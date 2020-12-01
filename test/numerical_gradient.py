@@ -1,0 +1,59 @@
+import numpy as np
+import simplenn as sn
+from typing import Tuple,Dict
+
+def numerical_gradient(f,x:np.ndarray,δEδy:np.ndarray, h=1e-5):
+    def all_generator(x):
+        it = np.nditer(x, flags=['multi_index'], op_flags=['readwrite'])
+        while not it.finished:
+            # evaluate function at x+h
+            ix = it.multi_index
+            yield ix
+            it.iternext()
+
+    generator = all_generator(x)
+    h2 = 2*h
+
+    δEδx = np.zeros_like(x)
+    for i in generator:
+        oldval = x[i]
+        x[i] = oldval + h # increment by h
+        fxph = f(x) # evaluate f(x + h)
+        x[i] = oldval - h # increment by h
+        fxmh = f(x) # evaluate f(x - h)
+        x[i] = oldval # reset
+
+        δyδxi = fxph - fxmh
+        δE = (δyδxi*δEδy).sum()
+        δEδx[i] = δE / h2
+    return δEδx
+
+def f(layer:sn.Layer,x:np.ndarray): return layer.forward(x)
+
+def df(layer:sn.Layer,x:np.ndarray,δEδy:np.ndarray):
+
+    layer.reset()
+    y = f(layer,x)
+    δEδx,δEδp = layer.backward(δEδy)
+    return δEδx,δEδp,y
+
+def layer_to_functions(l:sn.layer):
+    fx = lambda x:f(l, x)
+
+    def fp(l:sn.Layer,x:np.ndarray,k:str,p:np.ndarray):
+        old_p=l.get_parameters()[k]
+        l.get_parameters()[k][:]=p
+        y = l.forward(x)
+        l.get_parameters()[k][:]=old_p
+        return y
+
+    fps={}
+    for k in l.get_parameters():
+        fps[k] =lambda p,x:fp(l, x, k, p)
+
+    return fx,fps
+
+def replace_params(l:sn.Layer, new_p:Dict[str, np.ndarray]):
+    current_p = l.get_parameters()
+    for k in current_p:
+        current_p[k][:]=new_p[l]
