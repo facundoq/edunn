@@ -2,6 +2,5 @@ numpy
 ipython
 jupyter
 matplotlib
-sklearn
 tqdm
 colorama

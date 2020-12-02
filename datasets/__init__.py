@@ -10,7 +10,7 @@ def shuffle_dataset(x,y):
     x = x[indices,:]
     return x,y
 
-def load_regression_dataset(filename,shuffle=True):
+def load_regression_dataset(filename,shuffle=False):
     data=np.loadtxt(basepath / filename,skiprows=1,delimiter=",")
     x = data[:,:-1]
     y = data[:,-1:]
@@ -18,7 +18,7 @@ def load_regression_dataset(filename,shuffle=True):
         x, y = shuffle_dataset(x,y)
     return x,y
 
-def load_classification_dataset(filename,classes,shuffle=True):
+def load_classification_dataset(filename,classes,shuffle=False):
     data=np.loadtxt(basepath / filename,skiprows=1,delimiter=",")
     x = data[:,:-1]
     y = data[:,-1:]
@@ -79,3 +79,6 @@ def load(dataset_name:str):
 
     dataset_loader = names[dataset_name]
     return dataset_loader()
+
+def get_names()->[str]:
+    return list(names.keys())
