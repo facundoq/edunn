@@ -63,11 +63,25 @@ class Sequential(Model):
         self.error_function:ErrorLayer=error_function
 
     def predict(self,x:np.ndarray):
+        '''
+
+        :param x: input to model
+        :return: output of model with x as input
+        '''
         for layer in self.layers:
             x = layer.forward(x)
         return x
 
     def fit(self,x:np.ndarray,y:np.ndarray,epochs:int,batch_size:int,optimizer:Optimizer):
+        '''
+        Fit a model to a dataset.
+        :param x: dataset inputs
+        :param y: dataset outputs
+        :param epochs: number of epochs to train the model. Each epoch is a complete iteration over the training set. The number of parameter updates is n //batch_size, where n is the number of samples of the dataset
+        :param batch_size: Batch the dataset with batches of size `batch_size`.
+        :param algorithm optimizer: used to modify the parameters of the model
+        :return:
+        '''
         n = x.shape[0]
         batches = n // batch_size
         history = []
@@ -87,19 +101,25 @@ class Sequential(Model):
         for l in self.layers:
             l.set_phase(phase)
 
-    def backward(self,x:np.ndarray,y:np.ndarray):
+    def backward(self,x:np.ndarray,y:np.ndarray,average_batch=True):
         '''
 
         :param x: inputs
         :param y: expected output
         :return: gradients for every layer, prediction for inputs and error
         '''
+        n = x.shape[0]
         y_pred = self.predict(x)
         E = self.error_function.forward(y,y_pred)
         δEδy = self.error_function.backward(y,y_pred)
         gradients=[]
         for layer in reversed(self.layers):
             δEδy,δEδp = layer.backward(δEδy)
+            if average_batch:
+                # divide gradients by batch size to obtain average gradients
+                # so that magnitudes are independent of batch size
+                for k,v in δEδp.items():
+                    v[:]/=n
             if not layer.frozen:
                 # insert beginning
                 gradients.insert(0,δEδp)
@@ -110,6 +130,13 @@ class Sequential(Model):
             l.reset()
 
     def fit_batch(self,x:np.ndarray,y:np.ndarray,optimizer:Optimizer):
+        '''
+        Fit model on a batch of samples
+        :param x: input samples
+        :param y: target samples
+        :param optimizer: algorithm used to modify the parameters of the model
+        :return: error of the network on this batch
+        '''
         self.set_phase(Phase.Training)
         self.reset_layers()
         gradients, y_pred,error = self.backward(x,y)
@@ -121,6 +148,9 @@ class Sequential(Model):
 
 
     def summary(self)->str:
+        '''
+        :return: a summary of the layers of the model and their parameters
+        '''
         separator = "-------------------------------"
         result=f"{separator}\n"
         parameters=0

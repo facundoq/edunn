@@ -1,6 +1,12 @@
 from simplenn.layer import Layer
 import numpy as np
 
+class Identity(Layer):
+
+    def forward(self,x:np.ndarray):
+        return x
+    def backward(self,δEδy:np.ndarray):
+        return δEδy,{}
 
 class AddConstant(Layer):
     '''

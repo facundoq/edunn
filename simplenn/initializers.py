@@ -30,15 +30,36 @@ class Constant(Initializer):
 
 
 class RandomUniform(Initializer):
-    def __init__(self,eps:float=1e-10):
+    '''
+    A random initializer with samples from a Uniform distribution
+    with mean 0 and range -a,a
+    '''
+    def __init__(self, a:float=1e-10):
         super().__init__()
-        self.eps=eps
+        self.a=a
 
     def initialize(self,p:np.ndarray):
-        #TIP use np.random.random_sample(shape)
-        # to generate uniform randomnumbers between 0 and 1
+        #TIP use np.random.uniform(a,b,shape)
+        #to generate uniform random numbers between a and b
 
-        p[:]=(np.random.random_sample(p.shape)*2-1)*self.eps
+        ### COMPLETAR INICIO ###
+        p[:]=np.random.uniform(-self.a,self.a,p.shape)
+        ### COMPLETAR FIN ###
+
+
+class RandomNormal(Initializer):
+    def __init__(self, std:float=1e-10):
+        super().__init__()
+        self.std=std
+
+    def initialize(self,p:np.ndarray):
+        #TIP use np.random.normal(μ,σ,shape)
+        # to generate random numbers sampled from
+        # a normal distribution with mean μ and std σ
+
+        ### COMPLETAR INICIO ###
+        p[:]=np.random.normal(0,self.std,p.shape)
+        ### COMPLETAR FIN ###
 
 
 class XavierUniform(Initializer):

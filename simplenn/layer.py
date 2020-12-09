@@ -8,7 +8,13 @@ class Phase(Enum):
     Test = "Test"
 
 class Layer(ABC):
-
+    '''
+    A layer of a Model. Can perform forward and backward operations
+    The backward operation must be defined explicitely and is not automatically derived from the forward.
+    Each layer has a unique name. Also, it has a set of parameters that can be updated to fit a model.
+    The layer can be frozen, so that its parameters are not updated/optimized.
+    Finally, the layer can be stateful, so the reset() method can reinitialize the layer.
+    '''
     def __init__(self,name=None):
         if name is None:
             class_name= self.__class__.__name__
@@ -22,7 +28,13 @@ class Layer(ABC):
         self.reset()
         self.frozen=False
 
+
     def set_phase(self,phase:Phase):
+        '''
+        Indicate to the layer the current Phase (training/test/other) the model is in.
+        This can be used to code different behaviors in training and testing phases.
+        :param phase: phase to set
+        '''
         self.phase = phase
 
     def n_parameters(self)->int:
