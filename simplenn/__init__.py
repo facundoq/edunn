@@ -6,4 +6,4 @@ from .dense import Linear,Dense,Bias
 from .error_layer import SquaredError,CrossEntropyWithLabels,BinaryCrossEntropyWithLabels
 from .model import Sequential,Model
 from .optimizer import RandomOptimizer,GradientDescent
-from . import initializers,measures,plot
+from . import initializers,metrics,plot

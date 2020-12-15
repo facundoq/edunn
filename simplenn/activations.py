@@ -1,12 +1,15 @@
-from simplenn.layer import CommonLayer
+from simplenn.layer import CommonLayer,Cache
 import numpy as np
 
 class Identity(CommonLayer):
 
-    def forward(self,x:np.ndarray):
-        return x
-    def backward(self,δEδy:np.ndarray):
-        return δEδy,{}
+    def forward_with_cache(self, x:np.ndarray):
+        cache = tuple() # empty tuple
+        return x,cache
+
+    def backward(self,δEδy:np.ndarray,cache:Cache):
+        δEδp={} # no parameters, no derivatives
+        return δEδy,δEδp
 
 class AddConstant(CommonLayer):
     '''
@@ -18,23 +21,26 @@ class AddConstant(CommonLayer):
         super().__init__(name=name)
         self.value=value
 
-    def forward(self,x:np.ndarray):
+    def forward_with_cache(self, x:np.ndarray):
         '''
         :param x: input vector/matrix
         :return: x + a constant value, stored in self.value
         '''
         y= np.zeros_like(x)
         ### COMPLETAR INICIO ###
+
         y=x+self.value
         ### COMPLETAR FIN ###
-        return y
+        cache = tuple() # empty tuple
+        return y,cache
 
-    def backward(self,δEδy:np.ndarray):
+    def backward(self,δEδy:np.ndarray,cache:Cache):
         δEδx= np.zeros_like(δEδy)
         ### COMPLETAR INICIO ###
         δEδx= δEδy
         ### COMPLETAR FIN ###
-        return δEδx,{}
+        δEδp={} # no parameters, no derivatives
+        return δEδx,δEδp
 
 class MultiplyConstant(CommonLayer):
     '''
@@ -44,7 +50,7 @@ class MultiplyConstant(CommonLayer):
     def __init__(self,value:float,name=None):
         super().__init__(name=name)
         self.value=value
-    def forward(self,x:np.ndarray):
+    def forward_with_cache(self, x:np.ndarray):
         '''
         :param x: input vector/matrix
         :return: x * a constant value, stored in self.value
@@ -53,24 +59,25 @@ class MultiplyConstant(CommonLayer):
         ### COMPLETAR INICIO ###
         y=x*self.value
         ### COMPLETAR FIN ###
+        cache = tuple() # empty tuple
+        return y,cache
 
-        return y
 
-
-    def backward(self,δEδy:np.ndarray):
+    def backward(self,δEδy:np.ndarray,cache:Cache):
         δEδx= np.zeros_like(δEδy)
 
         ### COMPLETAR INICIO ###
         δEδx=δEδy *self.value
         ### COMPLETAR FIN ###
 
-        return δEδx,{}
+        δEδp={} # no parameters, no derivatives
+        return δEδx,δEδp
 
 
 
 class ReLU(CommonLayer):
 
-    def forward(self,x:np.ndarray):
+    def forward_with_cache(self, x:np.ndarray):
         y = np.zeros_like(x)
 
         # TIP: NO utilizar np.max()
@@ -80,13 +87,12 @@ class ReLU(CommonLayer):
         ### COMPLETAR INICIO ###
         y = np.maximum(x,0)
         ### COMPLETAR FIN ###
+        cache = (y,)
+        return y,cache
 
-        self.set_cache(y)
-        return y
-
-    def backward(self, δEδy:np.ndarray):
+    def backward(self, δEδy:np.ndarray,cache:Cache):
         δEδx = np.zeros_like(δEδy)
-        y, = self.cache
+        y, = cache
 
         # TIP: δEδx = δEδy * δyδx
         # δyδx is 1 if the output was greater than 0
@@ -102,17 +108,17 @@ class ReLU(CommonLayer):
 
 class Sigmoid(CommonLayer):
 
-    def forward(self,x:np.ndarray):
+    def forward_with_cache(self, x:np.ndarray):
         y = np.zeros_like(x)
         ### COMPLETAR INICIO ###
         y =   1.0/(1.0 + np.exp(-x))
         ### COMPLETAR FIN ###
-        self.set_cache(y)
-        return y
+        cache = (y,)
+        return y,cache
 
-    def backward(self, δEδy:np.ndarray):
+    def backward(self, δEδy:np.ndarray,cache:Cache):
         δEδx= np.zeros_like(δEδy)
-        y, = self.cache
+        y, = cache
         # TIP: δEδx = δEδy * δyδx
         # First calculate δyδx
         # then multiply by δEδy (provided)
@@ -132,32 +138,26 @@ class TanH(CommonLayer):
         super().__init__(name=name)
 
 
-    def forward(self,x:np.ndarray):
+    def forward_with_cache(self, x:np.ndarray):
         y= np.zeros_like(x)
         # TIP: TanH is simply sigmoid*2-1
         ### COMPLETAR INICIO ###
-        y=self.sigmoid.forward(x)*2-1
+        s ,cache = self.sigmoid.forward_with_cache(x)
+        y= s * 2 - 1
         ### COMPLETAR FIN ###
-        return y
+        return y,cache # this layer's cache is the same as the sigmoid's cache
 
-    def backward(self,δEδy:np.ndarray):
+    def backward(self,δEδy:np.ndarray,cache:Cache):
         δEδx= np.zeros_like(δEδy)
         # TIP: If TanH is simply sigmoid*2-1
         # Calculate derivative of TanH
         # in terms of derivative of sigmoid
         ### COMPLETAR INICIO ###
-        δEδx,δEδp =self.sigmoid.backward(δEδy)
+        δEδx,δEδp =self.sigmoid.backward(δEδy,cache)
         δEδx = δEδx*2
         ### COMPLETAR FIN ###
 
         return δEδx,{}
-
-    def reset(self):
-        self.sigmoid.reset()
-
-
-
-
 
 
 class Softmax(CommonLayer):
@@ -165,7 +165,7 @@ class Softmax(CommonLayer):
         super().__init__(name)
         self.smoothing=smoothing
 
-    def forward(self,x:np.ndarray):
+    def forward_with_cache(self, x:np.ndarray):
         # add a small value so that no probability ends up exactly 0
         # This avoids NaNs when computing log(p) or 1/p
         # Specially when paired with the CrossEntropy error function
@@ -182,12 +182,12 @@ class Softmax(CommonLayer):
             e = np.exp(xi)
             y[i,:] = e/e.sum()
             ### COMPLETAR FIN ###
-        self.set_cache(y)
-        return y
+        cache = (y,)
+        return y,cache
 
-    def backward(self, δEδy:np.ndarray):
+    def backward(self, δEδy:np.ndarray,cache:Cache):
         # δEδx = δEδy * δyδx
-        y, = self.cache
+        y, = cache
         n,classes = δEδy.shape
         δEδx = np.zeros_like(δEδy)
         for i in range(n):

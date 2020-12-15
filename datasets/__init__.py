@@ -31,29 +31,35 @@ def load_study_regression(): return load_regression_dataset("study_regression.cs
 
 def load_study_classification2d_easy(): return load_classification_dataset("study_logistic_2d_easy.csv",["Desaprobado","Aprobado"])
 
-def load_study_classification():
-    data=np.loadtxt(basepath /"study_logistic.csv",skiprows=1,delimiter=",")
-    x = data[:,0:1]
-    y = data[:,-1:]
-    y=y.astype(np.int)
-    classes = ["Desaprobado","Aprobado"]
-    return x,y,classes
+def load_study_classification2d(): return load_classification_dataset("study_logistic_2d.csv",["Desaprobado","Aprobado"])
 
-def load_study_classification2d():
-    data=np.loadtxt(basepath /"study_logistic_2d.csv",skiprows=1,delimiter=",")
-    x = data[:,0:2]
-    y = data[:,-1:]
-    y=y.astype(np.int)
-    classes = ["Desaprobado","Aprobado"]
-    return x,y,classes
+def load_study_classification(): return load_classification_dataset("study_logistic.csv",["Desaprobado","Aprobado"])
 
-def load_iris():
-    data=np.loadtxt(basepath /"iris.csv",skiprows=1,delimiter=",")
-    x = data[:,0:4]
-    y = data[:,-1:]
-    y=y.astype(np.int)
-    classes = ["setosa","versicolor","virginica"]
-    return x,y,classes
+def load_iris(): return load_classification_dataset("iris.csv",["setosa","versicolor","virginica"])
+
+# def load_study_classification():
+#     data=np.loadtxt(basepath /"study_logistic.csv",skiprows=1,delimiter=",")
+#     x = data[:,0:1]
+#     y = data[:,-1:]
+#     y=y.astype(np.int)
+#     classes = ["Desaprobado","Aprobado"]
+#     return x,y,classes
+
+# def load_study_classification2d():
+#     data=np.loadtxt(basepath /"study_logistic_2d.csv",skiprows=1,delimiter=",")
+#     x = data[:,0:2]
+#     y = data[:,-1:]
+#     y=y.astype(np.int)
+#     classes = ["Desaprobado","Aprobado"]
+#     return x,y,classes
+
+# def load_iris():
+#     data=np.loadtxt(basepath /"iris.csv",skiprows=1,delimiter=",")
+#     x = data[:,0:4]
+#     y = data[:,-1:]
+#     y=y.astype(np.int)
+#     classes = ["setosa","versicolor","virginica"]
+#     return x,y,classes
 
 def load_boston(): return load_regression_dataset("boston.csv")
 

@@ -18,7 +18,7 @@ class Bias(CommonLayer):
         b = initializer.create( (output_size,))
         self.register_parameter("b", b)
 
-    def forward(self,x:np.ndarray):
+    def forward_with_cache(self, x:np.ndarray):
         n,d = x.shape
         b = self.get_parameters()["b"]
         dout, = b.shape
@@ -26,9 +26,10 @@ class Bias(CommonLayer):
         ### COMPLETAR INICIO ###
         y = x + b
         ### COMPLETAR FIN ###
-        return y
+        cache = tuple()
+        return y,cache
 
-    def backward(self, δEδy:np.ndarray):
+    def backward(self, δEδy:np.ndarray,cache):
         b = self.get_parameters()["b"]
 
         δEδx = np.zeros_like(δEδy)
@@ -71,7 +72,7 @@ class Linear(CommonLayer):
         self.register_parameter("w", w)
 
 
-    def forward(self,x:np.ndarray):
+    def forward_with_cache(self, x:np.ndarray):
         n,d = x.shape
         # Retrieve w
         w = self.get_parameters()["w"]
@@ -88,12 +89,12 @@ class Linear(CommonLayer):
         ### COMPLETAR FIN ###
 
         # add input to cache to calculate δEδw in backward step
-        self.set_cache(x)
-        return y
+        cache = (x,)
+        return y,cache
 
-    def backward(self,δEδy:np.ndarray):
+    def backward(self,δEδy:np.ndarray,cache):
         # Retrieve input from cache to calculate δEδw
-        x, = self.cache
+        x, = cache
         n = x.shape[0]
 
         # Retrieve w
@@ -185,34 +186,32 @@ class Dense(CommonLayer):
         # add activation name to Dense name
         self.name+=f"({activation_name})"
 
-    def forward(self,x:np.ndarray):
+    def forward_with_cache(self, x:np.ndarray):
         # calculate and return activation(bias(linear(x)))
 
         ### COMPLETAR INICIO ###
-        output= self.activation.forward(self.bias.forward(self.linear.forward(x)))
+        y_linear,cache_linear = self.linear.forward_with_cache(x)
+        y_bias,cache_bias =self.bias.forward_with_cache(y_linear)
+        y_activation,cache_activation= self.activation.forward_with_cache(y_bias)
         ### COMPLETAR FIN ###
-        return output
+        return y_activation, (cache_linear,cache_bias,cache_activation)
 
-    def backward(self,δEδy:np.ndarray):
+    def backward(self,δEδy:np.ndarray,cache):
         # Compute gradients for the parameters of the bias, linear and activation function
         # It is possible that the activation function does not have any parameters
         # (ie, δEδactivation = {})
-
+        (cache_linear,cache_bias,cache_activation) = cache
         δEδbias,δEδlinear,δEδactivation={},{},{}
         ### COMPLETAR INICIO ###
-        δEδx_activation,δEδactivation = self.activation.backward(δEδy)
-        δEδx_bias,δEδbias =self.bias.backward(δEδx_activation)
-        δEδx,δEδlinear =self.linear.backward(δEδx_bias)
+        δEδx_activation,δEδactivation = self.activation.backward(δEδy,cache_activation)
+        δEδx_bias,δEδbias =self.bias.backward(δEδx_activation,cache_bias)
+        δEδx,δEδlinear =self.linear.backward(δEδx_bias,cache_linear)
         ### COMPLETAR FIN ###
 
         # combine gradients for parameters from dense, linear and activation layers
         δEδdense ={**δEδbias, **δEδlinear,**δEδactivation}
         return δEδx,δEδdense
 
-    def reset(self):
-        self.linear.reset()
-        self.bias.reset()
-        self.activation.reset()
 
     def get_parameters(self):
         # returns the combination of parameters of all models

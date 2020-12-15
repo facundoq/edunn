@@ -29,7 +29,7 @@ error = sn.MeanError(sn.BinaryCrossEntropyWithLabels())
 layers = [sn.Linear(din,1),
           sn.Sigmoid(),
           ]
-model = sn.Sequential(layers,error)
+model = sn.Sequential(layers)
 print(model.summary())
 
 epochs=100
@@ -40,7 +40,7 @@ batch_size=4
 #     print(i)
 #     history = model.fit(x,y,1,batch_size,optimizer)
 
-history = model.fit(x,y,epochs,batch_size,optimizer)
+history = model.fit(x,y,error,epochs,batch_size,optimizer)
 plot.plot_history(history, results_dir / f"logistic_regression1d_{dataset_name}_history.png")
 
 y_pred = model.predict(x)

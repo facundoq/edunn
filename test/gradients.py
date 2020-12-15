@@ -33,16 +33,14 @@ if __name__ == '__main__':
     layer = sn.Sigmoid()
     check_gradient_common_layer(layer, shape, samples=samples)
 
-
     layer = sn.Softmax()
-
     check_gradient_common_layer(layer, shape, samples=samples)
 
     layer = sn.CrossEntropyWithLabels()
-    check_gradient_cross_entropy_labels(layer, (2,5), samples=samples,tolerance=1e-3)
+    check_gradient_cross_entropy_labels(layer, (2,5), samples=samples, max_rel_error=1e-3)
 
     layer = sn.SquaredError()
-    check_gradient_squared_error(layer, shape, samples=samples)
+    check_gradient_squared_error(layer, shape, samples=samples, max_rel_error=1e-3)
 
     layer = sn.BinaryCrossEntropyWithLabels()
-    check_gradient_binary_cross_entropy_labels(layer, 3, samples=samples,tolerance=1e-4)
+    check_gradient_binary_cross_entropy_labels(layer, 3, samples=samples, max_rel_error=1e-3)

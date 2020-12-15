@@ -7,7 +7,8 @@ from typing import Tuple,Dict
 class Phase(Enum):
     Training = "Training"
     Test = "Test"
-
+ParameterSet = Dict[str,np.ndarray]
+Cache = Tuple
 class Layer(ABC):
     '''
     A layer of a Model. Can perform forward and backward operations
@@ -26,7 +27,6 @@ class Layer(ABC):
 
         self.name=name
         self.parameters = {}
-        self.reset()
         self.frozen=False
 
 
@@ -50,16 +50,13 @@ class Layer(ABC):
     def get_parameters(self):
         return self.parameters
 
-    def reset(self):
-        self.cache = ()
-
-    def set_cache(self,*args):
-        self.cache = args
-
     @abstractmethod
-    def forward(self,*x):
+    def forward_with_cache(self, *x):
         pass
 
+    def forward(self,*x):
+        y,cache=self.forward_with_cache(*x)
+        return y
 
     @abstractmethod
     def backward(self,*x):
@@ -74,12 +71,12 @@ class CommonLayer(Layer):
         super().__init__(name=name)
 
     @abstractmethod
-    def forward(self,x:np.ndarray)->np.ndarray:
+    def forward_with_cache(self, x:np.ndarray)->(np.ndarray,Cache):
         pass
 
 
     @abstractmethod
-    def backward(self,δEδy:np.ndarray)->(np.ndarray,Dict[str,np.ndarray]):
+    def backward(self,δEδy:np.ndarray,cache:Cache)->(np.ndarray,ParameterSet):
         pass
 
 class ErrorLayer(Layer):
@@ -88,12 +85,12 @@ class ErrorLayer(Layer):
         super().__init__(name=name)
 
     @abstractmethod
-    def forward(self,y:np.ndarray,y_pred:np.ndarray)->float:
+    def forward_with_cache(self, y:np.ndarray, y_pred:np.ndarray)->float:
         pass
 
 
     @abstractmethod
-    def backward(self,y:np.ndarray,y_pred:np.ndarray):
+    def backward(self,cache:Cache):
         pass
 
 
@@ -104,12 +101,12 @@ class SampleErrorLayer(Layer):
         super().__init__(name=name)
 
     @abstractmethod
-    def forward(self,y:np.ndarray,y_pred:np.ndarray)->np.ndarray:
+    def forward_with_cache(self, y:np.ndarray, y_pred:np.ndarray)->np.ndarray:
         pass
 
 
     @abstractmethod
-    def backward(self,y:np.ndarray,y_pred:np.ndarray):
+    def backward(self,cache:Cache):
         pass
 
 
@@ -124,12 +121,14 @@ class MeanError(ErrorLayer):
         super().__init__(name=name)
         self.e = e
 
-    def forward(self,y:np.ndarray,y_pred:np.ndarray):
-        return np.mean(self.e.forward(y,y_pred))
+    def forward_with_cache(self, y_true:np.ndarray, y:np.ndarray):
+        E, sample_cache=self.e.forward_with_cache(y_true, y)
+        n,dout=y_true.shape
+        cache =(n,sample_cache)
+        return np.mean(E),cache
 
-    def backward(self,y:np.ndarray,y_pred:np.ndarray):
-        n,dout=y.shape
-        δEδy=self.e.backward(y,y_pred)/n
+    def backward(self,cache):
+        n,sample_cache=cache
+        δEδy,δEδp=self.e.backward(sample_cache)
         assert δEδy.shape[0] == n, "SampleErrorLayer's gradient must have n values"
-
-        return δEδy
+        return δEδy/n

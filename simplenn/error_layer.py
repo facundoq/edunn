@@ -15,11 +15,15 @@ def fix_probabilities(p:np.ndarray):
 
 
 class SquaredError(SampleErrorLayer):
-    def forward(self, y_true:np.ndarray, y:np.ndarray):
-        return np.sum((y - y_true) ** 2, axis=0)
+    def forward_with_cache(self, y_true:np.ndarray, y:np.ndarray):
+        delta = (y - y_true)
+        E = np.sum(delta** 2, axis=1)
+        cache = (delta,)
+        return E,cache
 
-    def backward(self, y_true:np.ndarray, y:np.ndarray):
-        δEδy = 2 * (y - y_true)
+    def backward(self, cache):
+        delta, = cache
+        δEδy = 2 * delta
         return δEδy,{}
 
 
@@ -37,7 +41,7 @@ class BinaryCrossEntropyWithLabels(SampleErrorLayer):
 
 '''
 
-    def forward(self, y_true:np.ndarray, y:np.ndarray):
+    def forward_with_cache(self, y_true:np.ndarray, y:np.ndarray):
         y_true = np.squeeze(y_true)
         assert(len(y_true.shape) == 1)
         assert y.min() >= 0
@@ -54,11 +58,11 @@ class BinaryCrossEntropyWithLabels(SampleErrorLayer):
         # print(error)
         ### COMPLETAR FIN ###
         assert np.all(error.shape == y_true.shape)
+        cache = (y_true,y)
+        return error,cache
 
-        return error
-
-    def backward(self, y_true:np.ndarray, y:np.ndarray):
-
+    def backward(self, cache):
+        y_true,y = cache
         δEδy = np.zeros_like(y)
         n,classes = y.shape
         ### COMPLETAR INICIO ###
@@ -85,10 +89,10 @@ class CrossEntropyWithLabels(SampleErrorLayer):
 
     ### Ayuda para implementar:
     ### http://facundoq.github.io/guides/crossentropy_derivative.html
-    def forward(self, y_true:np.ndarray, y:np.ndarray):
+    def forward_with_cache(self, y_true:np.ndarray, y:np.ndarray):
         y_true = np.squeeze(y_true)
 
-        assert(len(y_true.shape) == 1)
+        assert len(y_true.shape) == 1
         assert y.min() >= 0
 
         n,c=y.shape
@@ -102,11 +106,11 @@ class CrossEntropyWithLabels(SampleErrorLayer):
             E[i] = -np.log(probability)
         ### COMPLETAR FIN ###
         assert np.all(E.shape == y_true.shape)
+        cache = (y_true,y)
+        return E,cache
 
-        return E
-
-    def backward(self, y_true:np.ndarray, y:np.ndarray):
-
+    def backward(self, cache):
+        y_true,y = cache
         #y_pred=fix_probabilities(y_pred)
 
         δEδy = np.zeros_like(y)

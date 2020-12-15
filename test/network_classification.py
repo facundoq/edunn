@@ -3,7 +3,7 @@ sys.path.insert(0, '..')
 
 import simplenn as sn
 import numpy as np
-import matplotlib.pyplot as plt
+from simplenn import metrics
 from simplenn import plot
 import datasets
 from sklearn.metrics import classification_report
@@ -30,19 +30,20 @@ layers = [sn.Dense(din,10),
           sn.Dense(10,n_classes),
           sn.Softmax()
           ]
-model = sn.Sequential(layers,error)
+model = sn.Sequential(layers)
 print(model.summary())
 
 epochs=100
 batch_size=6
 
-history = model.fit(x,y,epochs,batch_size,optimizer)
+history = model.fit(x,y,error,epochs,batch_size,optimizer)
 plot.plot_history(history, results_dir / f"logistic_regression_{dataset_name}_history.png")
 
 y_pred = model.predict(x)
 y_pred_labels = y_pred.argmax(axis=1)
 
-print(classification_report(y,y_pred_labels))
+metrics.classification_summary(np.squeeze(y), y_pred_labels)
+
 
 
 if din ==2:
