@@ -2,20 +2,20 @@ import numpy as np
 import simplenn as sn
 from typing import Tuple,Dict
 
+
 def numerical_gradient(f,x:np.ndarray,δEδy:np.ndarray, h=1e-5):
-    def all_generator(x):
+    ''' Calculates the numerical gradient of E wrt x'''
+    ''' E is assumed to be a scalar, so that δEδy has size equal to y'''
+    def indices_generator(x):
         it = np.nditer(x, flags=['multi_index'], op_flags=['readwrite'])
         while not it.finished:
             # evaluate function at x+h
             ix = it.multi_index
             yield ix
             it.iternext()
-
-    generator = all_generator(x)
     h2 = 2*h
-
     δEδx = np.zeros_like(x)
-    for i in generator:
+    for i in indices_generator(x):
         oldval = x[i]
         x[i] = oldval + h # increment by h
         fxph = f(x) # evaluate f(x + h)
@@ -23,10 +23,12 @@ def numerical_gradient(f,x:np.ndarray,δEδy:np.ndarray, h=1e-5):
         fxmh = f(x) # evaluate f(x - h)
         x[i] = oldval # reset
 
-        δyδxi = fxph - fxmh
+        δyδxi = (fxph - fxmh)/h2
         δE = (δyδxi*δEδy).sum()
-        δEδx[i] = δE / h2
+        δEδx[i] = δE
     return δEδx
+
+
 
 def f(layer:sn.Layer,x:np.ndarray): return layer.forward(x)
 
@@ -36,6 +38,8 @@ def df(layer:sn.Layer,x:np.ndarray,δEδy:np.ndarray):
     y = f(layer,x)
     δEδx,δEδp = layer.backward(δEδy)
     return δEδx,δEδp,y
+
+
 
 def layer_to_functions(l:sn.layer):
     fx = lambda x:f(l, x)

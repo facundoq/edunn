@@ -2,78 +2,190 @@ from __future__ import print_function
 from builtins import range
 import numpy as np
 from random import randrange
-from typing import Tuple,Dict
+from typing import Tuple,Dict,Callable
 import simplenn as sn
 
 from .numerical_gradient import replace_params,df,f,layer_to_functions,numerical_gradient
 from colorama import Fore, Back, Style
 
-def check_gradient_layer_random_sample(l:sn.Layer, shape:Tuple, samples:int=1, tolerance=1e-7):
-    print(f"{Back.LIGHTBLUE_EX}{Fore.BLACK}{l.name} layer:{Style.RESET_ALL}")
-    errors=0
-    count=0
-    for i in range(samples):
-        x = np.random.normal(0,1,shape)
-        y = l.forward(x)
-        δEδy = np.random.normal(0,1,y.shape)
-        sample_errors,sample_count=check_gradient_layer(l, x,δEδy, tolerance)
-        errors+=sample_errors
-        count+=sample_count
-    if errors==0:
-        status = f"{Back.GREEN}{Fore.BLACK}SUCCESS{Style.RESET_ALL}"
-    else:
-        status = f"{Back.RED}{Fore.BLACK} ERROR {Style.RESET_ALL}"
+ParameterSet = Dict[str,np.ndarray]
 
-    print(f"{status} {count} partial derivatives checked, {errors} failed (tolerance {tolerance}, {samples} random input samples)")
+def set_parameters_inplace(l:sn.Layer,parameters:ParameterSet):
+    old_params = l.get_parameters()
+    for k, v in old_params.items():
+        l.get_parameters()[k][:]=parameters[k]
 
+def common_layer_to_function(l:sn.CommonLayer):
 
-def report_error(label, error_count, count, error_max, tolerance):
-    if error_count==0:
-        print(f"{label}: success. All {count} checks were within tolerance ({tolerance})")
-    else:
-        error_percent=error_count/count*100
-        print(f"{label}: error. {error_percent:.1f}% checks were NOT within tolerance ({tolerance}), max error: {error_max:.6f}")
-
-def check_gradient_layer(l:sn.Layer, x:np.ndarray, δEδy:np.ndarray, tolerance:float, p:Dict[str, np.ndarray]=None,verbose=False):
-    if not p is None:
-        replace_params(l, p)
-    errors =0
-    total_count=0
-
-    δEδx_analytic,δEδp_analytic,y = df(l,x,δEδy)
-    error_count,count,error_max  = check_gradient_input("x",lambda x:f(l, x), x, δEδx_analytic,δEδy, tolerance=tolerance)
-    errors+=error_count
-    total_count+=count
-
-    if verbose and error_count>0:
-        report_error(f"{l.name}:δEδx",error_count,count,error_max,tolerance)
-
-    def fp(l:sn.Layer,x:np.ndarray,k:str,p:np.ndarray):
-        old_p=l.get_parameters()[k]
-        l.get_parameters()[k][:]=p
-        y = l.forward(x)
-        l.get_parameters()[k][:]=old_p
+    def f(inputs:Dict[str,np.ndarray]):
+        old_params = l.get_parameters().copy()
+        set_parameters_inplace(l,inputs)
+        y = l.forward(inputs["x"])
+        set_parameters_inplace(l,old_params)
         return y
 
-    for k in l.get_parameters():
-        p0=l.get_parameters()[k]
-        error_count,count,error_max = check_gradient_input(k,lambda p:fp(l, x, k, p), p0, δEδp_analytic[k],δEδy, tolerance=tolerance)
-        if verbose and error_count>0:
-            report_error(f"{l.name}:δEδ{k}",error_count,count,error_max,tolerance)
+    def df(inputs:ParameterSet,δEδy:np.ndarray):
+        old_params = l.get_parameters().copy()
+        set_parameters_inplace(l,inputs)
+        l.forward(inputs["x"])
+        δEδx,δEδp = l.backward(δEδy)
+        set_parameters_inplace(l,old_params)
+        return {"x":δEδx,**δEδp}
+    parameter_shapes = {k:v.shape for k,v in l.get_parameters().items()}
+    return f,df,parameter_shapes
+
+def error_layer_to_function(l:sn.SampleErrorLayer):
+
+    def f(inputs:Dict[str,np.ndarray]):
+        old_params = l.get_parameters().copy()
+        set_parameters_inplace(l,inputs)
+        y = l.forward(inputs["y_true"],inputs["y"])
+        set_parameters_inplace(l,old_params)
+        return y
+
+    def df(inputs:Dict[str,np.ndarray]):
+        old_params = l.get_parameters().copy()
+        set_parameters_inplace(l,inputs)
+        l.forward(inputs["y_true"],inputs["y"])
+        δEδy,δEδp = l.backward(inputs["y_true"],inputs["y"])
+        set_parameters_inplace(l,old_params)
+        return {"y":δEδy,**δEδp}
+    parameter_shapes = {k:v.shape for k,v in l.get_parameters().items()}
+
+    return f,df,parameter_shapes
+
+
+def check_gradient_common_layer(l:sn.CommonLayer,x_shape:Tuple,samples:int=1, tolerance=1e-7,break_on_error=True):
+    f,df,parameter_shapes = common_layer_to_function(l)
+    shapes = {**parameter_shapes,"x":x_shape}
+    input_generators = lambda: {k:np.random.normal(0,1,shape) for k,shape in shapes.items()}
+    y = f(input_generators())
+    δEδy_generator = lambda: np.random.normal(0,1,y.shape)
+    check_gradient_layer_random_sample(l,f,df,input_generators,δEδy_generator,samples=samples,tolerance=tolerance,break_on_error=break_on_error)
+
+def check_gradient_squared_error(l:sn.SquaredError,y_shape:Tuple,samples:int=1, tolerance=1e-7,break_on_error=True):
+    f,df,parameter_shapes = error_layer_to_function(l)
+
+    df_ignore_δEδy = lambda x,δEδy: df(x)
+    std=10
+    def input_generators():
+        parameters = {k:np.random.normal(0,1,shape) for k,shape in parameter_shapes.items()}
+        y = np.random.normal(0,std,y_shape)
+        y_true = np.random.normal(0,std,y_shape)
+        return {**parameters,"y":y,"y_true":y_true}
+    E = f(input_generators())
+    δE_generator = lambda : np.ones(E.shape)
+
+    check_gradient_layer_random_sample(l,f,df_ignore_δEδy,input_generators,δE_generator,samples=samples,tolerance=tolerance,break_on_error=break_on_error)
+
+def check_gradient_cross_entropy_labels(l:sn.CrossEntropyWithLabels,y_shape:Tuple,samples:int=1, tolerance=1e-7,break_on_error=True):
+    f,df,parameter_shapes = error_layer_to_function(l)
+    df_ignore_δEδy = lambda x,δEδy: df(x)
+    sm=sn.Softmax()
+    def input_generators():
+        parameters = {k:np.random.normal(0,1,shape) for k,shape in parameter_shapes.items()}
+
+        y = np.abs(np.random.normal(0,1,y_shape))
+        y/=y.sum(axis=1,keepdims=True)
+
+
+        n,classes = y.shape
+        y_true=np.random.randint(0,classes,(n,))
+
+        return {**parameters,"y":y,"y_true":y_true}
+
+    E = f(input_generators())
+    δE_generator = lambda : np.ones(E.shape)
+    check_gradient_layer_random_sample(l,f,df_ignore_δEδy,input_generators,δE_generator,samples=samples,tolerance=tolerance,break_on_error=break_on_error)
+
+def check_gradient_binary_cross_entropy_labels(l:sn.BinaryCrossEntropyWithLabels,batch_size:int,samples:int=1, tolerance=1e-7,break_on_error=True):
+    f,df,parameter_shapes = error_layer_to_function(l)
+    df_ignore_δEδy = lambda x,δEδy: df(x)
+    sm=sn.Softmax()
+    def input_generators():
+        parameters = {k:np.random.normal(0,1,shape) for k,shape in parameter_shapes.items()}
+        y = np.random.uniform(0,1,(batch_size,1))
+
+        y_true=np.random.randint(0,1,(batch_size,1))
+
+        return {**parameters,"y":y,"y_true":y_true}
+
+    E = f(input_generators())
+    δE_generator = lambda : np.ones(E.shape)
+    check_gradient_layer_random_sample(l,f,df_ignore_δEδy,input_generators,δE_generator,samples=samples,tolerance=tolerance,break_on_error=break_on_error)
+
+
+def check_gradient_layer_random_sample(l:sn.Layer,f,df,input_generator,δEδy_generator,samples:int=1, tolerance=1e-7,break_on_error=True):
+    checks,errors=0,0
+    print(f"{Back.LIGHTBLUE_EX}{Fore.BLACK}{l.name} layer:{Style.RESET_ALL}")
+
+    for i in range(samples):
+        inputs = input_generator()
+        δEδy = δEδy_generator()
+        δEδinputs_analytic = df(inputs,δEδy=δEδy)
+        sample_checks,sample_errors=check_gradient_numerical(f,inputs,δEδy,δEδinputs_analytic,tolerance=tolerance,break_on_error=break_on_error)
+        errors+=sample_errors
+        checks+=sample_checks
+        if errors>0 and break_on_error:
+            break
+
+    if errors==0:
+        status = f"{Back.GREEN}{Fore.BLACK}SUCCESS{Style.RESET_ALL}"
+        print(f"{status} {checks} partial derivatives checked, {samples} random input samples)")
+
+    if not break_on_error and errors>0:
+        status = f"{Back.RED}{Fore.BLACK}ERROR{Style.RESET_ALL}"
+        print(f"{status} {checks} partial derivatives checked, {errors} failed (tolerance {tolerance}, {samples} random input samples)")
+
+
+
+def check_gradient_numerical(f:Callable,inputs:ParameterSet,δEδy:np.ndarray,δEδinputs_analytic:Dict[str,np.ndarray], tolerance:float,break_on_error:bool):
+    errors=0
+    checks=0
+    for k,δEδk_analytical in δEδinputs_analytic.items():
+        v  = inputs[k]
+        #numerical
+        def fk(x):
+            old =inputs[k]
+            inputs[k] = x
+            y = f(inputs)
+            inputs[k] = old
+            return y
+        δEδk_numerical = numerical_gradient(fk,v,δEδy)
+
+        #comparison
+        error_count,count,max_error=relative_error_count(δEδk_analytical,δEδk_numerical,tolerance=tolerance)
         errors+=error_count
-        total_count+=count
+        checks+= count
+        if break_on_error and error_count>0 :
+
+            report_errors(δEδk_analytical,δEδk_numerical,k,v,δEδy,max_error,tolerance,)
+
+    return checks,errors
 
 
-    return errors,total_count
+def report_errors(δEδk_analytical,δEδk_numerical,label:str,x:np.ndarray,δEδy:np.ndarray,max_error:float,tolerance:float):
 
-def check_gradient_input(label,f, x, δEδx_analytical:np.ndarray, δEδy:np.ndarray, h=1e-5, tolerance=1e-8, verbose_ok=False, verbose_error=True):
+    message = f"{Back.RED}{Fore.BLACK} ERROR {Style.RESET_ALL}"
+    message+= f"\nδEδ{label}"
+    message+= f"\n Relative error (max):{max_error:0.5f} (tolerance: {tolerance})"
+    message+= f"\n{Style.RESET_ALL}######################## Details: ######################## "
+    message+= f"\n Input {label}:\n{x}"
+    message+= f"\n Input δEδy:\n{δEδy}"
+    message+= f"\n δEδ{label} (numerical, automatic):\n{δEδk_numerical}"
+    message+= f"\n δEδ{label} (analytic, your implementation):\n{δEδk_analytical}"
+
+    message+= f"\n##########################################################\n{Style.RESET_ALL}"
+    print(message)
+
+def relative_error_count(δanalytical:np.ndarray, δnumerical:np.ndarray, tolerance=1e-8):
     """
-    Check numerical gradients of f wrt x and compare with the analytic gradient
-    Can specify a maximum number of checks so that the gradient direction dimensions are randomly sampled.
+    Check numerical gradient vs analytic gradient
+    Count how many partial derivatives have a rel error greater than @tolerance
     """
-    δEδx_numerical = numerical_gradient(f,x,δEδy,h)
-    δsum=abs(δEδx_numerical) + abs(δEδx_analytical)
-    δdiff=abs(δEδx_numerical - δEδx_analytical)
+
+    δsum= abs(δnumerical) + abs(δanalytical)
+    δdiff=abs(δnumerical - δanalytical)
     rel_error = np.zeros_like(δsum)
     non_zero_indices = δsum!=0
     rel_error[non_zero_indices]=δdiff[non_zero_indices] / δsum[non_zero_indices]
@@ -83,57 +195,34 @@ def check_gradient_input(label,f, x, δEδx_analytical:np.ndarray, δEδy:np.nda
         max_error=0
     else:
         max_error=rel_error.max()
-    message = f"calculating δEδ{label}"
-    message+= f"\n Relative error (max):{max_error:0.5f} (tolerance: {tolerance})"
-    message+= f"\n{Style.RESET_ALL}######################## Details: ######################## "
-    message+= f"\n Input {label}:\n{x}"
-    message+= f"\n Input δEδy:\n{δEδy}"
-    message+= f"\n δEδ{label} (numerical, automatic):\n{δEδx_numerical}"
-    message+= f"\n δEδ{label} (analytic, your implementation):\n{δEδx_analytical}"
-
-    message+= f"\n##########################################################{Style.RESET_ALL}"
-
-
-    if error_count>0 and verbose_error:
-        print(f"{Fore.RED} Error {message}")
-    if verbose_ok and error_count ==0:
-        print(f"{Fore.GREEN} Success {message}")
 
     return error_count,rel_error.size,max_error
 
 
-def debug_gradient_layer_random_sample(l:sn.Layer, samples:int, shape:Tuple,δEδy=None):
-    print(f"Layer {l.name}:")
 
-    for i in range(samples):
-        x = np.random.normal(0,1,shape)
-        y = l.forward(x)
-        if δEδy is None:
-            δEδy = np.random.normal(0,1,y.shape)
-        # print("x:\n",x)
-        # print("y:\n",l.forward(x))
-        debug_gradient_layer(l,x,δEδy)
+def numerical_gradient(f,x:np.ndarray,δEδy:np.ndarray=None, h=1e-5):
+    ''' Calculates the numerical gradient of E wrt x'''
+    ''' E is assumed to be a scalar, so that δEδy has size equal to y'''
+    def indices_generator(x):
+        it = np.nditer(x, flags=['multi_index'], op_flags=['readwrite'])
+        while not it.finished:
+            # evaluate function at x+h
+            ix = it.multi_index
+            yield ix
+            it.iternext()
+    h2 = 2*h
+    δEδx = np.zeros_like(x)
+    for i in indices_generator(x):
+        oldval = x[i]
+        x[i] = oldval + h # increment by h
+        fxph = f(x) # evaluate f(x + h)
+        x[i] = oldval - h # increment by h
+        fxmh = f(x) # evaluate f(x - h)
+        x[i] = oldval # reset
 
+        δyδxi = (fxph - fxmh)/h2
 
-def debug_gradient_layer(l:sn.layer,x:np.ndarray,δEδy:np.ndarray):
-
-    δEδx_analytic,δEδp_analytic,y = df(l,x,δEδy)
-    fx,fps=layer_to_functions(l)
-
-    print(f"δEδx")
-    debug_gradient(fx, x, δEδx_analytic,δEδy)
-
-    for k in l.get_parameters():
-        fp = fps[k]
-        p0=l.get_parameters()[k]
-        print(f"δEδ{k}")
-        debug_gradient(lambda p:fp(p,x), p0, δEδp_analytic[k],δEδy)
-
-
-
-
-
-def debug_gradient(f, x, δEδx_analytic, δEδy, h=1e-4):
-    δEδx_numeric=numerical_gradient(f,x,δEδy,h)
-    print(f"Analytic gradient:\n {δEδx_analytic} ")
-    print(f"Numerical gradient:\n {δEδx_numeric} ")
+        δE = (δyδxi*δEδy)
+        δE = δE.sum()
+        δEδx[i] = δE
+    return δEδx

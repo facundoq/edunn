@@ -15,12 +15,12 @@ def fix_probabilities(p:np.ndarray):
 
 
 class SquaredError(SampleErrorLayer):
-    def forward(self,y:np.ndarray,y_pred:np.ndarray):
-        return np.sum((y_pred-y)**2,axis=0)
+    def forward(self, y_true:np.ndarray, y:np.ndarray):
+        return np.sum((y - y_true) ** 2, axis=0)
 
-    def backward(self,y:np.ndarray,y_pred:np.ndarray):
-        δEδy = 2 * (y_pred-y)
-        return δEδy
+    def backward(self, y_true:np.ndarray, y:np.ndarray):
+        δEδy = 2 * (y - y_true)
+        return δEδy,{}
 
 
 
@@ -37,39 +37,39 @@ class BinaryCrossEntropyWithLabels(SampleErrorLayer):
 
 '''
 
-    def forward(self,y:np.ndarray,y_pred:np.ndarray):
-        y = np.squeeze(y)
-        assert(len(y.shape)==1)
-        assert y_pred.min()>=0
+    def forward(self, y_true:np.ndarray, y:np.ndarray):
+        y_true = np.squeeze(y_true)
+        assert(len(y_true.shape) == 1)
+        assert y.min() >= 0
 
-        n,c=y_pred.shape
+        n,c=y.shape
 
         error = np.zeros((n))
         ### COMPLETAR INICIO ###
         for i in range(n):
-            miss = y[i] * y_pred[i] + (1-y[i]) * (1-y_pred[i])
+            miss = y_true[i] * y[i] + (1 - y_true[i]) * (1 - y[i])
             if miss==0:
                 miss += sn.eps
             error[i] = - np.log(miss)
         # print(error)
         ### COMPLETAR FIN ###
-        assert np.all(error.shape == y.shape)
+        assert np.all(error.shape == y_true.shape)
 
         return error
 
-    def backward(self,y:np.ndarray,y_pred:np.ndarray):
+    def backward(self, y_true:np.ndarray, y:np.ndarray):
 
-        δEδy = np.zeros_like(y_pred)
-        n,classes = y_pred.shape
+        δEδy = np.zeros_like(y)
+        n,classes = y.shape
         ### COMPLETAR INICIO ###
         for i in range(n):
-            miss = y[i] * y_pred[i] - (1-y[i]) * (1-y_pred[i])
+            miss = y_true[i] * y[i] - (1 - y_true[i]) * (1 - y[i])
             if miss==0:
                 miss+=sn.eps
             δEδy[i] = - 1/miss
         ### COMPLETAR FIN ###
 
-        return δEδy
+        return δEδy,{}
 
 
 class CrossEntropyWithLabels(SampleErrorLayer):
@@ -85,34 +85,35 @@ class CrossEntropyWithLabels(SampleErrorLayer):
 
     ### Ayuda para implementar:
     ### http://facundoq.github.io/guides/crossentropy_derivative.html
-    def forward(self,y:np.ndarray,y_pred:np.ndarray):
-        y = np.squeeze(y)
-        assert(len(y.shape)==1)
-        assert y_pred.min()>=0
+    def forward(self, y_true:np.ndarray, y:np.ndarray):
+        y_true = np.squeeze(y_true)
 
-        n,c=y_pred.shape
+        assert(len(y_true.shape) == 1)
+        assert y.min() >= 0
+
+        n,c=y.shape
 
         #y_pred=fix_probabilities(y_pred)
 
         E = np.zeros((n))
         ### COMPLETAR INICIO ###
         for i in range(n):
-            probability = y_pred[i,y[i]]
+            probability = y[i, y_true[i]]
             E[i] = -np.log(probability)
         ### COMPLETAR FIN ###
-        assert np.all(E.shape == y.shape)
+        assert np.all(E.shape == y_true.shape)
 
         return E
 
-    def backward(self,y:np.ndarray,y_pred:np.ndarray):
+    def backward(self, y_true:np.ndarray, y:np.ndarray):
 
         #y_pred=fix_probabilities(y_pred)
 
-        δEδy = np.zeros_like(y_pred)
-        n,classes = y_pred.shape
+        δEδy = np.zeros_like(y)
+        n,classes = y.shape
         ### COMPLETAR INICIO ###
         for i in range(n):
-            p=y_pred[i,y[i]]
-            δEδy[i,y[i]] = -1/p
+            p=y[i, y_true[i]]
+            δEδy[i, y_true[i]] = -1 / p
         ### COMPLETAR FIN ###
-        return δEδy
+        return δEδy,{}

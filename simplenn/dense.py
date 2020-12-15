@@ -1,10 +1,10 @@
-from simplenn.layer import Layer
+from simplenn.layer import CommonLayer
 import numpy as np
 from .initializers import  Initializer,Zero,RandomNormal
 from . import activations
 
 
-class Bias(Layer):
+class Bias(CommonLayer):
     '''
     The Bias layer outputs y = x+b, where b is a vector of parameters
     Input for forward:
@@ -58,7 +58,7 @@ class Bias(Layer):
 
 
 
-class Linear(Layer):
+class Linear(CommonLayer):
 
     '''
     The Linear layer outputs y = xw, where w is a matrix of parameters
@@ -105,24 +105,26 @@ class Linear(Layer):
 
         δEδx = np.zeros_like(x)
         ### COMPLETAR INICIO ###
-        # for loop version
+        # Per sample version
+        # for i in range(n):
+        #      δEδx[i,:] = np.dot(w, δEδy[i,:])
 
         # Vectorized version
-        δyδx = w.T
-        δEδx =δEδy.dot(δyδx)
+        #δyδx = w.T
+        δEδx =δEδy.dot(w.T)
         ### COMPLETAR FIN ###
 
         # Calculate derivative of error E with respect to parameter w
         δEδw = np.zeros_like(w)
 
         ### COMPLETAR INICIO ###
-        ## Vectorized
-        δEδw = x.T.dot(δEδy)
+        # per sample version
+        # for i in range(n):
+        #      δEδw_i = np.outer(x[i,:], δEδy[i,:])
+        #      δEδw += δEδw_i
 
-        ##non-vectorized version
-        for i in range(n):
-             δEδw_i = np.outer(x[i,:], δEδy[i,:])
-             δEδw += δEδw_i
+        ## Vectorized version
+        δEδw = x.T.dot(δEδy)
         ### COMPLETAR FIN ###
 
         return δEδx, {"w":δEδw}
@@ -135,7 +137,7 @@ activation_dict = {"id":activations.Identity,
                    "softmax":activations.Softmax,
                    }
 
-class Dense(Layer):
+class Dense(CommonLayer):
     '''
     A Dense layer simplifies the definition of networks by producing a common block
     that applies a linear, bias and activation function, in that order, to an input, ie

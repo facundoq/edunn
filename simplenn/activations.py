@@ -1,14 +1,14 @@
-from simplenn.layer import Layer
+from simplenn.layer import CommonLayer
 import numpy as np
 
-class Identity(Layer):
+class Identity(CommonLayer):
 
     def forward(self,x:np.ndarray):
         return x
     def backward(self,δEδy:np.ndarray):
         return δEδy,{}
 
-class AddConstant(Layer):
+class AddConstant(CommonLayer):
     '''
     A layer that adds a constant
     This layer has NO parameters
@@ -36,7 +36,7 @@ class AddConstant(Layer):
         ### COMPLETAR FIN ###
         return δEδx,{}
 
-class MultiplyConstant(Layer):
+class MultiplyConstant(CommonLayer):
     '''
     A layer that multiplies by a constant
     This layer has NO parameters
@@ -68,7 +68,7 @@ class MultiplyConstant(Layer):
 
 
 
-class ReLU(Layer):
+class ReLU(CommonLayer):
 
     def forward(self,x:np.ndarray):
         y = np.zeros_like(x)
@@ -100,7 +100,7 @@ class ReLU(Layer):
         return δEδx,{}
 
 
-class Sigmoid(Layer):
+class Sigmoid(CommonLayer):
 
     def forward(self,x:np.ndarray):
         y = np.zeros_like(x)
@@ -126,7 +126,7 @@ class Sigmoid(Layer):
 
 
 
-class TanH(Layer):
+class TanH(CommonLayer):
     def __init__(self,name=None):
         self.sigmoid=Sigmoid()
         super().__init__(name=name)
@@ -160,7 +160,7 @@ class TanH(Layer):
 
 
 
-class Softmax(Layer):
+class Softmax(CommonLayer):
     def __init__(self,name=None,smoothing=1e-12):
         super().__init__(name)
         self.smoothing=smoothing

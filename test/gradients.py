@@ -1,44 +1,48 @@
 import simplenn as sn
 import numpy as np
-from test.check_gradient import check_gradient_input
 from typing import Dict,Tuple
-from test.check_gradient import check_gradient_layer_random_sample,debug_gradient_layer_random_sample
+from test.check_gradient import check_gradient_common_layer,check_gradient_cross_entropy_labels,check_gradient_squared_error,check_gradient_binary_cross_entropy_labels
 if __name__ == '__main__':
     ## Check AddConstant
     n =2
     features = 4
     shape = (n,features)
-    samples=1
+    samples=100
 
     ac = sn.AddConstant(4)
-    check_gradient_layer_random_sample(ac,shape, samples=samples)
+    check_gradient_common_layer(ac,shape, samples=samples)
 
     mc = sn.MultiplyConstant(4)
-    check_gradient_layer_random_sample(mc,shape, samples=samples)
+    check_gradient_common_layer(mc,shape, samples=samples)
 
     layer = sn.Bias(features, initializer=sn.initializers.RandomUniform())
-    check_gradient_layer_random_sample(layer, shape,samples=samples)
+    check_gradient_common_layer(layer, shape,samples=samples)
 
     layer = sn.Linear(features, features)
-    check_gradient_layer_random_sample(layer, shape, samples=samples)
+    check_gradient_common_layer(layer, shape, samples=samples)
 
     layer = sn.Dense(features, features)
-    check_gradient_layer_random_sample(layer, shape, samples=samples)
+    check_gradient_common_layer(layer, shape, samples=samples)
 
     layer = sn.ReLU()
-    check_gradient_layer_random_sample(layer, shape, samples=samples)
+    check_gradient_common_layer(layer, shape, samples=samples)
 
     layer = sn.TanH()
-    check_gradient_layer_random_sample(layer, shape, samples=samples)
+    check_gradient_common_layer(layer, shape, samples=samples)
 
     layer = sn.Sigmoid()
-    check_gradient_layer_random_sample(layer, shape, samples=samples)
+    check_gradient_common_layer(layer, shape, samples=samples)
 
 
     layer = sn.Softmax()
-    #check_gradient_layer_random_sample(layer, samples, (1, 3),δEδy=1)
-    δEδy = np.array([[0,0,1.0,0]])
-    check_gradient_layer_random_sample(layer, shape, samples=samples)
-    #debug_gradient_layer_random_sample(layer,samples,(1,4))
 
+    check_gradient_common_layer(layer, shape, samples=samples)
 
+    layer = sn.CrossEntropyWithLabels()
+    check_gradient_cross_entropy_labels(layer, (2,5), samples=samples,tolerance=1e-3)
+
+    layer = sn.SquaredError()
+    check_gradient_squared_error(layer, shape, samples=samples)
+
+    layer = sn.BinaryCrossEntropyWithLabels()
+    check_gradient_binary_cross_entropy_labels(layer, 3, samples=samples,tolerance=1e-4)

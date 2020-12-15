@@ -2,6 +2,7 @@ from abc import ABC,abstractmethod
 import numpy as np
 from enum import Enum
 layer_counter = {}
+from typing import Tuple,Dict
 
 class Phase(Enum):
     Training = "Training"
@@ -56,19 +57,35 @@ class Layer(ABC):
         self.cache = args
 
     @abstractmethod
-    def forward(self,x:np.ndarray):
+    def forward(self,*x):
         pass
 
 
     @abstractmethod
-    def backward(self,δEδy:np.ndarray):
+    def backward(self,*x):
         pass
 
     def __repr__(self):
         return f"{self.name}"
 
-class ErrorLayer(ABC):
+class CommonLayer(Layer):
 
+    def __init__(self,name=None):
+        super().__init__(name=name)
+
+    @abstractmethod
+    def forward(self,x:np.ndarray)->np.ndarray:
+        pass
+
+
+    @abstractmethod
+    def backward(self,δEδy:np.ndarray)->(np.ndarray,Dict[str,np.ndarray]):
+        pass
+
+class ErrorLayer(Layer):
+
+    def __init__(self,name=None):
+        super().__init__(name=name)
 
     @abstractmethod
     def forward(self,y:np.ndarray,y_pred:np.ndarray)->float:
@@ -80,8 +97,11 @@ class ErrorLayer(ABC):
         pass
 
 
-class SampleErrorLayer(ABC):
 
+class SampleErrorLayer(Layer):
+
+    def __init__(self,name=None):
+        super().__init__(name=name)
 
     @abstractmethod
     def forward(self,y:np.ndarray,y_pred:np.ndarray)->np.ndarray:
@@ -100,8 +120,8 @@ class MeanError(ErrorLayer):
     into a mean error function with a single scalar output
     which represents the final error of a network
     '''
-    def __init__(self, e:SampleErrorLayer):
-        super().__init__()
+    def __init__(self, e:SampleErrorLayer,name=None):
+        super().__init__(name=name)
         self.e = e
 
     def forward(self,y:np.ndarray,y_pred:np.ndarray):
