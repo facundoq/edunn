@@ -30,9 +30,9 @@ def numerical_gradient(f,x:np.ndarray,δEδy:np.ndarray, h=1e-5):
 
 
 
-def f(layer:sn.Layer,x:np.ndarray): return layer.forward_with_cache(x)
+def f(layer:sn.Model, x:np.ndarray): return layer.forward_with_cache(x)
 
-def df(layer:sn.Layer,x:np.ndarray,δEδy:np.ndarray):
+def df(layer:sn.Model, x:np.ndarray, δEδy:np.ndarray):
 
     layer.reset()
     y = f(layer,x)
@@ -41,10 +41,10 @@ def df(layer:sn.Layer,x:np.ndarray,δEδy:np.ndarray):
 
 
 
-def layer_to_functions(l:sn.layer):
+def layer_to_functions(l:sn.model):
     fx = lambda x:f(l, x)
 
-    def fp(l:sn.Layer,x:np.ndarray,k:str,p:np.ndarray):
+    def fp(l:sn.Model, x:np.ndarray, k:str, p:np.ndarray):
         old_p=l.get_parameters()[k]
         l.get_parameters()[k][:]=p
         y = l.forward_with_cache(x)
@@ -57,7 +57,7 @@ def layer_to_functions(l:sn.layer):
 
     return fx,fps
 
-def replace_params(l:sn.Layer, new_p:Dict[str, np.ndarray]):
+def replace_params(l:sn.Model, new_p:Dict[str, np.ndarray]):
     current_p = l.get_parameters()
     for k in current_p:
         current_p[k][:]=new_p[l]

@@ -14,7 +14,7 @@ def plot_history(history,filepath=None):
 
 def plot_model_dataset_1d(x,y,model,filepath=None):
     plt.scatter(x,y)
-    y_pred=model.predict(x)
+    y_pred=model.forward(x)
     plt.plot(x,y_pred)
     plt.xlabel("x")
     plt.ylabel("y")
@@ -37,7 +37,7 @@ def plot_model_dataset_2d_classification(x,y,model,filepath=None,detail=0.1,titl
 
     Z = np.c_[xx.ravel(), yy.ravel()]
 
-    Z = model.predict(Z)
+    Z = model.forward(Z)
     Z = Z.argmax(axis=1)
     title = f"{title}: Regiones de cada clase"
     Z = Z.reshape(xx.shape)
@@ -61,7 +61,7 @@ def plot_model_dataset_1d_classification(x,y,model,filepath=None):
     xaxis=np.array(range(x.shape[0]))
     plt.scatter(xaxis,x,c=y)
     xx = np.linspace(x.min(),x.max(),100)
-    yy = model.predict(xx)
+    yy = model.forward(xx)
     plt.plot(xx,yy)
     plt.xlabel("index")
     plt.ylabel("x")

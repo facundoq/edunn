@@ -4,3 +4,4 @@ jupyter
 matplotlib
 tqdm
 colorama
+pydataset

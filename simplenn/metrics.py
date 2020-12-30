@@ -6,10 +6,11 @@ def accuracy(y_true:np.ndarray,y_pred:np.ndarray)->float:
     return np.mean(y_pred==y_true)
 
 def rmse(y_true:np.ndarray,y_pred:np.ndarray)->float:
-    return np.sqrt(((y_true-y_pred)**2).mean(axis=0)).mean()
+    return np.sqrt(((y_true-y_pred)**2).sum(axis=1)).mean()
 
 def mae(y_true:np.ndarray,y_pred:np.ndarray)->float:
     return np.abs(y_true-y_pred).mean(axis=0).mean()
+
 
 def check_label_array(y:np.ndarray):
     if  len(y.shape)!=1:
@@ -79,5 +80,5 @@ def classification_summary(y_true:np.ndarray,y_pred:np.ndarray):
 
 
 def regression_summary(y_true:np.ndarray,y_pred:np.ndarray):
-    print(f"MSE {rmse(y_true,y_pred)}")
+    print(f"RMSE {rmse(y_true,y_pred)}")
     print(f"MAE {mae(y_true,y_pred)}")

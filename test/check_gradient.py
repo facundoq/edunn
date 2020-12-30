@@ -10,12 +10,12 @@ from colorama import Fore, Back, Style
 
 ParameterSet = Dict[str,np.ndarray]
 
-def set_parameters_inplace(l:sn.Layer,parameters:ParameterSet):
+def set_parameters_inplace(l:sn.Model, parameters:ParameterSet):
     old_params = l.get_parameters()
     for k, v in old_params.items():
         l.get_parameters()[k][:]=parameters[k]
 
-def common_layer_to_function(l:sn.CommonLayer):
+def common_layer_to_function(l:sn.ModelWithParameters):
 
     def f(inputs:Dict[str,np.ndarray]):
         old_params = l.get_parameters().copy()
@@ -56,7 +56,7 @@ def error_layer_to_function(l:sn.SampleErrorLayer):
     return f,df,parameter_shapes
 
 
-def check_gradient_common_layer(l:sn.CommonLayer,x_shape:Tuple,samples:int=1, tolerance=1e-7,break_on_error=True):
+def check_gradient_common_layer(l:sn.ModelWithParameters, x_shape:Tuple, samples:int=1, tolerance=1e-7, break_on_error=True):
     f,df,parameter_shapes = common_layer_to_function(l)
     shapes = {**parameter_shapes,"x":x_shape}
     input_generators = lambda: {k:np.random.normal(0,1,shape) for k,shape in shapes.items()}
@@ -116,7 +116,7 @@ def check_gradient_binary_cross_entropy_labels(l:sn.BinaryCrossEntropyWithLabels
     check_gradient_layer_random_sample(l, f, df_ignore_δEδy, input_generators, δE_generator, samples=samples, tolerance=max_rel_error, break_on_error=break_on_error)
 
 
-def check_gradient_layer_random_sample(l:sn.Layer,f,df,input_generator,δEδy_generator,samples:int=1, tolerance=1e-7,break_on_error=True):
+def check_gradient_layer_random_sample(l:sn.Model, f, df, input_generator, δEδy_generator, samples:int=1, tolerance=1e-7, break_on_error=True):
     checks,errors=0,0
     print(f"{Back.LIGHTBLUE_EX}{Fore.BLACK}{l.name} layer:{Style.RESET_ALL}")
 
