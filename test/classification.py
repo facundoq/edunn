@@ -8,7 +8,7 @@ from typing import Callable
 
 
 class ExperimentConfig:
-    def __init__(self,min_accuracy:float,lr:float=0.3,epochs:int=3000):
+    def __init__(self,min_accuracy:float,lr:float=0.01,epochs:int=1000):
         self.min_accuracy=min_accuracy
         self.lr=lr
         self.epochs=epochs
@@ -53,7 +53,7 @@ config_datasets = {
     "study1d":ExperimentConfig(0.5),
     "study2d_easy":ExperimentConfig(0.5),
     "study2d":ExperimentConfig(0.5),
-    "iris":ExperimentConfig(0.95),
+    "iris":ExperimentConfig(0.95,epochs=2000),
 }
 
 def logistic_regression(din, classes):
@@ -70,14 +70,14 @@ def logistic_regression(din, classes):
     return sn.Sequential(layers,"linear_regression")
 
 
-test_classification_model(logistic_regression, config_datasets)
+# test_classification_model(logistic_regression, config_datasets)
 
 
 config_datasets = {
     "study1d":ExperimentConfig(0.5),
     "study2d_easy":ExperimentConfig(0.5),
     "study2d":ExperimentConfig(0.5),
-    "iris":ExperimentConfig(0.95),
+    "iris":ExperimentConfig(0.95,lr=0.1),
 }
 
 

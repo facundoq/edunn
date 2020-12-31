@@ -50,7 +50,7 @@ config_datasets = {
     "study2d":ExperimentConfig(1.8),
     "wine_white":ExperimentConfig(0.65),
     "wine_red":ExperimentConfig(0.55),
-    "insurance":ExperimentConfig(4500,lr=1e-5,epochs=2000),
+    "insurance":ExperimentConfig(4500,lr=1e-4),
     "real_state":ExperimentConfig(6.20),
 }
 
@@ -61,7 +61,7 @@ def linear_regression(din, dout):
     return sn.Sequential(layers,"linear_regression")
 
 
-# test_regression_model(linear_regression, config_datasets)
+test_regression_model(linear_regression, config_datasets)
 
 
 config_datasets = {
@@ -70,7 +70,7 @@ config_datasets = {
     "study2d":ExperimentConfig(3,epochs=2000),
     "wine_white":ExperimentConfig(0.65),
     "wine_red":ExperimentConfig(0.55),
-    "insurance":ExperimentConfig(4500,lr=1e-4,epochs=2000),
+    "insurance":ExperimentConfig(4500,lr=1e-6,epochs=500),
     "real_state":ExperimentConfig(6.20),
 }
 
