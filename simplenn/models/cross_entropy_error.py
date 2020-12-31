@@ -1,9 +1,9 @@
 import numpy as np
 
-from ..model import ModelWithParameters
+from ..model import ErrorModel
 
 
-class CrossEntropyWithLabels(ModelWithParameters):
+class CrossEntropyWithLabels(ErrorModel):
     '''
         Returns the CrossEntropy between two class distributions
         Receives a matrix of probabilities NxC for each sample and a vector
@@ -16,7 +16,7 @@ class CrossEntropyWithLabels(ModelWithParameters):
 
     ### Ayuda para implementar:
     ### http://facundoq.github.io/guides/crossentropy_derivative.html
-    def forward_with_cache(self, y_true:np.ndarray, y:np.ndarray):
+    def forward(self, y_true:np.ndarray, y:np.ndarray):
         y_true = np.squeeze(y_true)
 
         assert len(y_true.shape) == 1
@@ -26,18 +26,18 @@ class CrossEntropyWithLabels(ModelWithParameters):
 
         #y_pred=fix_probabilities(y_pred)
 
-        E = np.zeros((n))
+        E = np.zeros((n,1))
         ### COMPLETAR INICIO ###
         for i in range(n):
             probability = y[i, y_true[i]]
             E[i] = -np.log(probability)
         ### COMPLETAR FIN ###
-        assert np.all(E.shape == y_true.shape)
-        cache = (y_true,y)
-        return E,cache
+        assert np.all(np.squeeze(E).shape == y_true.shape)
+        self.set_cache(y_true,y)
+        return E
 
-    def backward(self, δEδyi, cache):
-        y_true,y = cache
+    def backward(self, δEδyi):
+        y_true,y = self.get_cache()
         #y_pred=fix_probabilities(y_pred)
 
         δEδy = np.zeros_like(y)

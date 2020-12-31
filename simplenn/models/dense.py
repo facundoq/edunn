@@ -61,27 +61,26 @@ class Dense(ModelWithParameters):
         # add activation name to Dense name
         self.name+=f"({activation_name})"
 
-    def forward_with_cache(self, x:np.ndarray):
+    def forward(self, x:np.ndarray):
         # calculate and return activation(bias(linear(x)))
 
         ### COMPLETAR INICIO ###
-        y_linear,cache_linear = self.linear.forward_with_cache(x)
-        y_bias,cache_bias =self.bias.forward_with_cache(y_linear)
-        y_activation,cache_activation= self.activation.forward_with_cache(y_bias)
+        y_linear = self.linear.forward(x)
+        y_bias =self.bias.forward(y_linear)
+        y_activation= self.activation.forward(y_bias)
         ### COMPLETAR FIN ###
-        return y_activation, (cache_linear,cache_bias,cache_activation)
+        return y_activation
 
-    def backward(self,δEδy:np.ndarray,cache):
+    def backward(self,δEδy:np.ndarray):
         # Compute gradients for the parameters of the bias, linear and activation function
         # It is possible that the activation function does not have any parameters
         # (ie, δEδactivation = {})
-        (cache_linear,cache_bias,cache_activation) = cache
         δEδbias,δEδlinear,δEδactivation={},{},{}
 
         ### COMPLETAR INICIO ###
-        δEδx_activation,δEδactivation = self.activation.backward(δEδy,cache_activation)
-        δEδx_bias,δEδbias =self.bias.backward(δEδx_activation,cache_bias)
-        δEδx,δEδlinear =self.linear.backward(δEδx_bias,cache_linear)
+        δEδx_activation,δEδactivation = self.activation.backward(δEδy)
+        δEδx_bias,δEδbias =self.bias.backward(δEδx_activation)
+        δEδx,δEδlinear =self.linear.backward(δEδx_bias)
         ### COMPLETAR FIN ###
 
         # combine gradients for parameters from dense, linear and activation models

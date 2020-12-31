@@ -31,26 +31,12 @@ class Sequential(Model):
             x = layer.forward(x)
         return x
 
-    def forward_with_cache(self,x:np.ndarray):
-        '''
-
-        :param x: input to model
-        :return: output of model with x as input
-                 cache of each layer
-        '''
-        caches=[]
-        for layer in self.layers:
-            x,cache = layer.forward_with_cache(x)
-            caches.append(cache)
-        return x,caches
-
-
 
     def set_phase(self,phase:Phase):
         for l in self.layers:
             l.set_phase(phase)
 
-    def backward(self,δEδy:np.ndarray,caches:[]):
+    def backward(self,δEδy:np.ndarray):
         '''
 
         :param x: inputs
@@ -59,18 +45,24 @@ class Sequential(Model):
         '''
 
         gradients={}
-        for layer,cache in reversed(list(zip(self.layers,caches))):
-            δEδy,δEδp = layer.backward(δEδy,cache)
+        for layer in reversed(self.layers):
+            δEδy,δEδp = layer.backward(δEδy)
             if not layer.frozen:
                 for k,v in δEδp.items():
-                    gradients[layer.name+k]=v
-            return gradients
+                    new_name=self.generate_parameter_name(layer,k)
+                    gradients[new_name]=v
+        return gradients
+
+    def generate_parameter_name(self,l:Model,parameter_name:str):
+        return f"{l.name}({parameter_name})"
 
     def get_parameters(self):
         parameters={}
         for l in self.layers:
             for k,v in l.get_parameters().items():
-                parameters[l.name+k]=v
+                new_name=self.generate_parameter_name(l,k)
+                parameters[new_name]=v
+        return parameters
 
     def summary(self)->str:
         '''

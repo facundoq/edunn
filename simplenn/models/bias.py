@@ -16,7 +16,7 @@ class Bias(ModelWithParameters):
         b = initializer.create( (output_size,))
         self.register_parameter("b", b)
 
-    def forward_with_cache(self, x:np.ndarray):
+    def forward(self, x:np.ndarray):
         n,d = x.shape
         b = self.get_parameters()["b"]
         dout, = b.shape
@@ -26,12 +26,10 @@ class Bias(ModelWithParameters):
         y = x + b
 
         ### COMPLETAR FIN ###
-        cache = tuple()
-        return y,cache
+        return y
 
-    def backward(self, δEδy:np.ndarray,cache):
+    def backward(self, δEδy:np.ndarray):
         b = self.get_parameters()["b"]
-
         δEδx = np.zeros_like(δEδy)
 
         # Calculate derivative of error E with respect to input x

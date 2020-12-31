@@ -10,6 +10,8 @@ class Phase(Enum):
 ParameterSet = Dict[str,np.ndarray]
 Cache = Tuple
 
+
+
 class Model(ABC):
     '''
 
@@ -30,7 +32,12 @@ class Model(ABC):
 
         self.name=name
         self.frozen=False
+        self.cache=None
 
+    def set_cache(self,*values):
+        self.cache=values
+    def get_cache(self):
+        return self.cache
 
     def set_phase(self,phase:Phase):
         '''
@@ -51,22 +58,20 @@ class Model(ABC):
         pass
 
     @abstractmethod
-    def forward_with_cache(self, *x)->(np.ndarray,Cache):
+    def forward(self, *x)->(np.ndarray):
         pass
 
-    def forward(self,*x):
-        y,cache=self.forward_with_cache(*x)
-        return y
-
     @abstractmethod
-    def backward(self,δEδy:np.ndarray,cache:Cache)->(np.ndarray,ParameterSet):
+    def backward(self,δEδy:np.ndarray)->(np.ndarray,ParameterSet):
         pass
 
     def __repr__(self):
         return f"{self.name}"
 
 class ModelWithParameters(Model):
-
+    '''
+    Helper class to implement layers with parameters
+    '''
     def __init__(self,name=None):
         super().__init__(name=name)
         self.parameters = {}
@@ -77,25 +82,33 @@ class ModelWithParameters(Model):
     def get_parameters(self):
         return self.parameters
 
-
-class ErrorFunction:
+class ModelWithoutParameters(Model):
     '''
-    A
+    Helper class to implement layers _without_ parameters
+    '''
+    def __init__(self,name=None):
+        super().__init__(name=name)
+
+    def get_parameters(self):
+        return {}
+
+class ErrorModel(ModelWithoutParameters):
+    '''
+    Helper class to implement layers _without_ parameters
     '''
     def __init__(self,name=None):
         super().__init__(name=name)
 
     @abstractmethod
-    def forward_with_cache(self, y:np.ndarray, y_pred:np.ndarray)->float:
+    def forward(self, y_true:np.ndarray, y:np.ndarray):
         pass
-
 
     @abstractmethod
-    def backward(self,cache:Cache):
+    def backward(self,δE:float) ->(np.ndarray,ParameterSet):
         pass
 
 
-class MeanError(ErrorFunction):
+class MeanError(ErrorModel):
     '''
     Converts a Model that calculates
     an error function for each sample
@@ -106,16 +119,28 @@ class MeanError(ErrorFunction):
         super().__init__(name=name)
         self.sample_error_layer = sample_error
 
-    def forward_with_cache(self, y_true:np.ndarray, y:np.ndarray):
-        E, sample_cache=self.sample_error_layer.forward_with_cache(y_true, y)
+    def forward(self, y_true:np.ndarray, y:np.ndarray):
+        E=self.sample_error_layer.forward(y_true, y)
         n=y_true.shape[0]
-        cache =(n,sample_cache)
-        return np.mean(E),cache
+        self.set_cache(n)
+        return np.mean(E)
 
-    def backward(self,cache):
-        n,sample_cache=cache
-        δEδy=np.ones(n)/n
-        δEδy,δEδp=self.sample_error_layer.backward(δEδy,sample_cache)
-        assert len(δEδy.shape)==1
-        assert δEδy.shape[0] == n, "sample_error_layer's gradient must have n values"
-        return δEδy
+    def backward(self,δE:float=1) ->(np.ndarray,ParameterSet):
+        '''
+
+        :param δE: needed to comply with Model's interface
+               Scalar to scale the gradients
+        :param cache: calculated from forward pass
+        :return:
+        '''
+        n, =self.get_cache()
+        # Since we just calculate the mean over n values
+        # and the mean is equivalent to multiplying by 1/n
+        # the gradient is simply 1/n for each value
+        δEδy = np.ones((n,1))/n
+        # Return error gradient scaled by δE
+        δEδy *= δE
+        # Calculate gradient for each sample
+        δEδy_sample,δEδp_sample=self.sample_error_layer.backward(δEδy)
+        assert δEδy_sample.shape[0] == n, f"sample_error_layer's gradient must have n values (found {δEδy_sample.shape[0]}, expected {n}"
+        return δEδy_sample,δEδp_sample

@@ -1,6 +1,7 @@
 from simplenn.model import ModelWithParameters
 import numpy as np
 from simplenn.initializers import  Initializer,RandomNormal
+
 class Linear(ModelWithParameters):
 
     '''
@@ -14,7 +15,7 @@ class Linear(ModelWithParameters):
         self.register_parameter("w", w)
 
 
-    def forward_with_cache(self, x:np.ndarray):
+    def forward(self, x:np.ndarray):
         n,d = x.shape
         # Retrieve w
         w = self.get_parameters()["w"]
@@ -31,12 +32,12 @@ class Linear(ModelWithParameters):
         ### COMPLETAR FIN ###
 
         # add input to cache to calculate δEδw in backward step
-        cache = (x,)
-        return y,cache
+        self.set_cache(x)
+        return y
 
-    def backward(self,δEδy:np.ndarray,cache):
+    def backward(self,δEδy:np.ndarray):
         # Retrieve input from cache to calculate δEδw
-        x, = cache
+        x, = self.get_cache()
         n = x.shape[0]
 
         # Retrieve w

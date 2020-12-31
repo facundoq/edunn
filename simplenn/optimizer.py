@@ -1,7 +1,7 @@
 from typing import Dict
 import numpy as np
 from .model import Model
-from .model import ErrorFunction, ParameterSet
+from .model import ErrorModel, ParameterSet
 import sys,abc
 from tqdm.auto import tqdm
 
@@ -50,7 +50,7 @@ class BatchedOptimizer(Optimizer):
         self.epochs=epochs
 
 
-    def optimize(self, model:Model, x:np.ndarray, y:np.ndarray, error_layer:ErrorFunction, verbose=True):
+    def optimize(self, model:Model, x:np.ndarray, y:np.ndarray, error_layer:ErrorModel, verbose=True):
         '''
         Fit a model to a dataset.
         :param model: the Model to optimize
@@ -75,7 +75,7 @@ class BatchedOptimizer(Optimizer):
         return np.array(history)
 
     @abc.abstractmethod
-    def optimize_batch(self, model:Model, x:np.ndarray, y:np.ndarray, error_layer:ErrorFunction, epoch:int):
+    def optimize_batch(self, model:Model, x:np.ndarray, y:np.ndarray, error_layer:ErrorModel, epoch:int):
         pass
 
 class StochasticGradientDescent(BatchedOptimizer):
@@ -84,17 +84,19 @@ class StochasticGradientDescent(BatchedOptimizer):
         super().__init__(batch_size,epochs)
         self.lr=lr
 
-    def optimize_batch(self, model:Model, x:np.ndarray, y:np.ndarray, error_layer:ErrorFunction, epoch:int):
-        y,cache=model.forward_with_cache(x)
+    def optimize_batch(self, model:Model, x:np.ndarray, y_true:np.ndarray, error_layer:ErrorModel, epoch:int):
 
-        y_pred,caches = model.forward_with_cache(x)
-        E,E_cache = error_layer.forward_with_cache(y, y_pred)
-        δEδy = error_layer.backward(E_cache)
+        y = model.forward(x)
+        E = error_layer.forward(y_true, y)
+        δEδy,_ = error_layer.backward(1)
 
-        gradients = model.backward(δEδy,caches)
+        gradients = model.backward(δEδy)
+
         parameters = model.get_parameters()
+        # print(parameters.keys())
         for parameter_name,δEδp in gradients.items():
                 p = parameters[parameter_name]
+                # print(parameter_name,p,δEδp)
                 # use p[:] so that updates are in-place
                 # instead of creating a new variable
                 p[:] = p - self.lr * δEδp

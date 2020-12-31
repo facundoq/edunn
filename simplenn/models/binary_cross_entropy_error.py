@@ -1,9 +1,9 @@
 import numpy as np
 
-from ..model import ModelWithParameters
+from ..model import ErrorModel
 import simplenn as sn
 
-class BinaryCrossEntropyWithLabels(ModelWithParameters):
+class BinaryCrossEntropyWithLabels(ErrorModel):
 
     '''
     Returns the CrossEntropy between two binary class distributions
@@ -13,28 +13,28 @@ class BinaryCrossEntropyWithLabels(ModelWithParameters):
 
 '''
 
-    def forward_with_cache(self, y_true:np.ndarray, y:np.ndarray):
+    def forward(self, y_true:np.ndarray, y:np.ndarray):
         y_true = np.squeeze(y_true)
         assert(len(y_true.shape) == 1)
         assert y.min() >= 0
 
         n,c=y.shape
 
-        error = np.zeros((n))
+        E = np.zeros((n,1))
         ### COMPLETAR INICIO ###
         for i in range(n):
             miss = y_true[i] * y[i] + (1 - y_true[i]) * (1 - y[i])
             if miss==0:
                 miss += sn.eps
-            error[i] = - np.log(miss)
+            E[i] = - np.log(miss)
         # print(error)
         ### COMPLETAR FIN ###
-        assert np.all(error.shape == y_true.shape)
-        cache = (y_true,y)
-        return error,cache
+        assert np.all(np.squeeze(E).shape == y_true.shape)
+        self.set_cache(y_true,y)
+        return E
 
-    def backward(self, δEδyi,cache):
-        y_true,y = cache
+    def backward(self, δEδyi):
+        y_true,y = self.get_cache()
         δEδy = np.zeros_like(y)
         n,classes = y.shape
         ### COMPLETAR INICIO ###
