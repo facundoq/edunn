@@ -132,3 +132,4 @@ results/
 test/results
 
 .idea
+generated/

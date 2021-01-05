@@ -132,7 +132,9 @@ class Sigmoid(ModelWithParameters):
 
 class TanH(ModelWithParameters):
     def __init__(self,name=None):
+
         self.sigmoid=Sigmoid()
+
         super().__init__(name=name)
 
 

@@ -26,3 +26,9 @@ def load(dataset_name:str,loaders:Dict[str,Callable],title:str):
     dataset_loader = loaders[dataset_name]
     return dataset_loader()
 
+
+def get_classification_names():
+    return classification.loaders.keys()
+
+def get_regression_names():
+    return regression.loaders.keys()
