@@ -1,7 +1,9 @@
 
 
 
-### :brain: `simplenn` Learn to implement modern, modular Neural Networks by implementing a PyTorch/Keras-like framework.
+#  `simplenn`
+
+## :brain: Learn to implement modern, modular Neural Networks by implementing a PyTorch/Keras-like framework.
 
 `simplenn` is a very simple library that contains the basic elements to define, train and use **modular** Neural Networks using just Python and Numpy. 
 
@@ -16,7 +18,7 @@ Supported languages:
 * English (coming soon)
 
 
-# :rainbow: Why `simplenn`?
+## :rainbow: Why `simplenn`?
 
 Well-known courses that teach you how to program neural networks from the ground up such as [*CS231n: Convolutional Neural Networks for Visual Recognition*](https://cs231n.github.io/) or [Andrew Ng's *Machine Learning*](https://www.coursera.org/learn/machine-learning) are great for understanding the basics using `numpy`, but use monolithic neural network models that make it difficult to understand how that code translates to other frameworks such as `pytorch` or `tensorflow`.
 
@@ -25,7 +27,7 @@ Alternatively, [Andrew Ng's Deep Learning](https://www.coursera.org/specializati
  Using `simplenn` to understand how modern neural networks frameworks work fills the gap in between; you get full low-level control but without all the complexities `pytorch` or `tensorflow` bring along.
 
 
-# :heavy_plus_sign: Pre-requisites
+## :heavy_plus_sign: Pre-requisites
 
 The guides are intended for learners with some experience with Python, Numpy and Neural Networks. We have included explanations of what you should implement, but learners still should be able to:
 
@@ -33,7 +35,7 @@ The guides are intended for learners with some experience with Python, Numpy and
 2. Understand Numpy, basic linear algebra and calculus and be able to translate  mathematical operations to Numpy code.
 3. Understand the basic ideas in modern modular Neural Network frameworks, such as models, layers, optimizers, batches, backward and forward passes, and specially backpropagation. 
 
-# :wrench: Download and install
+## :wrench: Download and install
 
 **Do not clone** this repository if you want to solve the exercises. 
 
@@ -60,18 +62,18 @@ The guides are intended for learners with some experience with Python, Numpy and
     `source nnvenv/bin/activate`
     `pip install -r requirements.txt`
 
-# :pill: Solutions and bugs :bug: 
+## :pill: Solutions and bugs :bug: 
 
 `simplenn` is designed so that you can automatically test your implementations. However, it is intended to be used as a set of exercises in a course or seminar. Please address all questions regarding the material to your instructor. Alternatively, you may consult public forums such as [stack overflow](stackoverflow.com/), [r/neuralnetworks](https://www.reddit.com/r/neuralnetworks/) or [r/MachineLearning](https://www.reddit.com/r/MachineLearning)
 
 Please, only [file an issue](issues) if there is an actual bug or feature request.  
 
-# :package: Reference implementation and usage as library
+## :package: Reference implementation and usage as library
 
 This repository  also has a reference implementation in the `simplenn` of the library you can consult.
 
 You can `pip install simplenn` to use the reference implementation of the library to train models and use them. However, we **do not recommend** doing so since the library is *slow* and not meant for neither research nor production environments.  
 
-# :busts_in_silhouette: Contributing
+## :busts_in_silhouette: Contributing
 
 We'd like to expand `simplenn` with more guides/layers/optimizers. Check out our [contribution guide](CONTRIBUTE.md)! 
