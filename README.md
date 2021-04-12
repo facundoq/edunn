@@ -27,7 +27,7 @@ Alternatively, [Andrew Ng's Deep Learning](https://www.coursera.org/specializati
  Implementing `simplenn` allows you to understand how modern neural networks frameworks work and fills the gap between those types of courses. You get to program a full neural network framework, without all the complexities `pytorch` or `tensorflow` bring along.
 
 
-## :heavy_plus_sign: Pre-requisites
+## :heavy_plus_sign: Pre-requisite knowledge
 
 The guides are intended for learners with some experience with Python, Numpy and Neural Networks. We have included explanations of what you should implement, but learners still should be able to:
 
@@ -35,11 +35,13 @@ The guides are intended for learners with some experience with Python, Numpy and
 2. Understand Numpy, basic linear algebra and calculus and be able to translate  mathematical operations to Numpy code.
 3. Understand the basic ideas in modern modular Neural Network frameworks, such as models, layers, optimizers, batches, backward and forward passes, and specially backpropagation. 
 
-## :wrench: Download and install
+## :wrench: Download and setup
 
-**Do not clone** this repository if you want to solve the exercises. 
+**Do not clone** this repository if you want to use `simplenn` as a learning exercise. Instead, follow  
 
-1. To use `simplenn` as a learning exercise, please download a [release](releases) for your language. If you like the command line, use `wget`, replacing `es` with your preferred language (only `es` currently supported):
+The following instructions assume a working installation of python3 (3.6 or greater), pip3 and virtualenv. 
+
+1. Download a [release](releases) for your language. If you prefer the command line, use `wget`, replacing `es` with your preferred language (only `es` currently supported):
 
     `wget https://github.com/facundoq/simplenn/releases/es.zip`
 
@@ -51,16 +53,16 @@ The guides are intended for learners with some experience with Python, Numpy and
 
     `python3 --version`
     `pip3 --version`
+    `python3 -c "import venv"`
+   
 
-4. Make sure virtualenv is installed or else install with virtualenv:
-
-    `pip3 --user install virtualenv`
-
-5. Create a virtualenv environment and install the dependencies in requirements.txt: 
+4. Create a virtualenv environment and install the dependencies in [requirements.txt](https://github.com/facundoq/simplenn/blob/main/requirements.txt): 
 
     `python3 -m venv nnenv`
     `source nnvenv/bin/activate`
     `pip install -r requirements.txt`
+
+Alternatively, you can use your `conda` distribution or another such tool to create a virtual environment and install the required libraries for `simplenn`. 
 
 ## :pill: Solutions and bugs :bug: 
 
@@ -70,14 +72,39 @@ This repository also has a reference implementation in the `simplenn` of the lib
 
 Alternatively, you may consult public forums such as [stack overflow](stackoverflow.com/), [r/neuralnetworks](https://www.reddit.com/r/neuralnetworks/) or [r/MachineLearning](https://www.reddit.com/r/MachineLearning)
 
-
-
-Please, only [file an issue](issues) if there is an actual bug or feature request.  
+Please, only [file an issue](issues) if there is an actual bug or feature request, not if you have trouble solving the exercises.  
 
 ## :package: Reference implementation and usage as library
 
 
-You can `pip install simplenn` to use the reference implementation of the library to train models and use them. However, we **do not recommend** doing so since the library is *slow* and not meant for neither research nor production environments. The reference implementation is mostly focused on being easy to understand so that learners can check their implementations.
+You can `pip install simplenn` to use the reference implementation of the library to train models and use them. Indeed, the API is very simple:
+
+````python
+import simplenn as sn
+x,y,n_classes = ... # load data 
+n,din=x.shape
+
+# Model definition
+layers = [sn.Linear(din,10),
+          sn.Bias(10),
+          sn.ReLU(),
+          sn.Linear(10,20),
+          sn.Bias(20),
+          sn.TanH(),
+          sn.Linear(10,n_classes),
+          sn.Bias(n_classes),
+          sn.Softmax()
+          ]
+
+model = sn.Sequential(layers)
+print(model.summary())
+
+error = sn.MeanError(sn.CrossEntropyWithLabels())
+optimizer = sn.StochasticGradientDescent(lr=0.001,epochs=1000,batch_size=32)
+history = optimizer.optimize(model,x,y,error)
+````
+
+However, we **do not recommend** doing so since the library is *slow* and not meant for neither research nor production environments. The reference implementation is mostly focused on being easy to understand so that learners can check their implementations.
 
 ## :busts_in_silhouette: Contributing
 
