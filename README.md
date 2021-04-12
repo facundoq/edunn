@@ -20,11 +20,11 @@ Supported languages:
 
 ## :rainbow: Why `simplenn`?
 
-Well-known courses that teach you how to program neural networks from the ground up such as [*CS231n: Convolutional Neural Networks for Visual Recognition*](https://cs231n.github.io/) or [Andrew Ng's *Machine Learning*](https://www.coursera.org/learn/machine-learning) are great for understanding the basics using `numpy`, but use monolithic neural network models that make it difficult to understand how that code translates to other frameworks such as `pytorch` or `tensorflow`.
+Well-known courses that teach you how to program neural networks from the ground up such as [*CS231n: Convolutional Neural Networks for Visual Recognition*](https://cs231n.github.io/) or Andrew Ng's [*Machine Learning*](https://www.coursera.org/learn/machine-learning) are great for understanding the basics using `numpy`, but use monolithic neural network models that make it difficult to understand how that code translates to other frameworks such as `pytorch` or `tensorflow`.
 
-Alternatively, [Andrew Ng's Deep Learning](https://www.coursera.org/specializations/deep-learning) or [FastAI](https://course19.fast.ai/part2) build networks out of `tensorflow` or basic `pytorch` operators instead of numpy. This is great to build complex models, but there's still a lot of magic under the hood since both frameworks automatically derive `backward` methods. 
+Alternatively, [Andrew Ng's Deep Learning](https://www.coursera.org/specializations/deep-learning) or [FastAI](https://course19.fast.ai/part2) build modular networks out of `tensorflow` or basic `pytorch` operators instead of numpy. This is great to build complex models, but there's still a lot of magic under the hood since both frameworks automatically derive `backward` methods and bring along other goodies. 
 
- Using `simplenn` to understand how modern neural networks frameworks work fills the gap in between; you get full low-level control but without all the complexities `pytorch` or `tensorflow` bring along.
+ Implementing `simplenn` allows you to understand how modern neural networks frameworks work and fills the gap between those types of courses. You get to program a full neural network framework, without all the complexities `pytorch` or `tensorflow` bring along.
 
 
 ## :heavy_plus_sign: Pre-requisites
@@ -64,16 +64,21 @@ The guides are intended for learners with some experience with Python, Numpy and
 
 ## :pill: Solutions and bugs :bug: 
 
-`simplenn` is designed so that you can automatically test your implementations. However, it is intended to be used as a set of exercises in a course or seminar. Please address all questions regarding the material to your instructor. Alternatively, you may consult public forums such as [stack overflow](stackoverflow.com/), [r/neuralnetworks](https://www.reddit.com/r/neuralnetworks/) or [r/MachineLearning](https://www.reddit.com/r/MachineLearning)
+`simplenn` is designed so that you can automatically test your implementations. However, it is intended to be used as a set of exercises in a course or seminar. Please address all questions regarding the material to your instructor.
+
+This repository also has a reference implementation in the `simplenn` of the library you can consult. 
+
+Alternatively, you may consult public forums such as [stack overflow](stackoverflow.com/), [r/neuralnetworks](https://www.reddit.com/r/neuralnetworks/) or [r/MachineLearning](https://www.reddit.com/r/MachineLearning)
+
+
 
 Please, only [file an issue](issues) if there is an actual bug or feature request.  
 
 ## :package: Reference implementation and usage as library
 
-This repository  also has a reference implementation in the `simplenn` of the library you can consult.
 
-You can `pip install simplenn` to use the reference implementation of the library to train models and use them. However, we **do not recommend** doing so since the library is *slow* and not meant for neither research nor production environments.  
+You can `pip install simplenn` to use the reference implementation of the library to train models and use them. However, we **do not recommend** doing so since the library is *slow* and not meant for neither research nor production environments. The reference implementation is mostly focused on being easy to understand so that learners can check their implementations.
 
 ## :busts_in_silhouette: Contributing
 
-We'd like to expand `simplenn` with more guides/layers/optimizers. Check out our [contribution guide](CONTRIBUTE.md)! 
+We'd like your help to expand `simplenn` with more guides/layers/optimizers. Check out our [contribution guide](CONTRIBUTE.md)! 
