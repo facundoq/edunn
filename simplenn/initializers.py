@@ -24,9 +24,9 @@ class Constant(Initializer):
         self.c=c
 
     def initialize(self,p:np.ndarray):
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         p[:]=self.c
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
 
 
 class RandomUniform(Initializer):
@@ -42,9 +42,9 @@ class RandomUniform(Initializer):
         #TIP use np.random.uniform(a,b,shape)
         #to generate uniform random numbers between a and b
 
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         p[:]=np.random.uniform(-self.a,self.a,p.shape)
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
 
 
 class RandomNormal(Initializer):
@@ -57,9 +57,9 @@ class RandomNormal(Initializer):
         # to generate random numbers sampled from
         # a normal distribution with mean μ and std σ
 
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         p[:]=np.random.normal(0,self.std,p.shape)
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
 
 
 class XavierUniform(Initializer):
@@ -68,10 +68,10 @@ class XavierUniform(Initializer):
         din,dout=p.shape
         #TIP use np.random.random_sample(shape)
         # to generate uniform randomnumbers between 0 and 1
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         factor = np.sqrt(6/(din+dout))
         p[:]=(np.random.random_sample(p.shape)*2-1)*factor
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
 
 class XavierNormal(Initializer):
 
@@ -80,10 +80,10 @@ class XavierNormal(Initializer):
         #TIP use np.random.normal(mu,std,shape)
         # to sample random numbers from a normal distribution
 
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         std = np.sqrt(6/(din+dout))
         p[:]=(np.random.normal(0,std, p.shape))
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
 
 class KaimingNormal(Initializer):
 
@@ -92,10 +92,10 @@ class KaimingNormal(Initializer):
         #TIP use np.random.normal(mu,std,shape)
         # to sample random numbers from a normal distribution
 
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         std = np.sqrt(2/din)
         p[:]=(np.random.normal(0,std, p.shape))
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
 
 class KaimingUniform(Initializer):
 
@@ -104,7 +104,7 @@ class KaimingUniform(Initializer):
         #TIP use np.random.random_sample(shape)
         # to generate uniform randomnumbers between 0 and 1
 
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         factor = np.sqrt(2/din)
         p[:]=(np.random.random_sample(p.shape)*2-1)*factor
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###

@@ -26,17 +26,17 @@ class AddConstant(ModelWithParameters):
         :return: x + a constant value, stored in self.value
         '''
         y= np.zeros_like(x)
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
 
         y=x+self.value
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
         return y
 
     def backward(self,δEδy:np.ndarray):
         δEδx= np.zeros_like(δEδy)
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         δEδx= δEδy
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
         δEδp={} # no parameters, no derivatives
         return δEδx,δEδp
 
@@ -54,18 +54,18 @@ class MultiplyConstant(ModelWithParameters):
         :return: x * a constant value, stored in self.value
         '''
         y= np.zeros_like(x)
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         y=x*self.value
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
         return y
 
 
     def backward(self,δEδy:np.ndarray):
         δEδx= np.zeros_like(δEδy)
 
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         δEδx=δEδy *self.value
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
 
         δEδp={} # no parameters, no derivatives
         return δEδx,δEδp
@@ -81,9 +81,9 @@ class ReLU(ModelWithParameters):
         # Ya que devuelve el valor máximo
         # y no aplica la función elemento a elemento
 
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         y = np.maximum(x,0)
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
         self.set_cache(y)
         return y
 
@@ -95,10 +95,10 @@ class ReLU(ModelWithParameters):
         # δyδx is 1 if the output was greater than 0
         # and 0 otherwise
 
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         δyδx = y>0
         δEδx = δEδy * δyδx
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
 
         return δEδx,{}
 
@@ -107,9 +107,9 @@ class Sigmoid(ModelWithParameters):
 
     def forward(self, x:np.ndarray):
         y = np.zeros_like(x)
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         y =   1.0/(1.0 + np.exp(-x))
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
         cache = (y,)
         self.set_cache(y)
         return y
@@ -121,10 +121,10 @@ class Sigmoid(ModelWithParameters):
         # First calculate δyδx
         # then multiply by δEδy (provided)
 
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         δyδx = y * (1.0-y)
         δEδx = δEδy * δyδx
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
 
         return δEδx,{}
 
@@ -141,10 +141,10 @@ class TanH(ModelWithParameters):
     def forward(self, x:np.ndarray):
         y= np.zeros_like(x)
         # TIP: TanH is simply sigmoid*2-1
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         s = self.sigmoid.forward(x)
         y= s * 2 - 1
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
         return y # this layer's cache is the same as the sigmoid's cache
 
     def backward(self,δEδy:np.ndarray):
@@ -152,10 +152,10 @@ class TanH(ModelWithParameters):
         # TIP: If TanH is simply sigmoid*2-1
         # Calculate derivative of TanH
         # in terms of derivative of sigmoid
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         δEδx,δEδp =self.sigmoid.backward(δEδy)
         δEδx = δEδx*2
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
 
         return δEδx,{}
 
@@ -178,10 +178,10 @@ class Softmax(ModelWithParameters):
             xi = xi + xi.max() # trick to avoid numerical issues
             # Calcular las probabilidades para cada clase
             # y guardar el valor en y[i,:]
-            ### COMPLETAR INICIO ###
+            ### YOUR IMPLEMENTATION START  ###
             e = np.exp(xi)
             y[i,:] = e/e.sum()
-            ### COMPLETAR FIN ###
+            ### YOUR IMPLEMENTATION END  ###
         self.set_cache(y)
         return y
 
@@ -208,7 +208,7 @@ class Softmax(ModelWithParameters):
         # AYUDA PARA EL CÁLCULO
         # http://facundoq.github.io/guides/softmax_derivada.html
         δyδx = np.zeros((classes,classes))
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         for i in range(classes):
             for j in range(classes):
                 if i == j:
@@ -223,15 +223,15 @@ class Softmax(ModelWithParameters):
         # B = y.T.repeat(classes,axis=0)
         # δyδx = (id-A)*B
 
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
 
         δEδx = np.zeros_like(δEδy)
         classes=y.shape[0]
         for j in range(classes):
             δyδx_j = δyδx[:,j]
 
-            ### COMPLETAR INICIO ###
+            ### YOUR IMPLEMENTATION START  ###
             δEδx[j] = δEδy.dot(δyδx_j)
-            ### COMPLETAR FIN ###
+            ### YOUR IMPLEMENTATION END  ###
         return δEδx
 

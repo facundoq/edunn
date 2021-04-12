@@ -71,7 +71,7 @@ class Sequential(Model):
         separator = "-------------------------------"
         result=f"{separator}\n"
         parameters=0
-        print(f"Model {self.name}:")
+        result+=f"Model {self.name}:\n"
         for l in self.layers:
             layer_parameters= l.n_parameters()
             parameters+=layer_parameters

@@ -21,11 +21,12 @@ class Bias(ModelWithParameters):
         b = self.get_parameters()["b"]
         dout, = b.shape
         assert dout==d, f"#features of input ({d}) must match size of b ({dout})"
-        ### COMPLETAR INICIO ###
+        y = np.zeros_like(x)
+        ### YOUR IMPLEMENTATION START  ###
 
         y = x + b
 
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
         return y
 
     def backward(self, δEδy:np.ndarray):
@@ -35,9 +36,9 @@ class Bias(ModelWithParameters):
         # Calculate derivative of error E with respect to input x
         # Hints:
         # δEδx = δEδy * δyδx = δEδy * [1,1,...,1] = δEδy
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         δEδx = δEδy
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
 
         # Calculate derivative of error E with respect to parameter b
 
@@ -49,10 +50,10 @@ class Bias(ModelWithParameters):
         for i in range(n):
             # Calculate derivative of error for a sample i (a single sample)
             # And accumulate to obtain δEδb
-            ### COMPLETAR INICIO ###
+            ### YOUR IMPLEMENTATION START  ###
             δEδb_i = δEδy[i,:] # * [1,1,1...,1]
             δEδb += δEδb_i
-            ### COMPLETAR FIN ###
+            ### YOUR IMPLEMENTATION END  ###
 
         return δEδx,{"b":δEδb}
 

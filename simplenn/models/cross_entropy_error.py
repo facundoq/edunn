@@ -27,11 +27,11 @@ class CrossEntropyWithLabels(ErrorModel):
         #y_pred=fix_probabilities(y_pred)
 
         E = np.zeros((n,1))
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         for i in range(n):
             probability = y[i, y_true[i]]
             E[i] = -np.log(probability)
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
         assert np.all(np.squeeze(E).shape == y_true.shape)
         self.set_cache(y_true,y)
         return E
@@ -42,9 +42,9 @@ class CrossEntropyWithLabels(ErrorModel):
 
         δEδy = np.zeros_like(y)
         n,classes = y.shape
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         for i in range(n):
             p=y[i, y_true[i]]
             δEδy[i, y_true[i]] = -1 / p
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
         return δEδy*δEδyi,{}

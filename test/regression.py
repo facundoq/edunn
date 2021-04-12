@@ -1,9 +1,8 @@
 import sys
 sys.path.insert(0, '..')
 import simplenn as sn
-import datasets
 
-from simplenn import metrics
+from simplenn import metrics, datasets
 from typing import Callable
 
 

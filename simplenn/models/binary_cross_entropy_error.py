@@ -21,14 +21,14 @@ class BinaryCrossEntropyWithLabels(ErrorModel):
         n,c=y.shape
 
         E = np.zeros((n,1))
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         for i in range(n):
             miss = y_true[i] * y[i] + (1 - y_true[i]) * (1 - y[i])
             if miss==0:
                 miss += sn.eps
             E[i] = - np.log(miss)
         # print(error)
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
         assert np.all(np.squeeze(E).shape == y_true.shape)
         self.set_cache(y_true,y)
         return E
@@ -37,13 +37,13 @@ class BinaryCrossEntropyWithLabels(ErrorModel):
         y_true,y = self.get_cache()
         δEδy = np.zeros_like(y)
         n,classes = y.shape
-        ### COMPLETAR INICIO ###
+        ### YOUR IMPLEMENTATION START  ###
         for i in range(n):
             miss = y_true[i] * y[i] - (1 - y_true[i]) * (1 - y[i])
             if miss==0:
                 miss+=sn.eps
             δEδy[i] = - 1/miss
-        ### COMPLETAR FIN ###
+        ### YOUR IMPLEMENTATION END  ###
 
         return δEδy*δEδyi,{}
 
