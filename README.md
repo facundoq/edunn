@@ -60,7 +60,7 @@ The guides are intended for learners with some experience with Python, Numpy and
     `source nnvenv/bin/activate`
     `pip install -r requirements.txt`
 
-# :bug: Bugs :pill: Solutions
+# :pill: Solutions and bugs :bug: 
 
 `simplenn` is designed so that you can automatically test your implementations. However, it is intended to be used as a set of exercises in a course or seminar. Please address all questions regarding the material to your instructor. Alternatively, you may consult public forums such as [stack overflow](stackoverflow.com/), [r/neuralnetworks](https://www.reddit.com/r/neuralnetworks/) or [r/MachineLearning](https://www.reddit.com/r/MachineLearning)
 
@@ -72,6 +72,6 @@ This repository  also has a reference implementation in the `simplenn` of the li
 
 You can `pip install simplenn` to use the reference implementation of the library to train models and use them. However, we **do not recommend** doing so since the library is *slow* and not meant for neither research nor production environments.  
 
-# Contributing
+# :busts_in_silhouette: Contributing
 
-We are open to [contributions](CONTRIBUTE.md)! 
+We'd like to expand `simplenn` with more guides/layers/optimizers. Check out our [contribution guide](CONTRIBUTE.md)! 
