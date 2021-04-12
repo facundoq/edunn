@@ -9,15 +9,13 @@
 We strip the key parts of the code to let you reimplement them and learn about layers, initializers, error functions, backpropagation and optimizers.
 
 
-
-
 Supported languages:
 
 * [Spanish](releases/es)
 
 [comment]: <> (* [English]&#40;https://www.countryflags.io/gb/shiny/32.png&#41;)
 
-# :sparkles: Why SimpleNN?
+# :rainbow: Why SimpleNN?
 
 Well-known courses that teach you how to program neural networks from the ground up such as [*CS231n: Convolutional Neural Networks for Visual Recognition*](https://cs231n.github.io/) or [Andrew Ng's *Machine Learning*](https://www.coursera.org/learn/machine-learning) are great for understanding the basics, but use monolithic neural network models that don't allow for modularity.
 
@@ -56,9 +54,9 @@ Create a Python3.6+ virtual env and install the dependencies in requirements.txt
 
 SimpleNN is intended to be used as an exercise or supplementary material in a course or seminar. Please address all questions regarding the material to your instructor. Alternatively, you may consult public forums such as [stack overflow](stackoverflow.com/), [r/neuralnetworks](https://www.reddit.com/r/neuralnetworks/) or [r/MachineLearning](https://www.reddit.com/r/MachineLearning) 
 
-This repository  also has a reference implementation in the `simplenn` of the library you can consult. 
+# :package: Reference implementation and usage as library
 
-# :: Reference implementation and usage as library
+This repository  also has a reference implementation in the `simplenn` of the library you can consult.
 
 You can `pip install simplenn` to use the reference implementation of the library to train models and use them. However, we **do not recommend** doing so since the library is *slow* and not meant for neither research nor production environments.  
 

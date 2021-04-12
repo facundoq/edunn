@@ -7,11 +7,7 @@ We are open to contributions! Specifically:
 4. Additional layers/models/optimizers (with the corresponding guide).
 
 
-
-
-
-
-
+# :bulb: Project organization
 A **release** of the library is a copy of the library without the key code that learners must implement.
 
 To generate a **release**, SimpleNN's reference implementation in folder `simplenn` is stripped of `### YOUR IMPLEMENTATION START  ###` and `### YOUR IMPLEMENTATION END  ###` comment pairs, and all the code in between. The resulting code is stored in the `generated` folder.
@@ -26,7 +22,7 @@ Guides can be written for different languages (english, spanish, etc), and can b
 2. Add/modify guide and/or `simplenn` component
 3.
 
-#  :rocket: New `simplenn` releases 
+#  :package: New `simplenn` releases 
 
 If you modified the `simplenn` library itself, then:
 
