@@ -3,7 +3,7 @@
 
 #  `simplenn`
 
-## :brain: Learn to implement modern, modular Neural Networks by implementing a PyTorch/Keras-like framework.
+## :brain: Learn how modern, modular Neural Networks work by implementing a PyTorch/Keras-like framework.
 
 `simplenn` is a very simple library that contains the basic elements to define, train and use **modular** Neural Networks using just Python and Numpy. 
 
