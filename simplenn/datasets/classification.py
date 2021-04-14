@@ -7,7 +7,7 @@ def load_classification_dataset(filename,classes):
     data=np.loadtxt(classification_basepath / filename,skiprows=1,delimiter=",")
     x = data[:,:-1]
     y = data[:,-1:]
-    y=y.astype(np.int)
+    y=y.astype(int)
     y = np.squeeze(y)
     return x,y, classes
 

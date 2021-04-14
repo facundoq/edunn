@@ -70,7 +70,7 @@ class BatchedOptimizer(Optimizer):
                 epoch_error+=batch_error
             epoch_error/=batches
             history.append(epoch_error)
-            bar.set_postfix_str(f"error: {epoch_error:.5f}")
+            bar.set_postfix_str(f"{error_layer.name}: {epoch_error:.5f}")
 
         return np.array(history)
 
@@ -85,8 +85,8 @@ class StochasticGradientDescent(BatchedOptimizer):
         self.lr=lr
 
     def optimize_batch(self, model:Model, x:np.ndarray, y_true:np.ndarray, error_layer:ErrorModel, epoch:int):
-
         y = model.forward(x)
+
         E = error_layer.forward(y_true, y)
         δEδy,_ = error_layer.backward(1)
 

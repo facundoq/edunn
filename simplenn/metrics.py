@@ -15,7 +15,7 @@ def mae(y_true:np.ndarray,y_pred:np.ndarray)->float:
 def check_label_array(y:np.ndarray):
     if  len(y.shape)!=1:
         raise ValueError(f"True labels array must have a single dimension (shape is {y.shape} instead)")
-    if y.dtype!=np.int:
+    if y.dtype!=int:
         raise ValueError(f"True labels array must be of type int (type is {y.dtype} instead)")
 
 def check_binary(y:np.ndarray):

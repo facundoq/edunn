@@ -1,8 +1,14 @@
+# library requirements
 numpy
-ipython
-jupyter
 matplotlib
 tqdm
 colorama
 pydataset
+
+# guide requirements
+ipython
+jupyter
+sklearn
+
+# dev requirements
 twine

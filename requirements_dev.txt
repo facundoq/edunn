@@ -1,0 +1,3 @@
+# dev requirements
+twine
+pytest

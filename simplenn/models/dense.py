@@ -46,7 +46,7 @@ class Dense(ModelWithParameters):
     * softmax
     '''
     def __init__(self, input_size:int, output_size:int,activation_name:str=None,
-                 linear_initializer:Initializer=RandomNormal(), bias_initializer:Initializer=Zero(), name=None):
+                 linear_initializer:Initializer=None, bias_initializer:Initializer=None, name=None):
         self.linear = Linear(input_size,output_size,initializer=linear_initializer)
         self.bias = Bias(output_size,initializer=bias_initializer)
 

@@ -1,4 +1,4 @@
-from simplenn.model import ModelWithParameters,Cache
+from simplenn.model import ModelWithParameters,Cache,ModelWithoutParameters
 import numpy as np
 
 class Identity(ModelWithParameters):
@@ -72,7 +72,7 @@ class MultiplyConstant(ModelWithParameters):
 
 
 
-class ReLU(ModelWithParameters):
+class ReLU(ModelWithoutParameters):
 
     def forward(self, x:np.ndarray):
         y = np.zeros_like(x)
@@ -103,7 +103,7 @@ class ReLU(ModelWithParameters):
         return δEδx,{}
 
 
-class Sigmoid(ModelWithParameters):
+class Sigmoid(ModelWithoutParameters):
 
     def forward(self, x:np.ndarray):
         y = np.zeros_like(x)
@@ -130,7 +130,7 @@ class Sigmoid(ModelWithParameters):
 
 
 
-class TanH(ModelWithParameters):
+class TanH(ModelWithoutParameters):
     def __init__(self,name=None):
 
         self.sigmoid=Sigmoid()
@@ -160,7 +160,7 @@ class TanH(ModelWithParameters):
         return δEδx,{}
 
 
-class Softmax(ModelWithParameters):
+class Softmax(ModelWithoutParameters):
     def __init__(self,name=None,smoothing=1e-12):
         super().__init__(name)
         self.smoothing=smoothing
