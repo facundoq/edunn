@@ -1,6 +1,7 @@
 from simplenn.model import ModelWithParameters
 import numpy as np
-from simplenn.initializers import  Initializer,Zero
+from simplenn.initializers import Initializer, Zero
+
 
 class Bias(ModelWithParameters):
     '''
@@ -11,16 +12,19 @@ class Bias(ModelWithParameters):
     The number of columns of x, $o$, must match the size of $b$.
 
     '''
-    def __init__(self,output_size:int,initializer:Initializer=Zero(),name=None):
+
+    def __init__(self, output_size: int, initializer: Initializer = None, name=None):
         super().__init__(name=name)
-        b = initializer.create( (output_size,))
+        if initializer is None:
+            initializer = Zero()
+        b = initializer.create((output_size,))
         self.register_parameter("b", b)
 
-    def forward(self, x:np.ndarray):
-        n,d = x.shape
+    def forward(self, x: np.ndarray):
+        n, d = x.shape
         b = self.get_parameters()["b"]
         dout, = b.shape
-        assert dout==d, f"#features of input ({d}) must match size of b ({dout})"
+        assert dout == d, f"#features of input ({d}) must match size of b ({dout})"
         y = np.zeros_like(x)
         ### YOUR IMPLEMENTATION START  ###
 
@@ -29,7 +33,7 @@ class Bias(ModelWithParameters):
         ### YOUR IMPLEMENTATION END  ###
         return y
 
-    def backward(self, δEδy:np.ndarray):
+    def backward(self, δEδy: np.ndarray):
         b = self.get_parameters()["b"]
         δEδx = np.zeros_like(δEδy)
 
@@ -45,15 +49,14 @@ class Bias(ModelWithParameters):
         # Hints:
         # δEδb = δEδy * δyδb
         # δyδb = [1, 1, 1, ..., 1]
-        n,d = δEδy.shape
+        n, d = δEδy.shape
         δEδb = np.zeros_like(b)
         for i in range(n):
             # Calculate derivative of error for a sample i (a single sample)
             # And accumulate to obtain δEδb
             ### YOUR IMPLEMENTATION START  ###
-            δEδb_i = δEδy[i,:] # * [1,1,1...,1]
+            δEδb_i = δEδy[i, :]  # * [1,1,1...,1]
             δEδb += δEδb_i
             ### YOUR IMPLEMENTATION END  ###
 
-        return δEδx,{"b":δEδb}
-
+        return δEδx, {"b": δEδb}

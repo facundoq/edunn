@@ -8,8 +8,10 @@ class Linear(ModelWithParameters):
     The Linear layer outputs y = xw, where w is a matrix of parameters
 
     '''
-    def __init__(self,input_size:int,output_size:int,initializer:Initializer=RandomNormal(),name=None):
+    def __init__(self,input_size:int,output_size:int,initializer:Initializer=None,name=None):
         super().__init__(name=name)
+        if initializer is None:
+            initializer = RandomNormal()
         shape = (input_size,output_size)
         w = initializer.create(shape)
         self.register_parameter("w", w)

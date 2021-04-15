@@ -7,3 +7,5 @@ from .binary_cross_entropy_error import BinaryCrossEntropyWithLabels
 from .cross_entropy_error import CrossEntropyWithLabels
 from .squared_error import SquaredError
 from .dense import Dense
+from .linear_regression import LinearRegression
+from .logistic_regression import LogisticRegression
