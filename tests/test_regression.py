@@ -1,5 +1,6 @@
 
 import simplenn as sn
+import simplenn.models.mean_error
 from simplenn import metrics, datasets
 from typing import Callable
 
@@ -23,7 +24,7 @@ def evaluate_regression_model(dataset_name:str, model_generator:Callable, epochs
     batch_size = min(n,batch_size)
 
     optimizer = sn.StochasticGradientDescent(batch_size,epochs,lr)
-    error = sn.MeanError(sn.SquaredError())
+    error = simplenn.models.mean_error.MeanError(sn.SquaredError())
 
     optimizer.optimize(model,x,y,error,)
     y_pred = model.forward(x)

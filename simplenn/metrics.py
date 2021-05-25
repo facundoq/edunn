@@ -1,4 +1,5 @@
 import numpy as np
+from . import utils
 
 def accuracy(y_true:np.ndarray,y_pred:np.ndarray)->float:
     check_label_array(y_true)
@@ -64,6 +65,13 @@ def confusion(y_true:np.ndarray,y_pred:np.ndarray)->np.ndarray:
     for i in range(n):
         c[y_true[i],y_pred[i]]+=1
     return c
+
+def classification_summary_onehot(y_true:np.ndarray,y_pred:np.ndarray):
+    assert(len(y_true.shape)==2)
+    assert(np.all(y_true.shape==y_pred.shape))
+    y_true=utils.onehot2labels(y_true)
+    y_pred=utils.onehot2labels(y_pred)
+    classification_summary(y_true,y_pred)
 
 def classification_summary(y_true:np.ndarray,y_pred:np.ndarray):
     classes = y_true.max()+1

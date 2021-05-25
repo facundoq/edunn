@@ -1,4 +1,7 @@
 import sys
+
+import simplenn.models.mean_error
+
 sys.path.insert(0, '..')
 import simplenn as sn
 import numpy as np
@@ -26,10 +29,10 @@ def evaluate_classification_model(dataset_name:str, model_generator:Callable, ep
     optimizer = sn.StochasticGradientDescent(batch_size,epochs,lr)
 
     if n_classes==2:
-        sample_error=sn.BinaryCrossEntropyWithLabels()
+        sample_error=sn.BinaryCrossEntropy()
     else:
         sample_error=sn.CrossEntropyWithLabels()
-    error = sn.MeanError(sample_error)
+    error = simplenn.models.mean_error.MeanError(sample_error)
     optimizer.optimize(model,x,y,error)
     y_pred = model.forward(x)
     y_pred_labels= np.argmax(y_pred,axis=1)
@@ -66,7 +69,7 @@ def test_logistic_regression():
                   sn.Bias(classes),
                   last_layer,
                   ]
-        return sn.Sequential(layers,"linear_regression")
+        return sn.Sequential(layers,"logistic_regression")
 
     evaluate_classification_model_datasets(logistic_regression, config_datasets)
 

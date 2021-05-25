@@ -133,3 +133,5 @@ tests/results
 
 .idea
 generated/
+.vscode/
+.pytest_cache/

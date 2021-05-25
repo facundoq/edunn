@@ -18,7 +18,7 @@ def all_equal(list:[]):
     return len(list) == 0 or list.count(list[0]) == len(list)
 import random
 
-def batch_arrays(batch_size:int,*arrays,shuffle=True):
+def batch_arrays(batch_size:int,*arrays,shuffle=False):
     '''
 
     :param batch_size: size of batches
@@ -41,13 +41,14 @@ def batch_arrays(batch_size:int,*arrays,shuffle=True):
 
 class BatchedOptimizer(Optimizer):
 
-    def __init__(self,batch_size:int,epochs:int):
+    def __init__(self,batch_size:int,epochs:int,shuffle=True):
         '''
         :param epochs: number of epochs to train the model. Each epoch is a complete iteration over the training set. The number of parameter updates is n //batch_size, where n is the number of samples of the dataset
         :param batch_size: Batch the dataset with batches of size `batch_size`, and perform an optimization step for each batch
         '''
         self.batch_size=batch_size
         self.epochs=epochs
+        self.shuffle=shuffle
 
 
     def optimize(self, model:Model, x:np.ndarray, y:np.ndarray, error_layer:ErrorModel, verbose=True):
@@ -65,7 +66,7 @@ class BatchedOptimizer(Optimizer):
         bar = tqdm(range(self.epochs),desc="fit",file=sys.stdout,disable=not verbose)
         for epoch in bar:
             epoch_error=0
-            for x_batch,y_batch in batch_arrays(self.batch_size,x,y):
+            for x_batch,y_batch in batch_arrays(self.batch_size,x,y,shuffle=self.shuffle):
                 batch_error=self.optimize_batch(model,x_batch,y_batch,error_layer,epoch)
                 epoch_error+=batch_error
             epoch_error/=batches
@@ -80,26 +81,34 @@ class BatchedOptimizer(Optimizer):
 
 class StochasticGradientDescent(BatchedOptimizer):
 
-    def __init__(self,batch_size:int,epochs:int,lr:float=0.1):
-        super().__init__(batch_size,epochs)
+    def __init__(self,batch_size:int,epochs:int,lr:float=0.1,shuffle=True):
+        super().__init__(batch_size,epochs,shuffle)
         self.lr=lr
 
-    def optimize_batch(self, model:Model, x:np.ndarray, y_true:np.ndarray, error_layer:ErrorModel, epoch:int):
+    def backpropagation(self,model:Model, x:np.ndarray, y_true:np.ndarray, error_layer:ErrorModel):
+        # forward pass (model and error)
         y = model.forward(x)
-
         E = error_layer.forward(y_true, y)
-        δEδy,_ = error_layer.backward(1)
 
-        gradients = model.backward(δEδy)
+        # backward pass (error and model)
+        δEδy, _ = error_layer.backward(1)
+        δEδx,δEδps = model.backward(δEδy)
 
+        return δEδx,δEδps,E
+
+    def optimize_batch(self, model:Model, x:np.ndarray, y_true:np.ndarray, error_layer:ErrorModel, epoch:int):
+
+        δEδx,δEδps,E = self.backpropagation(model,x,y_true,error_layer)
+
+        # Update parameters
         parameters = model.get_parameters()
-        # print(parameters.keys())
-        for parameter_name,δEδp in gradients.items():
+        for parameter_name,δEδp in δEδps.items():
                 p = parameters[parameter_name]
-                # print(parameter_name,p,δEδp)
                 # use p[:] so that updates are in-place
                 # instead of creating a new variable
+                ### YOUR IMPLEMENTATION START  ###
                 p[:] = p - self.lr * δEδp
+                ### YOUR IMPLEMENTATION END    ###
         return E
 
 

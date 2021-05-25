@@ -2,7 +2,7 @@ import numpy as np
 import pathlib
 from typing import Dict,Callable
 basepath = pathlib.Path(__file__).parent.absolute()
-
+from .. import utils
 from . import regression,classification
 
 def shuffle_dataset(x,y):
@@ -16,8 +16,11 @@ def shuffle_dataset(x,y):
 def load_regression(dataset_name:str):
     return load(dataset_name,regression.loaders,"regression")
 
-def load_classification(dataset_name:str):
-    return load(dataset_name,classification.loaders,"classification")
+def load_classification(dataset_name:str,onehot=False):
+    x,y,classes= load(dataset_name,classification.loaders,"classification")
+    if onehot:
+        y = utils.labels2onehot(y,len(classes))
+    return x,y,classes
 
 def load(dataset_name:str,loaders:Dict[str,Callable],title:str):
     if not dataset_name in loaders:

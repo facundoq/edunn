@@ -42,7 +42,7 @@ def test_gradients():
     layer = sn.SquaredError()
     squared_error(layer, shape, samples=samples, max_rel_error=1e-3)
 
-    layer = sn.BinaryCrossEntropyWithLabels()
+    layer = sn.BinaryCrossEntropy()
     binary_cross_entropy_labels(layer, 3, samples=samples, max_rel_error=1e-3)
 
     layer = sn.CrossEntropyWithLabels()

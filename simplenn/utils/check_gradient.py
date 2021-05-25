@@ -17,7 +17,7 @@ def common_layer(l:sn.ModelWithParameters, x_shape:Tuple, samples:int=1, toleran
     δEδy_generator = lambda: np.random.normal(0,1,y.shape)
     common_layer_random_sample(l, f, df, input_generators, δEδy_generator, samples=samples, tolerance=tolerance, break_on_error=break_on_error)
 
-def squared_error(l:sn.SquaredError, y_shape:Tuple, samples:int=1, max_rel_error=1e-7, break_on_error=True):
+def squared_error(l:sn.SquaredError, y_shape:Tuple, samples:int=1, tolerance=1e-7, break_on_error=True):
     f,df,parameter_shapes = error_layer_to_function(l)
 
     df_ignore_δEδy = lambda x,δEδy: df(x)
@@ -30,9 +30,9 @@ def squared_error(l:sn.SquaredError, y_shape:Tuple, samples:int=1, max_rel_error
     E = f(input_generators())
     δE_generator = lambda : np.ones(E.shape)
 
-    common_layer_random_sample(l, f, df_ignore_δEδy, input_generators, δE_generator, samples=samples, tolerance=max_rel_error, break_on_error=break_on_error)
+    common_layer_random_sample(l, f, df_ignore_δEδy, input_generators, δE_generator, samples=samples, tolerance=tolerance, break_on_error=break_on_error)
 
-def cross_entropy_labels(l:sn.CrossEntropyWithLabels, y_shape:Tuple, samples:int=1, max_rel_error=1e-7, break_on_error=True):
+def cross_entropy_labels(l:sn.CrossEntropyWithLabels, y_shape:Tuple, samples:int=1, tolerance=1e-7, break_on_error=True):
     f,df,parameter_shapes = error_layer_to_function(l)
     df_ignore_δEδy = lambda x,δEδy: df(x)
 
@@ -50,9 +50,9 @@ def cross_entropy_labels(l:sn.CrossEntropyWithLabels, y_shape:Tuple, samples:int
 
     E = f(input_generators())
     δE_generator = lambda : np.ones(E.shape)
-    common_layer_random_sample(l, f, df_ignore_δEδy, input_generators, δE_generator, samples=samples, tolerance=max_rel_error, break_on_error=break_on_error)
+    common_layer_random_sample(l, f, df_ignore_δEδy, input_generators, δE_generator, samples=samples, tolerance=tolerance, break_on_error=break_on_error)
 
-def binary_cross_entropy_labels(l:sn.BinaryCrossEntropyWithLabels, batch_size:int, samples:int=1, max_rel_error=1e-7, break_on_error=True):
+def binary_cross_entropy_labels(l:sn.BinaryCrossEntropy, batch_size:int, samples:int=1, tolerance=1e-7, break_on_error=True):
     f,df,parameter_shapes = error_layer_to_function(l)
     df_ignore_δEδy = lambda x,δEδy: df(x)
     sm=sn.Softmax()
@@ -66,7 +66,7 @@ def binary_cross_entropy_labels(l:sn.BinaryCrossEntropyWithLabels, batch_size:in
 
     E = f(input_generators())
     δE_generator = lambda : np.ones(E.shape)
-    common_layer_random_sample(l, f, df_ignore_δEδy, input_generators, δE_generator, samples=samples, tolerance=max_rel_error, break_on_error=break_on_error)
+    common_layer_random_sample(l, f, df_ignore_δEδy, input_generators, δE_generator, samples=samples, tolerance=tolerance, break_on_error=break_on_error)
 
 
 def common_layer_random_sample(l:sn.Model, f, df, input_generator, δEδy_generator, samples:int=1, tolerance=1e-7, break_on_error=True):

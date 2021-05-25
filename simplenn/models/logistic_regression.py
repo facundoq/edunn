@@ -38,7 +38,7 @@ class LogisticRegression(ModelWithParameters):
         δEδx = None
         ### YOUR IMPLEMENTATION START  ###
         δEδx_softmax, δEδsoftmax = self.softmax.backward(δEδy)
-        δEδx_bias, δEδbias = self.bias.backward(δEδsoftmax)
+        δEδx_bias, δEδbias = self.bias.backward(δEδx_softmax)
         δEδx, δEδlinear = self.linear.backward(δEδx_bias)
         ### YOUR IMPLEMENTATION END  ###
 

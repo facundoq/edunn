@@ -161,7 +161,7 @@ class TanH(ModelWithoutParameters):
 
 
 class Softmax(ModelWithoutParameters):
-    def __init__(self,name=None,smoothing=1e-12):
+    def __init__(self,name=None,smoothing=1e-16):
         super().__init__(name)
         self.smoothing=smoothing
 
@@ -178,9 +178,13 @@ class Softmax(ModelWithoutParameters):
             xi = xi + xi.max() # trick to avoid numerical issues
             # Calcular las probabilidades para cada clase
             # y guardar el valor en y[i,:]
+            # en base al vector de puntaje xi
+            # Nota: este cálculo es para 1 ejemplo del batch
+            # el for se encarga de repetirlo para c/u
             ### YOUR IMPLEMENTATION START  ###
             e = np.exp(xi)
-            y[i,:] = e/e.sum()
+            N = e.sum()
+            y[i,:] = e/N
             ### YOUR IMPLEMENTATION END  ###
         self.set_cache(y)
         return y

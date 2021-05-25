@@ -3,7 +3,7 @@ import numpy as np
 from ..model import ErrorModel
 import simplenn as sn
 
-class BinaryCrossEntropyWithLabels(ErrorModel):
+class BinaryCrossEntropy(ErrorModel):
 
     '''
     Returns the CrossEntropy between two binary class distributions

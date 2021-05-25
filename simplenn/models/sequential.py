@@ -51,7 +51,8 @@ class Sequential(Model):
                 for k,v in δEδp.items():
                     new_name=self.generate_parameter_name(layer,k)
                     gradients[new_name]=v
-        return gradients
+
+        return δEδy, gradients
 
     def generate_parameter_name(self,l:Model,parameter_name:str):
         return f"{l.name}({parameter_name})"

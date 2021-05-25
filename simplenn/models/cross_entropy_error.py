@@ -18,7 +18,6 @@ class CrossEntropyWithLabels(ErrorModel):
     ### http://facundoq.github.io/guides/crossentropy_derivative.html
     def forward(self, y_true:np.ndarray, y:np.ndarray):
         y_true = np.squeeze(y_true)
-
         assert len(y_true.shape) == 1
         assert y.min() >= 0
 
