@@ -27,9 +27,7 @@ history = optimizer.optimize(model,x,y,error)
 sn.plot.plot_history(history)
 ````
 
-We strip the key parts of `simplenn` that deal with layers, initializers, error functions, backpropagation and optimizers in the process. 
-
-Through our guides, we help **you reimplement  the key parts of `simplenn`** with various automated tests along the way for you to check your solutions. 
+We _remove_ the key parts of `simplenn` that deal with layers, initializers, error functions, backpropagation and optimizers. Then, through our guides, we help **_you_ reimplement** the key parts of `simplenn`. We also provide various automated tests along the way for you to check your solutions. 
 
 
 Supported languages:
@@ -40,11 +38,11 @@ Supported languages:
 
 ## :rainbow: Why `simplenn`?
 
-Well-known courses that teach you how to program neural networks from the ground up such as [*CS231n: Convolutional Neural Networks for Visual Recognition*](https://cs231n.github.io/) or Andrew Ng's [*Machine Learning*](https://www.coursera.org/learn/machine-learning) are great for understanding the basics using `numpy`, but use monolithic neural network models that make it difficult to understand how that code translates to other frameworks such as `pytorch` or `tensorflow`.
+There are many excellent courses or books that teach you how to program neural networks from the ground up such as [*CS231n: Convolutional Neural Networks for Visual Recognition*](https://cs231n.github.io/), Andrew Ng's [*Machine Learning*](https://www.coursera.org/learn/machine-learning) or Sebastian Rascha's [Python Machine Learning](https://sebastianraschka.com/books/#python-machine-learning-3rd-edition). However, while these are great for understanding the basics using `numpy`, they use monolithic neural network models that make it difficult to understand how that code translates to other frameworks such as `pytorch` or `tensorflow`.
 
-Alternatively, [Andrew Ng's *Deep Learning*](https://www.coursera.org/specializations/deep-learning) or [*FastAI*](https://course19.fast.ai/part2) build modular networks out of `tensorflow` or basic `pytorch` operators instead of numpy. This is great to build complex models quickly, but there's still a lot of magic under the hood since both frameworks automatically derive `backward` methods and bring along other goodies. 
+Alternatively, [Andrew Ng's *Deep Learning*](https://www.coursera.org/specializations/deep-learning) or [*FastAI*](https://course19.fast.ai/part2) build modular networks out of `tensorflow` or basic `pytorch` operators instead of numpy. This is great to build complex models quickly, but there's still a lot of magic under the hood. Both frameworks automatically derive `backward` methods and bring along other goodies. 
 
-Reimplementing `simplenn` allows you to understand how modern neural networks frameworks work and fills the gap between those types of courses. You get to program a full neural network framework, without all the magic `pytorch` or `tensorflow` bring along.
+Reimplementing `simplenn` allows you to understand how modern neural networks frameworks work and fills the gap between those types of learning. You get to program a full neural network framework, without all the magic `pytorch` or `tensorflow` bring along. Of course, `simplenn` does help you out along the way and provides many 
 
 
 ## :heavy_plus_sign: Pre-requisite knowledge
@@ -53,7 +51,7 @@ The guides are intended for learners with some experience with Python, Numpy and
 
 1. Read and write object-oriented python code, including subclassing and method overriding.
 2. Understand Numpy, basic linear algebra and calculus and be able to translate  mathematical operations to Numpy code.
-3. Understand the basic ideas in modern modular Neural Network frameworks, such as models, layers, optimizers, batches, backward and forward passes, and specially backpropagation. Therefore we recomend having previous exposure to `tensorflow` or `pytorch`.
+3. Understand the basic ideas in modern modular Neural Network frameworks, such as models, layers, optimizers, batches, backward and forward passes, and specially backpropagation. It is also helpful to have previous exposure to `tensorflow/keras` or `pytorch`, but not necessary.
 
 ## :wrench: Download and setup
 
@@ -69,18 +67,28 @@ The guides are intended for learners with some experience with Python, Numpy and
 
 3. Make sure Python3.6 or greater, pip3 and venv are installed:
 
-    `python3 --version` 
-    `pip3 --version && `
-    `python3 -c "import venv" && echo "venv is installed"`
+    ````bash
+    python3 --version
+    pip3 --version && 
+    python3 -c "import venv" && echo "venv is installed"
+    ````
    
 
 4. Create a virtualenv environment and install the dependencies in [requirements.txt](https://github.com/facundoq/simplenn/blob/main/requirements.txt): 
 
-    `python3 -m venv nnenv`
-    `source nnvenv/bin/activate`
-    `pip install -r requirements.txt`
+    ````bash
+    python3 -m venv nnenv
+    source nnvenv/bin/activate
+    pip install -r requirements.txt
+    ````
 
-Alternatively, you can use your `conda` distribution or another such tool to create a virtual environment and install the required libraries for `simplenn`. 
+Alternatively, you can use your `conda` distribution or another such tool to create a virtual environment and install the required libraries for `simplenn` (listed inside `requirements.txt`). 
+
+5. Run jupyter and follow the guides:
+
+```bash
+jupyter notebook
+```
 
 ## :pill: Solutions and bugs :bug: 
 

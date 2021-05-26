@@ -42,17 +42,24 @@ if __name__ == '__main__':
     parser.add_argument(dest="language", help="Language of guide to export")
     args=parser.parse_args()
     language = args.language
+    print(f"""
+    ********************************************
+    * This script will compile and zip a guide *
+    * Only run this command from the root of   *
+    * the simplnn library                      * 
+    ********************************************
+    """)
 
     guides_folderpath=Path("guides")
     releases_folderpath=Path("releases")
     guide_folderpath = guides_folderpath / language
     if not guide_folderpath.exists():
         sys.exit(f"Language {language} not found. Check `guides` folder for available languages.")
-    print(f"Language {language} available.")
-    print(f"Delete checkpoints in {guide_folderpath}...")
+    print(f"Language *{language}* available.")
+    print(f"Deleting checkpoints in {guide_folderpath}...")
     delete_checkpoints(guide_folderpath)
 
-    print(f"Clear notebooks in {guide_folderpath}...")
+    print(f"Clearing notebooks in {guide_folderpath}...")
     clear_notebooks(guide_folderpath)
 
     zip_filepath = releases_folderpath / f"{language}.zip"
