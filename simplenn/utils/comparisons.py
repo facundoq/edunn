@@ -6,6 +6,13 @@ success=f"{Back.GREEN}{Fore.BLACK}SUCCESS :){Style.RESET_ALL}"
 failure=f"{Back.RED}{Fore.BLACK}ERROR   :({Style.RESET_ALL}"
 
 def check_same(expected:np.ndarray,calculated:np.ndarray,tol=default_tol,check_shape=True):
+    if expected is None:
+        print(f"{failure} Expected value is None")
+        return
+    if calculated is None:
+        print("{failure} Calculated value is None")
+        return
+
     if check_shape:
         if not expected.shape ==calculated.shape:
             print(f"{failure} Shape mismatch:")

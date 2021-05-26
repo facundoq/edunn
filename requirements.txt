@@ -10,5 +10,3 @@ ipython
 jupyter
 sklearn
 
-# dev requirements
-twine

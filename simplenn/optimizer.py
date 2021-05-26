@@ -110,7 +110,7 @@ class GradientDescent(BatchedGradientOptimizer):
                 # instead of creating a new variable
                 ### YOUR IMPLEMENTATION START  ###
                 p[:] = p - self.lr * δEδp
-                ### YOUR IMPLEMENTATION END    ###
+                ### YOUR IMPLEMENTATION END  ###
 
 class MomentumGD(BatchedGradientOptimizer):
 
@@ -138,7 +138,7 @@ class MomentumGD(BatchedGradientOptimizer):
             ### YOUR IMPLEMENTATION START  ###
             v[:] = self.gamma * v + self.lr * δEδp
             p[:] = p - v
-            ### YOUR IMPLEMENTATION END    ###
+            ### YOUR IMPLEMENTATION END  ###
 
 
 class NesterovMomentumGD(BatchedGradientOptimizer):
@@ -167,7 +167,7 @@ class NesterovMomentumGD(BatchedGradientOptimizer):
             ### YOUR IMPLEMENTATION START  ###
             v[:] = self.gamma * v + self.lr * δEδp
             p[:] = p - (self.gamma*v+self.lr*δEδp)
-            ### YOUR IMPLEMENTATION END    ###
+            ### YOUR IMPLEMENTATION END  ###
 
 
 class Adagrad(BatchedGradientOptimizer):
@@ -188,21 +188,5 @@ class Adagrad(BatchedGradientOptimizer):
                 ### YOUR IMPLEMENTATION START  ###
                 denom = np.sqrt(δEδp**2+self.eps)
                 p[:] = p - self.lr * (δEδp/denom)
-                ### YOUR IMPLEMENTATION END    ###
+                ### YOUR IMPLEMENTATION END  ###
 
-
-# class RandomOptimizer(Optimizer):
-#     '''
-#     Random Optimizer
-#     Takes a step in a random direction
-#     '''
-#     def __init__(self,lr=0.001):
-#         self.lr=lr
-#
-#     def optimize(self,weights:[Dict[str,np.ndarray]],gradients:[Dict[str,np.ndarray]],names:[str]):
-#         for (layer_weights,layer_gradients) in zip(weights,gradients):
-#             for parameter_name, w in layer_weights.items():
-#                 g = layer_gradients[parameter_name] # ignored
-#                 # use w[:] so that updates are in-place
-#                 # instead of creating a new variable
-#                 w[:] = w + (np.random.random_sample(w.shape)-0.5)*self.lr

@@ -20,10 +20,7 @@ class CrossEntropyWithLabels(ErrorModel):
         y_true = np.squeeze(y_true)
         assert len(y_true.shape) == 1
         assert y.min() >= 0
-
         n,c=y.shape
-
-        #y_pred=fix_probabilities(y_pred)
 
         E = np.zeros((n,1))
         ### YOUR IMPLEMENTATION START  ###
@@ -37,7 +34,6 @@ class CrossEntropyWithLabels(ErrorModel):
 
     def backward(self, δEδyi):
         y_true,y = self.get_cache()
-        #y_pred=fix_probabilities(y_pred)
 
         δEδy = np.zeros_like(y)
         n,classes = y.shape

@@ -16,13 +16,15 @@ class LinearRegression(ModelWithParameters):
 
     def __init__(self, input_size: int, output_size: int,
                  linear_initializer: Initializer = None, bias_initializer: Initializer = None, name=None):
+        self.output_size=output_size
+        self.input_size=input_size
         self.linear = Linear(input_size, output_size, initializer=linear_initializer)
         self.bias = Bias(output_size, initializer=bias_initializer)
         super().__init__(name=name)
 
     def forward(self, x: np.ndarray):
         # calculate and return bias(linear(x))
-        y = None
+        y = np.zeros(x.shape[0],self.output_size) # default value
         ### YOUR IMPLEMENTATION START  ###
         y_linear = self.linear.forward(x)
         y = self.bias.forward(y_linear)
@@ -32,7 +34,8 @@ class LinearRegression(ModelWithParameters):
     def backward(self, δEδy: np.ndarray):
         # Compute gradients for the parameters of the bias and linear models
         δEδbias, δEδlinear = {}, {}
-        δEδx = None
+        δEδx = np.zeros(δEδy.shape[0],self.input_size) # default value
+
         ### YOUR IMPLEMENTATION START  ###
         δEδx_bias, δEδbias = self.bias.backward(δEδy)
         δEδx, δEδlinear = self.linear.backward(δEδx_bias)

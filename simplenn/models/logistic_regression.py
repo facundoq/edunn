@@ -17,6 +17,9 @@ class LogisticRegression(ModelWithParameters):
 
     def __init__(self, input_size: int, output_size: int,
                  linear_initializer: Initializer = None, bias_initializer: Initializer = None, name=None):
+        self.output_size = output_size
+        self.input_size = input_size
+
         self.linear = Linear(input_size, output_size, initializer=linear_initializer)
         self.bias = Bias(output_size, initializer=bias_initializer)
         self.softmax = Softmax()
@@ -24,7 +27,8 @@ class LogisticRegression(ModelWithParameters):
 
     def forward(self, x: np.ndarray):
         # calculate and return softmax(bias(linear(x)))
-        y = None
+        y = np.zeros(x.shape[0],self.output_size) # default value
+
         ### YOUR IMPLEMENTATION START  ###
         y_linear = self.linear.forward(x)
         y_bias = self.bias.forward(y_linear)
@@ -35,7 +39,8 @@ class LogisticRegression(ModelWithParameters):
     def backward(self, δEδy: np.ndarray):
         # Compute gradients for the parameters of the bias and linear models
         δEδbias, δEδlinear, δEδsoftmax = {}, {}, {}
-        δEδx = None
+        δEδx = np.zeros(δEδy.shape[0],self.input_size) # default value
+
         ### YOUR IMPLEMENTATION START  ###
         δEδx_softmax, δEδsoftmax = self.softmax.backward(δEδy)
         δEδx_bias, δEδbias = self.bias.backward(δEδx_softmax)

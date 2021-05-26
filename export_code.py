@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os,argparse
 from pathlib import Path
 import shutil
@@ -53,6 +54,7 @@ def remove_implementation(filepath:Path):
 generated_path = Path("generated")
 lib_name = "simplenn"
 lib_folderpath = generated_path / lib_name
+import sys
 
 if __name__ == '__main__':
     
@@ -60,6 +62,8 @@ if __name__ == '__main__':
     # parser.add_argument(dest="language", help="This is the first argument")
     # args=parser.parse_args()
     # language = parser.language
+
+    print(f"Generating unimplemented library version to {generated_path}")
 
     if generated_path.exists():
         print(f"Deleting folder {generated_path.absolute()}...")
@@ -82,3 +86,10 @@ if __name__ == '__main__':
                     modified_files+=1
 
     print(f"Done, {modified_files} files modified out of {total_files} python files.")
+
+    extra_files = ["requirements.txt"]
+    print("Copying additional files...")
+    for f in extra_files:
+        print(f)
+        shutil.copy(f,generated_path/f)
+    print(f"Done, {len(extra_files)} files copied")
