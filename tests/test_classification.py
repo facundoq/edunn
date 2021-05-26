@@ -26,12 +26,13 @@ def evaluate_classification_model(dataset_name:str, model_generator:Callable, ep
     print(f"Testing model {model} on dataset {dataset_name}: {n} samples, {din} features, {n_classes} classes")
     batch_size=min(16,max(64,n//32))
     batch_size = min(n,batch_size)
-    optimizer = sn.StochasticGradientDescent(batch_size,epochs,lr)
+    optimizer = sn.GradientDescent(batch_size, epochs, lr)
 
     if n_classes==2:
         sample_error=sn.BinaryCrossEntropy()
     else:
         sample_error=sn.CrossEntropyWithLabels()
+
     error = simplenn.models.mean_error.MeanError(sample_error)
     optimizer.optimize(model,x,y,error)
     y_pred = model.forward(x)

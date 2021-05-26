@@ -1,3 +1,7 @@
+# Additional material to help you implement optimizers:
+# "An overview of gradient descent optimization algorithms" https://ruder.io/optimizing-gradient-descent/
+
+
 from typing import Dict
 import numpy as np
 from .model import Model
@@ -39,7 +43,7 @@ def batch_arrays(batch_size:int,*arrays,shuffle=False):
         yield tuple(batch)
 
 
-class BatchedOptimizer(Optimizer):
+class BatchedGradientOptimizer(Optimizer):
 
     def __init__(self,batch_size:int,epochs:int,shuffle=True):
         '''
@@ -50,6 +54,16 @@ class BatchedOptimizer(Optimizer):
         self.epochs=epochs
         self.shuffle=shuffle
 
+    def backpropagation(self,model:Model, x:np.ndarray, y_true:np.ndarray, error_layer:ErrorModel):
+        # forward pass (model and error)
+        y = model.forward(x)
+        E = error_layer.forward(y_true, y)
+
+        # backward pass (error and model)
+        δEδy, _ = error_layer.backward(1)
+        δEδx,δEδps = model.backward(δEδy)
+
+        return δEδx,δEδps,E
 
     def optimize(self, model:Model, x:np.ndarray, y:np.ndarray, error_layer:ErrorModel, verbose=True):
         '''
@@ -66,8 +80,9 @@ class BatchedOptimizer(Optimizer):
         bar = tqdm(range(self.epochs),desc="fit",file=sys.stdout,disable=not verbose)
         for epoch in bar:
             epoch_error=0
-            for x_batch,y_batch in batch_arrays(self.batch_size,x,y,shuffle=self.shuffle):
-                batch_error=self.optimize_batch(model,x_batch,y_batch,error_layer,epoch)
+            for i,(x_batch,y_batch) in enumerate(batch_arrays(self.batch_size,x,y,shuffle=self.shuffle)):
+                δEδx, δEδps, batch_error = self.backpropagation(model, x, y, error_layer)
+                self.optimize_batch(model,δEδps,epoch,i)
                 epoch_error+=batch_error
             epoch_error/=batches
             history.append(epoch_error)
@@ -79,26 +94,13 @@ class BatchedOptimizer(Optimizer):
     def optimize_batch(self, model:Model, x:np.ndarray, y:np.ndarray, error_layer:ErrorModel, epoch:int):
         pass
 
-class StochasticGradientDescent(BatchedOptimizer):
+class GradientDescent(BatchedGradientOptimizer):
 
     def __init__(self,batch_size:int,epochs:int,lr:float=0.1,shuffle=True):
         super().__init__(batch_size,epochs,shuffle)
         self.lr=lr
 
-    def backpropagation(self,model:Model, x:np.ndarray, y_true:np.ndarray, error_layer:ErrorModel):
-        # forward pass (model and error)
-        y = model.forward(x)
-        E = error_layer.forward(y_true, y)
-
-        # backward pass (error and model)
-        δEδy, _ = error_layer.backward(1)
-        δEδx,δEδps = model.backward(δEδy)
-
-        return δEδx,δEδps,E
-
-    def optimize_batch(self, model:Model, x:np.ndarray, y_true:np.ndarray, error_layer:ErrorModel, epoch:int):
-
-        δEδx,δEδps,E = self.backpropagation(model,x,y_true,error_layer)
+    def optimize_batch(self, model:Model, δEδps:ParameterSet, epoch:int,iteration:int):
 
         # Update parameters
         parameters = model.get_parameters()
@@ -109,9 +111,84 @@ class StochasticGradientDescent(BatchedOptimizer):
                 ### YOUR IMPLEMENTATION START  ###
                 p[:] = p - self.lr * δEδp
                 ### YOUR IMPLEMENTATION END    ###
-        return E
+
+class MomentumGD(BatchedGradientOptimizer):
+
+    def __init__(self,batch_size:int,epochs:int,lr:float=0.1,gamma=0.9,shuffle=True):
+        super().__init__(batch_size,epochs,shuffle)
+        self.lr=lr
+        self.gamma=gamma
+        self.first=True
+        self.v={}
+
+    def optimize_batch(self, model:Model, δEδps:ParameterSet, epoch:int,iteration:int):
+        if self.first:
+            self.first=False
+            for k,p in model.get_parameters().items():
+                self.v[k]=np.zeros_like(p)
+
+        # Update parameters
+        parameters = model.get_parameters()
+        for k,δEδp in δEδps.items():
+            # K = parameter name
+            p = parameters[k]
+            v = self.v[k]
+            # use p[:] and v[:] so that updates are in-place
+            # instead of creating a new variable
+            ### YOUR IMPLEMENTATION START  ###
+            v[:] = self.gamma * v + self.lr * δEδp
+            p[:] = p - v
+            ### YOUR IMPLEMENTATION END    ###
 
 
+class NesterovMomentumGD(BatchedGradientOptimizer):
+
+    def __init__(self,batch_size:int,epochs:int,lr:float=0.1,gamma=0.9,shuffle=True):
+        super().__init__(batch_size,epochs,shuffle)
+        self.lr=lr
+        self.gamma=gamma
+        self.first=True
+        self.v={}
+
+    def optimize_batch(self, model:Model, δEδps:ParameterSet, epoch:int,iteration:int):
+        if self.first:
+            self.first=False
+            for k,p in model.get_parameters().items():
+                self.v[k]=np.zeros_like(p)
+
+        # Update parameters
+        parameters = model.get_parameters()
+        for k,δEδp in δEδps.items():
+            # K = parameter name
+            p = parameters[k]
+            v = self.v[k]
+            # use p[:] so that updates are in-place
+            # instead of creating a new variable
+            ### YOUR IMPLEMENTATION START  ###
+            v[:] = self.gamma * v + self.lr * δEδp
+            p[:] = p - (self.gamma*v+self.lr*δEδp)
+            ### YOUR IMPLEMENTATION END    ###
+
+
+class Adagrad(BatchedGradientOptimizer):
+
+    def __init__(self,batch_size:int,epochs:int,lr:float=0.1,eps=1e-8,shuffle=True):
+        super().__init__(batch_size,epochs,shuffle)
+        self.eps=eps
+        self.lr=lr
+
+    def optimize_batch(self, model:Model, δEδps:ParameterSet, epoch:int,iteration:int):
+
+        # Update parameters
+        parameters = model.get_parameters()
+        for parameter_name,δEδp in δEδps.items():
+                p = parameters[parameter_name]
+                # use p[:] so that updates are in-place
+                # instead of creating a new variable
+                ### YOUR IMPLEMENTATION START  ###
+                denom = np.sqrt(δEδp**2+self.eps)
+                p[:] = p - self.lr * (δEδp/denom)
+                ### YOUR IMPLEMENTATION END    ###
 
 
 # class RandomOptimizer(Optimizer):

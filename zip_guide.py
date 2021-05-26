@@ -3,8 +3,25 @@ from pathlib import Path
 import sys
 import zipfile
 from export_code import generated_path
+import subprocess
 
-def zip_without_
+#
+
+def clear_notebooks(folderpath):
+    for root, dirs, files in os.walk(folderpath):
+        for file in files:
+            if file.endswith(".ipynb"):
+                notebook_path = file
+                command = f"jupyter nbconvert --clear-output --inplace {notebook_path}"
+                print(command)
+                #subprocess.run(command)
+
+def zip_all(path,zip_file):
+    for f in path.iterdir():
+        if f.is_file():
+            zip_file.write(f, f.name)
+        if f.is_dir():
+            zipdir(f, zip_file)
 def zipdir(path, zip_file,skip_hidden=True):
     # ziph is zipfile handle
     for root, dirs, files in os.walk(path):
@@ -26,6 +43,9 @@ if __name__ == '__main__':
     if not guide_folderpath.exists():
         sys.exit(f"Language {language} not found. Check `guides` folder for available languages.")
     print(f"Language {language} available.")
+
+    clear_notebooks(guide_folderpath)
+
     zip_filepath = releases_folderpath / f"{language}.zip"
 
     if not generated_path.exists():
@@ -34,17 +54,10 @@ if __name__ == '__main__':
     print(f"Creating zip file...")
     zip_file = zipfile.ZipFile(zip_filepath, 'w', zipfile.ZIP_DEFLATED)
     print(f"Adding guide to zip...")
-    for f in guide_folderpath.iterdir():
-        if f.is_file():
-            zip_file.write(f,f.name)
-        if f.is_dir():
-            zipdir(f, zip_file)
+    zip_all(guide_folderpath, zip_file)
     print(f"Adding code to zip...")
-    for f in generated_path.iterdir():
-        if f.is_file():
-            zip_file.write(f,f.name)
-        if f.is_dir():
-            zipdir(f, zip_file)
+    zip_all(generated_path,zip_file)
+
     print(f"Saving to file...")
     zip_file.close()
     print(f"Done")

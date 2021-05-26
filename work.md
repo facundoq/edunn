@@ -1,5 +1,4 @@
 * Guías
-  * CrossEntropy (solo guia de derivada aparte)
   * Funciones de activación
   * Sequential
   * Red 2 capas Regresión

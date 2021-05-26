@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
+plt.style.use('bmh')
+
 import numpy as np
 import simplenn as sn
+
 
 def plot_history(history,error_name="Error",filepath=None):
     plt.figure()
@@ -90,3 +93,37 @@ def regression1d_predictions(y_true:np.ndarray,y_pred:np.ndarray,filepath=None):
     else:
         plt.savefig(filepath)
         plt.close()
+
+def plot_activation_function(m:sn.Model,range=(-10,10),backward=False):
+    plot_activation_functions([m],range=range,backward=backward)
+
+def plot_activation_functions(models:[sn.Model],range=(-10,10),backward=False):
+    start,end=range
+    x = np.linspace(start,end,100)
+    names = [m.__class__.__name__ for m in models]
+    fig=plt.figure()
+    ax = fig.gca()
+    # spines_origin(ax)
+    for m in models:
+        y = m.forward(x)
+        name = m.__class__.__name__
+        if backward:
+            E = np.ones_like(x)
+            y,_ = m.backward(E)
+            name = f"{name} derivative"
+
+        plt.plot(x,y,label=name)
+    plt.legend()
+    names = ", ".join(names)
+    if backward:
+        title = f"Derivatives of {names}"
+    else:
+        title = f"Values of {names}"
+    plt.title(title)
+
+def spines_origin(ax):
+    ax.grid(True)
+    ax.spines['left'].set_position('zero')
+    ax.spines['right'].set_color('none')
+    ax.spines['bottom'].set_position('zero')
+    ax.spines['top'].set_color('none')

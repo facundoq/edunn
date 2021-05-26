@@ -23,7 +23,7 @@ def evaluate_regression_model(dataset_name:str, model_generator:Callable, epochs
     batch_size=min(16,max(64,n//32))
     batch_size = min(n,batch_size)
 
-    optimizer = sn.StochasticGradientDescent(batch_size,epochs,lr)
+    optimizer = sn.GradientDescent(batch_size, epochs, lr)
     error = simplenn.models.mean_error.MeanError(sn.SquaredError())
 
     optimizer.optimize(model,x,y,error,)

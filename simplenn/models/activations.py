@@ -132,29 +132,28 @@ class Sigmoid(ModelWithoutParameters):
 
 class TanH(ModelWithoutParameters):
     def __init__(self,name=None):
-
-        self.sigmoid=Sigmoid()
-
         super().__init__(name=name)
-
+        self.sigmoid=Sigmoid()
 
     def forward(self, x:np.ndarray):
         y= np.zeros_like(x)
-        # TIP: TanH is simply sigmoid*2-1
+        # TIP: TanH2 is simply sigmoid*2-1
+        # we already defined self.sigmoid as a sigmod Layer
+        # use it to simplify your implementation
         ### YOUR IMPLEMENTATION START  ###
-        s = self.sigmoid.forward(x)
+        s = self.sigmoid.forward(2*x)
         y= s * 2 - 1
         ### YOUR IMPLEMENTATION END  ###
         return y # this layer's cache is the same as the sigmoid's cache
 
     def backward(self,δEδy:np.ndarray):
         δEδx= np.zeros_like(δEδy)
-        # TIP: If TanH is simply sigmoid*2-1
+        # TIP: If TanH2 is simply sigmoid*2-1
         # Calculate derivative of TanH
         # in terms of derivative of sigmoid
         ### YOUR IMPLEMENTATION START  ###
         δEδx,δEδp =self.sigmoid.backward(δEδy)
-        δEδx = δEδx*2
+        δEδx = δEδx*4
         ### YOUR IMPLEMENTATION END  ###
 
         return δEδx,{}
