@@ -87,6 +87,8 @@ def regression1d_predictions(y_true:np.ndarray,y_pred:np.ndarray,filepath=None):
     plt.figure()
     plt.plot(range(len(y_true)), y_true, label="true value")
     plt.plot(range(len(y_true)), y_pred, label="prediction")
+    plt.xlabel("Sample ID")
+    plt.ylabel("Prediction")
     plt.legend()
     if filepath is None:
         plt.show()

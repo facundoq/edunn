@@ -22,7 +22,7 @@ layers = [sn.Linear(din,10),
 model = sn.Sequential(layers)
 print(model.summary())
 error = sn.MeanError(sn.CrossEntropyWithLabels())
-optimizer = sn.StochasticGradientDescent(lr=0.1,epochs=3000,batch_size=32)
+optimizer = sn.GradientDescent(lr=0.1,epochs=3000,batch_size=32)
 history = optimizer.optimize(model,x,y,error)
 sn.plot.plot_history(history)
 ````
@@ -32,7 +32,7 @@ We _remove_ the key parts of `simplenn` that deal with layers, initializers, err
 
 Supported languages:
 
-* [Spanish](releases/es)
+* [Spanish](releases/simplenn-es)
 * English (coming soon)
 
 
@@ -74,7 +74,7 @@ The guides are intended for learners with some experience with Python, Numpy and
     ````
    
 
-4. Create a virtualenv environment and install the dependencies in [requirements.txt](https://github.com/facundoq/simplenn/blob/main/requirements.txt): 
+4. Create a virtualenv environment and install the dependencies in the requirements file `requirements.txt`: 
 
     ````bash
     python3 -m venv nnenv

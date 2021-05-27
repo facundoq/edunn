@@ -24,7 +24,7 @@ class LinearRegression(ModelWithParameters):
 
     def forward(self, x: np.ndarray):
         # calculate and return bias(linear(x))
-        y = np.zeros(x.shape[0],self.output_size) # default value
+        y = np.zeros((x.shape[0],self.output_size)) # default value
         ### YOUR IMPLEMENTATION START  ###
         y_linear = self.linear.forward(x)
         y = self.bias.forward(y_linear)
@@ -34,7 +34,7 @@ class LinearRegression(ModelWithParameters):
     def backward(self, δEδy: np.ndarray):
         # Compute gradients for the parameters of the bias and linear models
         δEδbias, δEδlinear = {}, {}
-        δEδx = np.zeros(δEδy.shape[0],self.input_size) # default value
+        δEδx = np.zeros((δEδy.shape[0],self.input_size)) # default value
 
         ### YOUR IMPLEMENTATION START  ###
         δEδx_bias, δEδbias = self.bias.backward(δEδy)

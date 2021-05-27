@@ -4,7 +4,7 @@
 
 from typing import Dict
 import numpy as np
-from .model import Model
+from .model import Model,Phase
 from .model import ErrorModel, ParameterSet
 import sys,abc
 from tqdm.auto import tqdm
@@ -77,6 +77,7 @@ class BatchedGradientOptimizer(Optimizer):
         n = x.shape[0]
         batches = n // self.batch_size
         history = []
+        model.set_phase(Phase.Training)
         bar = tqdm(range(self.epochs),desc="fit",file=sys.stdout,disable=not verbose)
         for epoch in bar:
             epoch_error=0
@@ -170,7 +171,7 @@ class NesterovMomentumGD(BatchedGradientOptimizer):
             ### YOUR IMPLEMENTATION END  ###
 
 
-class Adagrad(BatchedGradientOptimizer):
+class SignGD(BatchedGradientOptimizer):
 
     def __init__(self,batch_size:int,epochs:int,lr:float=0.1,eps=1e-8,shuffle=True):
         super().__init__(batch_size,epochs,shuffle)

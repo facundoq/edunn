@@ -3,7 +3,7 @@ import os,argparse
 from pathlib import Path
 import sys
 import zipfile
-from export_code import generated_path
+from export_code import generated_path,lib_name
 import subprocess
 import shutil
 
@@ -11,7 +11,7 @@ import shutil
 def delete_checkpoints(folderpath:Path):
     for f in folderpath.rglob("*.ipynb_checkpoints"):
         if f.is_dir() and f.name==".ipynb_checkpoints":
-            print(f"Deleting {f.absolute()}..")
+            print(f"    Deleting {f.absolute()}..")
             shutil.rmtree(f.absolute())
 
 def clear_notebooks(folderpath:Path):
@@ -35,6 +35,7 @@ def zipdir(path, zip_file,skip_hidden=True):
             if file.startswith(".") and skip_hidden:
                 continue
             zip_file.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), os.path.join(path, '..')))
+
 
 if __name__ == '__main__':
 
@@ -62,7 +63,7 @@ if __name__ == '__main__':
     print(f"Clearing notebooks in {guide_folderpath}...")
     clear_notebooks(guide_folderpath)
 
-    zip_filepath = releases_folderpath / f"{language}.zip"
+    zip_filepath = releases_folderpath / f"{lib_name}-{language}.zip"
 
     if not generated_path.exists():
         sys.exit(f"Code skeleton not found in {generated_path.absolute()}")
@@ -76,5 +77,5 @@ if __name__ == '__main__':
 
     print(f"Saving to file...")
     zip_file.close()
-    print(f"Done")
+    print(f"Done: {zip_filepath}")
     
