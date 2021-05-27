@@ -32,7 +32,7 @@ We _remove_ the key parts of `simplenn` that deal with layers, initializers, err
 
 Supported languages:
 
-* [Spanish](releases/simplenn-es)
+* [Spanish](https://github.com/facundoq/simplenn/blob/main/releases/simplenn-es.zip)
 * English (coming soon)
 
 
@@ -57,9 +57,9 @@ The guides are intended for learners with some experience with Python, Numpy and
 
 **Do not clone** this repository if you want to use `simplenn` as a learning exercise. Instead use the following instructions. These instructions assume a working installation of python3 (3.6 or greater), pip3 and virtualenv. The installations of those varies wildly with OS/distribution so its up to you to get a setup working. Afterwards: 
 
-1. Download a [release](releases) for your language. If you prefer the command line, use `wget`, replacing `es` with your preferred language (only `es` currently supported):
+1. Download a [release](https://github.com/facundoq/simplenn/blob/main/releases) for your language. If you prefer the command line, use `wget`, replacing `es` with your preferred language (only `es` currently supported):
 
-    `wget https://github.com/facundoq/simplenn/releases/es.zip`
+    `wget https://github.com/facundoq/simplenn/blob/main/releases/simplenn-es.zip`
 
 2. Unzip to `simplenn` or other folder name you choose:
 
