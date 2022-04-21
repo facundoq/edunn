@@ -94,9 +94,6 @@ setup(
     # },
     install_requires= [ 'numpy','matplotlib','tqdm','colorama','pydataset'],
     include_package_data=True,
-    package_data = {
-        'edunn': ['*.csv'],
-    },
     license='GNU Affero General Public License v3 or later (AGPLv3+)',
     classifiers=[
         # Trove classifiers

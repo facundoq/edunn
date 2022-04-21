@@ -5,7 +5,7 @@
 
 ## :brain: Learn how modern, modular Neural Networks work by implementing a PyTorch/Keras-like framework.
 
-`edunn` is a very simple library that contains the basic elements to define, train and use **modular** Neural Networks using just Python and Numpy ([full example](https://colab.research.google.com/github/facundoq/edunn/examples/iris_classification.ipynb)).
+`edunn` is a very simple library that contains the basic elements to define, train and use **modular** Neural Networks using just Python and Numpy ([full example](https://colab.research.google.com/github/facundoq/edunn/blob/main/samples/iris_classification.ipynb)).
 
 ````python
 import edunn as nn
