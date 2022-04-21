@@ -47,7 +47,7 @@ if __name__ == '__main__':
     ********************************************
     * This script will compile and zip a guide *
     * Only run this command from the root of   *
-    * the simplnn library                      * 
+    * the edunn library                        * 
     ********************************************
     """)
 

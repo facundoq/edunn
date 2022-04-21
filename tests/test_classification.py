@@ -1,11 +1,11 @@
 import sys
 
-import simplenn.models.mean_error
+import edunn.models.mean_error
 
 sys.path.insert(0, '..')
-import simplenn as sn
+import edunn as nn
 import numpy as np
-from simplenn import metrics, datasets
+from edunn import metrics, datasets
 from typing import Callable
 
 
@@ -26,14 +26,14 @@ def evaluate_classification_model(dataset_name:str, model_generator:Callable, ep
     print(f"Testing model {model} on dataset {dataset_name}: {n} samples, {din} features, {n_classes} classes")
     batch_size=min(16,max(64,n//32))
     batch_size = min(n,batch_size)
-    optimizer = sn.GradientDescent(batch_size, epochs, lr)
+    optimizer = nn.GradientDescent(batch_size, epochs, lr)
 
     if n_classes==2:
-        sample_error=sn.BinaryCrossEntropy()
+        sample_error=nn.BinaryCrossEntropy()
     else:
-        sample_error=sn.CrossEntropyWithLabels()
+        sample_error=nn.CrossEntropyWithLabels()
 
-    error = simplenn.models.mean_error.MeanError(sample_error)
+    error = edunn.models.mean_error.MeanError(sample_error)
     optimizer.optimize(model,x,y,error)
     y_pred = model.forward(x)
     y_pred_labels= np.argmax(y_pred,axis=1)
@@ -62,15 +62,15 @@ def test_logistic_regression():
     def logistic_regression(din, classes):
         if classes==2:
             classes=1
-            last_layer=sn.Sigmoid()
+            last_layer=nn.Sigmoid()
         else:
-            last_layer=sn.Softmax()
+            last_layer=nn.Softmax()
 
-        layers = [sn.Linear(din,classes),
-                  sn.Bias(classes),
+        layers = [nn.Linear(din, classes),
+                  nn.Bias(classes),
                   last_layer,
                   ]
-        return sn.Sequential(layers,"logistic_regression")
+        return nn.Sequential(layers, "logistic_regression")
 
     evaluate_classification_model_datasets(logistic_regression, config_datasets)
 
@@ -87,16 +87,16 @@ def test_classification_network():
 
         if classes==2:
             classes=1
-            last_layer=sn.Sigmoid()
+            last_layer=nn.Sigmoid()
         else:
-            last_layer=sn.Softmax()
+            last_layer=nn.Softmax()
 
-        layers = [sn.Dense(din,din),
-                  sn.ReLU(),
-                  sn.Dense(din,classes),
+        layers = [nn.Dense(din, din),
+                  nn.ReLU(),
+                  nn.Dense(din, classes),
                   last_layer,
                   ]
-        return sn.Sequential(layers,"network2")
+        return nn.Sequential(layers, "network2")
 
 
     evaluate_classification_model_datasets(network, config_datasets)

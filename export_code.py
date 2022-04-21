@@ -52,7 +52,7 @@ def remove_implementation(filepath:Path):
     return modifications
 
 generated_path = Path("generated")
-lib_name = "simplenn"
+lib_name = "edunn"
 lib_folderpath = generated_path / lib_name
 import sys
 

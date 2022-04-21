@@ -1,7 +1,7 @@
 
-import simplenn as sn
-import simplenn.models.mean_error
-from simplenn import metrics, datasets
+import edunn as nn
+import edunn.models.mean_error
+from edunn import metrics, datasets
 from typing import Callable
 
 
@@ -23,8 +23,8 @@ def evaluate_regression_model(dataset_name:str, model_generator:Callable, epochs
     batch_size=min(16,max(64,n//32))
     batch_size = min(n,batch_size)
 
-    optimizer = sn.GradientDescent(batch_size, epochs, lr)
-    error = simplenn.models.mean_error.MeanError(sn.SquaredError())
+    optimizer = nn.GradientDescent(batch_size, epochs, lr)
+    error = edunn.models.mean_error.MeanError(nn.SquaredError())
 
     optimizer.optimize(model,x,y,error,)
     y_pred = model.forward(x)
@@ -54,10 +54,10 @@ def test_linear_regression():
     }
 
     def linear_regression(din, dout):
-        layers = [sn.Linear(din,dout),
-                  sn.Bias(dout)
+        layers = [nn.Linear(din, dout),
+                  nn.Bias(dout)
                   ]
-        return sn.Sequential(layers,"linear_regression")
+        return nn.Sequential(layers, "linear_regression")
 
 
     evaluate_regression_model_datasets(linear_regression, config_datasets)
@@ -68,8 +68,8 @@ def test_regression_network():
         "boston":ExperimentConfig(3.2),
         "study1d":ExperimentConfig(2,epochs=2000),
         "study2d":ExperimentConfig(3,epochs=2000),
-        "wine_white":ExperimentConfig(0.65),
-        "wine_red":ExperimentConfig(0.55),
+        "wine_white":ExperimentConfig(0.65,epochs=100),
+        "wine_red":ExperimentConfig(0.55,epochs=100),
         "insurance":ExperimentConfig(4500,lr=1e-6,epochs=500),
         "real_state":ExperimentConfig(6.20),
     }
@@ -77,10 +77,10 @@ def test_regression_network():
 
 
     def network(din,dout):
-        layers = [sn.Dense(din,din),
-                  sn.ReLU(),
-                  sn.Dense(din,dout),]
-        return sn.Sequential(layers,"network2")
+        layers = [nn.Dense(din, din),
+                  nn.ReLU(),
+                  nn.Dense(din, dout), ]
+        return nn.Sequential(layers, "network2")
 
 
     evaluate_regression_model_datasets(network, config_datasets)

@@ -12,8 +12,8 @@ import io
 from pathlib import Path
 
 # Package meta-data.
-NAME = 'simplenn'
-URL="https://github.com/facundoq/simplenn"
+NAME = 'edunn'
+URL="https://github.com/facundoq/edunn"
 
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -27,7 +27,7 @@ except FileNotFoundError:
     long_description = "No README.md in your MANIFEST.in"
 
 # Load the package's __version__.py module as a dictionary.
-VERSION = "0.1.0"
+VERSION = "0.1.2"
 
 
 class UploadCommand(Command):
@@ -73,7 +73,7 @@ class UploadCommand(Command):
 setup(
     name=NAME,
     version=VERSION,
-    description='A single library to (down)load all existing sign language handshape datasets. This library allows you to automatically download and load various sign language handshape datasets. Currently supporting 13 different datasets.',
+    description='An educational implementation of a Keras-like neural network framework. ',
     long_description=long_description,
     long_description_content_type='text/markdown',
     author='Facundo Quiroga',
@@ -85,9 +85,9 @@ setup(
         "Documentation": URL,
         "Source Code": URL,
     },
-    #packages=find_packages(exclude=('simplenn','samples')),
+    #packages=find_packages(exclude=('edunn','samples')),
     # If your package is a single module, use this instead of 'packages':
-    py_modules=['simplenn'],
+    py_modules=['edunn'],
 
     # entry_points={
     #     'console_scripts': ['mycli=mymodule:cli'],

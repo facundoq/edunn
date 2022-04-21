@@ -1,7 +1,7 @@
-import simplenn as sn
+import edunn as nn
 
-from simplenn.utils.check_gradient import common_layer
-from simplenn.utils.check_gradient import cross_entropy_labels, \
+from edunn.utils.check_gradient import common_layer
+from edunn.utils.check_gradient import cross_entropy_labels, \
     squared_error, \
     binary_cross_entropy_labels
 
@@ -12,38 +12,38 @@ def test_gradients():
     shape = (n, features)
     samples = 100
 
-    ac = sn.AddConstant(4)
+    ac = nn.AddConstant(4)
     common_layer(ac, shape, samples=samples)
 
-    mc = sn.MultiplyConstant(4)
+    mc = nn.MultiplyConstant(4)
     common_layer(mc, shape, samples=samples)
 
-    layer = sn.Bias(features, initializer=sn.initializers.RandomUniform())
+    layer = nn.Bias(features, initializer=nn.initializers.RandomUniform())
     common_layer(layer, shape, samples=samples)
 
-    layer = sn.Linear(features, features)
+    layer = nn.Linear(features, features)
     common_layer(layer, shape, samples=samples)
 
-    layer = sn.Dense(features, features)
+    layer = nn.Dense(features, features)
     common_layer(layer, shape, samples=samples)
 
-    layer = sn.ReLU()
+    layer = nn.ReLU()
     common_layer(layer, shape, samples=samples)
 
-    layer = sn.TanH()
+    layer = nn.TanH()
     common_layer(layer, shape, samples=samples)
 
-    layer = sn.Sigmoid()
+    layer = nn.Sigmoid()
     common_layer(layer, shape, samples=samples)
 
-    layer = sn.Softmax()
+    layer = nn.Softmax()
     common_layer(layer, shape, samples=samples)
 
-    layer = sn.SquaredError()
+    layer = nn.SquaredError()
     squared_error(layer, shape, samples=samples, tolerance=1e-3)
 
-    layer = sn.BinaryCrossEntropy()
+    layer = nn.BinaryCrossEntropy()
     binary_cross_entropy_labels(layer, 3, samples=samples, tolerance=1e-3)
 
-    layer = sn.CrossEntropyWithLabels()
+    layer = nn.CrossEntropyWithLabels()
     cross_entropy_labels(layer, (2, 5), samples=samples, tolerance=1e-3)
