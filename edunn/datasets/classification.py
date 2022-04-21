@@ -1,7 +1,7 @@
 import numpy as np
 from . import basepath
 
-classification_basepath=basepath/ "classification"
+classification_basepath=basepath/ "classification_data"
 
 def load_classification_dataset(filename,classes):
     data=np.loadtxt(classification_basepath / filename,skiprows=1,delimiter=",")

@@ -38,26 +38,28 @@ Supported languages:
 
 ## :rainbow: Why `edunn`?
 
-There are many excellent courses or books that teach you how to program neural networks from the ground up such as [*CS231n: Convolutional Neural Networks for Visual Recognition*](https://cs231n.github.io/), Andrew Ng's [*Machine Learning*](https://www.coursera.org/learn/machine-learning) or Sebastian Rascha's [Python Machine Learning](https://sebastianraschka.com/books/#python-machine-learning-3rd-edition). However, while these are great for understanding the basics using `numpy`, they use monolithic neural network models that make it difficult to understand how that code translates to other frameworks such as `pytorch` or `tensorflow`.
+There are many excellent courses and books that teach you how to program neural networks from the ground up such as [*CS231n: Convolutional Neural Networks for Visual Recognition*](https://cs231n.github.io/), Andrew Ng's [*Machine Learning*](https://www.coursera.org/learn/machine-learning) or Sebastian Rascha's [Python Machine Learning](https://sebastianraschka.com/books/#python-machine-learning-3rd-edition). However, while these are great for understanding the basics using `numpy`, they use monolithic neural network models that make it difficult to understand how that code translates to other frameworks such as `pytorch` or `tensorflow`.
 
-Alternatively, [Andrew Ng's *Deep Learning*](https://www.coursera.org/specializations/deep-learning) or [*FastAI*](https://course19.fast.ai/part2) build modular networks out of `tensorflow` or basic `pytorch` operators instead of numpy. This is great to build complex models quickly, but there's still a lot of magic under the hood. Both frameworks automatically derive `backward` methods and bring along other goodies. 
+Alternatively, [Andrew Ng's *Deep Learning*](https://www.coursera.org/specializations/deep-learning) or [*FastAI*](https://course19.fast.ai/part2) build modular networks out of `tensorflow` or basic `pytorch` operators instead of numpy. This is great for building complex models quickly, but there's still a lot of magic under the hood. Both frameworks automatically derive `backward` methods and bring along other goodies. 
 
-Reimplementing `edunn` allows you to understand how modern neural networks frameworks work and fills the gap between those types of learning. You get to program a full neural network framework, without all the magic `pytorch` or `tensorflow` bring along. Of course, `edunn` does help you out along the way and provides many 
+Implementing `edunn` allows you to understand how modern neural networks frameworks work and fills the gap between those types of learning. You get to program a full neural network framework, without all the magic `pytorch` or `tensorflow` bring along. Of course, `edunn` guides help you out along the way and provide a clear path to complete the implementation of the library. Also, in this case you'd actually be _reimplementing_ `edunn`, since we provide a reference implementation you can check when in doubt with your solutions.
 
 
 ## :heavy_plus_sign: Pre-requisite knowledge
 
-The guides are intended for learners with some experience with Python, Numpy and Neural Networks. We have included explanations of what you should implement, but learners still should be able to:
+The guides are intended for learners with some experience with Python, Numpy and Neural Networks. We have included explanations of what you must implement, but learners still should be able to:
 
 1. Read and write object-oriented python code, including subclassing and method overriding.
 2. Understand Numpy, basic linear algebra and calculus and be able to translate  mathematical operations to Numpy code.
-3. Understand the basic ideas in modern modular Neural Network frameworks, such as models, layers, optimizers, batches, backward and forward passes, and specially backpropagation. It is also helpful to have previous exposure to `tensorflow/keras` or `pytorch`, but not necessary.
+3. Understand the basic ideas in modern modular Neural Network frameworks, such as models, layers, optimizers, batches, backward and forward passes, and specially backpropagation. It is also helpful but not necessary to have previous exposure to `tensorflow/keras` or `pytorch`.
 
 ## :wrench: Download and setup
 
-**Do not clone** this repository if you want to use `edunn` as a learning exercise. Instead use the following instructions. These instructions assume a working installation of python3 (3.6 or greater), pip3 and virtualenv. The installations of those varies wildly with OS/distribution so its up to you to get a setup working. Afterwards: 
+**Do not clone** this repository if you want to use `edunn` as a learning exercise. Instead, follow these steps to get a working environment for the guides. These instructions assume a working installation of python3 (3.6 or greater), pip3 and virtualenv. The installations of those vary wildly with OS/distribution so it's up to you to get a setup working.
 
-1. Download a [release](https://github.com/facundoq/edunn/blob/main/releases) for your language. If you prefer the command line, use `wget`, replacing `es` with your preferred language (only `es` currently supported):
+Afterward: 
+
+1. Download a [release](https://github.com/facundoq/edunn/blob/main/releases) for your language. If you prefer the command line, use `wget`, replacing `es` with your preferred language (only `es` is currently supported):
 
     `wget https://github.com/facundoq/edunn/blob/main/releases/edunn-es.zip`
 
@@ -131,7 +133,7 @@ optimizer = nn.StochasticGradientDescent(lr=0.001, epochs=1000, batch_size=32)
 history = optimizer.optimize(model, x, y, error)
 ````
 
-However, we **do not recommend** doing so since the library is *slow* and not meant for neither research nor production environments. The reference implementation is mostly focused on being easy to understand so that learners can check their implementations.
+However, we **do not recommend** for serious projects since the library is *very slow* and not meant for neither research nor production environments. The reference implementation is mostly focused on being easy to understand so that learners can check their implementations.
 
 ## :busts_in_silhouette: Contributing
 

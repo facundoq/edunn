@@ -27,7 +27,7 @@ except FileNotFoundError:
     long_description = "No README.md in your MANIFEST.in"
 
 # Load the package's __version__.py module as a dictionary.
-VERSION = "0.1.2"
+VERSION = "0.1.4"
 
 
 class UploadCommand(Command):
@@ -85,15 +85,18 @@ setup(
         "Documentation": URL,
         "Source Code": URL,
     },
-    #packages=find_packages(exclude=('edunn','samples')),
+     packages=find_packages(exclude=('samples',"guides","releases","generated","tests")),
     # If your package is a single module, use this instead of 'packages':
-    py_modules=['edunn'],
+    
 
     # entry_points={
     #     'console_scripts': ['mycli=mymodule:cli'],
     # },
     install_requires= [ 'numpy','matplotlib','tqdm','colorama','pydataset'],
     include_package_data=True,
+    package_data = {
+        'edunn': ['*.csv'],
+    },
     license='GNU Affero General Public License v3 or later (AGPLv3+)',
     classifiers=[
         # Trove classifiers

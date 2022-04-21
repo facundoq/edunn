@@ -1,7 +1,7 @@
 import numpy as np
 from . import basepath
 
-regression_basepath=basepath/ "regression"
+regression_basepath=basepath/ "regression_data"
 def load_regression_dataset(filename,output_values=1):
     data=np.loadtxt(regression_basepath / filename,skiprows=1,delimiter=",")
     x = data[:,:-output_values]
