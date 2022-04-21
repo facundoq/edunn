@@ -27,7 +27,7 @@ except FileNotFoundError:
     long_description = "No README.md in your MANIFEST.in"
 
 # Load the package's __version__.py module as a dictionary.
-VERSION = "0.1.4"
+VERSION = "0.1.6"
 
 
 class UploadCommand(Command):
@@ -92,7 +92,7 @@ setup(
     # entry_points={
     #     'console_scripts': ['mycli=mymodule:cli'],
     # },
-    install_requires= [ 'numpy','matplotlib','tqdm','colorama','pydataset'],
+    install_requires= [ 'numpy','matplotlib','tqdm','colorama'],
     include_package_data=True,
     license='GNU Affero General Public License v3 or later (AGPLv3+)',
     classifiers=[
