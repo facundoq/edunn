@@ -3,7 +3,6 @@ numpy
 matplotlib
 tqdm
 colorama
-pydataset
 
 # guide requirements
 ipython

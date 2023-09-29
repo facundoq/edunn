@@ -1,6 +1,6 @@
 eps = 1e-12
 
-from .model import ErrorModel,Model,Phase, ModelWithParameters
+from .model import Model,Phase,ModelWithParameters, ModelWithoutParameters
 from .optimizer import Optimizer,BatchedGradientOptimizer,GradientDescent,MomentumGD,NesterovMomentumGD,SignGD
 from . import initializers,plot
 

@@ -1,7 +1,7 @@
 from edunn.model import ModelWithParameters
 import numpy as np
 from edunn.initializers import Initializer, Zero
-
+import edunn
 
 class Bias(ModelWithParameters):
     '''
@@ -13,10 +13,10 @@ class Bias(ModelWithParameters):
 
     '''
 
-    def __init__(self, output_size: int, initializer: Initializer = None, name=None):
+    def __init__(self, output_size: int, initializer: edunn.initializers.Initializer = None, name=None):
         super().__init__(name=name)
         if initializer is None:
-            initializer = Zero()
+            initializer = edunn.initializers.Zero()
         b = initializer.create((output_size,))
         self.register_parameter("b", b)
 

@@ -5,7 +5,7 @@
 from typing import Dict
 import numpy as np
 from .model import Model,Phase
-from .model import ErrorModel, ParameterSet
+from .model import  ParameterSet
 import sys,abc
 from tqdm.auto import tqdm
 
@@ -54,7 +54,7 @@ class BatchedGradientOptimizer(Optimizer):
         self.epochs=epochs
         self.shuffle=shuffle
 
-    def backpropagation(self,model:Model, x:np.ndarray, y_true:np.ndarray, error_layer:ErrorModel):
+    def backpropagation(self,model:Model, x:np.ndarray, y_true:np.ndarray, error_layer:Model):
         # forward pass (model and error)
         y = model.forward(x)
         E = error_layer.forward(y_true, y)
@@ -65,7 +65,7 @@ class BatchedGradientOptimizer(Optimizer):
 
         return δEδx,δEδps,E
 
-    def optimize(self, model:Model, x:np.ndarray, y:np.ndarray, error_layer:ErrorModel, verbose=True):
+    def optimize(self, model:Model, x:np.ndarray, y:np.ndarray, error_layer:Model, verbose=True):
         '''
         Fit a model to a dataset.
         :param model: the Model to optimize
@@ -92,7 +92,7 @@ class BatchedGradientOptimizer(Optimizer):
         return np.array(history)
 
     @abc.abstractmethod
-    def optimize_batch(self, model:Model, x:np.ndarray, y:np.ndarray, error_layer:ErrorModel, epoch:int):
+    def optimize_batch(self, model:Model, x:np.ndarray, y:np.ndarray, error_layer:Model, epoch:int):
         pass
 
 class GradientDescent(BatchedGradientOptimizer):

@@ -16,7 +16,7 @@ def mae(y_true:np.ndarray,y_pred:np.ndarray)->float:
 def check_label_array(y:np.ndarray):
     if  len(y.shape)!=1:
         raise ValueError(f"True labels array must have a single dimension (shape is {y.shape} instead)")
-    if not np.issubdtype(y.dtype, np.integer):
+    if not np.issubdtype(y.dtype, int):
         raise ValueError(f"True labels array must be of type int (type is {y.dtype} instead)")
 
 def check_binary(y:np.ndarray):
@@ -60,7 +60,7 @@ def confusion(y_true:np.ndarray,y_pred:np.ndarray)->np.ndarray:
     check_label_array(y_pred)
 
     classes = y_true.max()+1
-    c = np.zeros((classes,classes),dtype=np.int)
+    c = np.zeros((classes,classes),dtype=int)
     n = len(y_true)
     for i in range(n):
         c[y_true[i],y_pred[i]]+=1

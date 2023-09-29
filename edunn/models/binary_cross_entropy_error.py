@@ -1,9 +1,9 @@
 import numpy as np
 
-from ..model import ErrorModel
+from ..model import ModelWithoutParameters
 import edunn as nn
 
-class BinaryCrossEntropy(ErrorModel):
+class BinaryCrossEntropy(ModelWithoutParameters):
 
     '''
     Returns the CrossEntropy between two binary class distributions

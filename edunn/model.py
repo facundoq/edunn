@@ -3,6 +3,8 @@ import numpy as np
 from enum import Enum
 
 class_counter = {}
+model_name_registry = []
+
 from typing import Tuple, Dict
 
 
@@ -27,11 +29,19 @@ class Model(ABC):
     '''
 
     def __init__(self, name=None):
+        '''
+        Create a model with a name. Name's should be unique so that gradients from different models can be updated independently.
+        '''
+    
         if name is None:
+            ' auto generate a name if not provided'
             class_name = self.__class__.__name__
             count = class_counter.get(class_name, 0)
             name = f"{class_name}_{count}"
             class_counter[class_name] = count + 1
+        assert not (name in model_name_registry), f"The model name {name} has already been used, see model_name_registry: {model_name_registry}."
+        model_name_registry.append(name)
+        
         self.phase = Phase.Training
 
         self.name = name
@@ -105,20 +115,6 @@ class ModelWithoutParameters(Model):
         return {}
 
 
-class ErrorModel(ModelWithoutParameters):
-    '''
-    Helper class to implement layers _without_ parameters
-    '''
 
-    def __init__(self, name=None):
-        super().__init__(name=name)
-
-    @abstractmethod
-    def forward(self, y_true: np.ndarray, y: np.ndarray):
-        pass
-
-    @abstractmethod
-    def backward(self, δE: float) -> (np.ndarray, ParameterSet):
-        pass
 
 

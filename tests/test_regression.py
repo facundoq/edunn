@@ -12,13 +12,13 @@ class ExperimentConfig:
         self.epochs=epochs
 
 
-def evaluate_regression_model(dataset_name:str, model_generator:Callable, epochs:int, lr:float):
+def evaluate_regression_model(dataset_name:str, model_generator:Callable, epochs:int, lr:float,id:str):
     x,y = datasets.load_regression(dataset_name)
     x = x-x.mean(axis=0)
     x /= x.std(axis=0)
     n,din=x.shape
     _,dout=y.shape
-    model = model_generator(din,dout)
+    model = model_generator(din,dout,id)
     print(f"Testing model {model} on dataset {dataset_name}: {n} samples, {din} features, {dout} output values")
     batch_size=min(16,max(64,n//32))
     batch_size = min(n,batch_size)
@@ -35,9 +35,9 @@ def evaluate_regression_model(dataset_name:str, model_generator:Callable, epochs
 
 def evaluate_regression_model_datasets(model_generator, datasets_config):
 
-    for dataset_name,config in datasets_config.items():
+    for i,(dataset_name,config) in enumerate(datasets_config.items()):
         lr,epochs,max_mse = config.lr,config.epochs,config.max_mse
-        model,mse,mae=evaluate_regression_model(dataset_name, model_generator, epochs, lr)
+        model,mse,mae=evaluate_regression_model(dataset_name, model_generator, epochs, lr,str(i))
         assert mse<config.max_mse,f"Model {model} achieved {mse} rmse, more than  {max_mse} which is the maximum expected for dataset {dataset_name}."
         print(f"\nRMSE={mse} OK (expected less than {max_mse}).")
     print("All models have satisfactory errors.")
@@ -53,11 +53,11 @@ def test_linear_regression():
         "real_state":ExperimentConfig(6.20),
     }
 
-    def linear_regression(din, dout):
+    def linear_regression(din, dout,id):
         layers = [nn.Linear(din, dout),
                   nn.Bias(dout)
                   ]
-        return nn.Sequential(layers, "linear_regression")
+        return nn.Sequential(layers, f"linear_regression_{id}")
 
 
     evaluate_regression_model_datasets(linear_regression, config_datasets)
@@ -76,11 +76,11 @@ def test_regression_network():
 
 
 
-    def network(din,dout):
+    def network(din,dout,id):
         layers = [nn.Dense(din, din),
                   nn.ReLU(),
                   nn.Dense(din, dout), ]
-        return nn.Sequential(layers, "network2")
+        return nn.Sequential(layers, f"network_{id}")
 
 
     evaluate_regression_model_datasets(network, config_datasets)

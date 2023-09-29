@@ -10,8 +10,8 @@ from .activations import Softmax
 
 class LogisticRegression(ModelWithParameters):
     '''
-    A LinearRegression model applies a linear and bias function, in that order, to an input, ie
-    y = wx+b, where w and b are the parameters of the Linear and Bias models,
+    A LogisticRegression model applies a softmax function to linear and bias function, in that order, to an input, ie
+    y = softmax(wx+b), where w and b are the parameters of the Linear and Bias models
 
     '''
 

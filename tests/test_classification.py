@@ -15,18 +15,18 @@ class ExperimentConfig:
         self.lr=lr
         self.epochs=epochs
 
-def evaluate_classification_model(dataset_name:str, model_generator:Callable, epochs:int, lr:float):
+def evaluate_classification_model(dataset_name:str, model_generator:Callable, epochs:int, lr:float,id:str):
     x,y,classes = datasets.load_classification(dataset_name)
     x = x-x.mean(axis=0)
     x /= x.std(axis=0)
     n,din=x.shape
     assert (n == len(y))
     n_classes =len(classes)
-    model = model_generator(din,n_classes)
+    model = model_generator(din,n_classes,id)
     print(f"Testing model {model} on dataset {dataset_name}: {n} samples, {din} features, {n_classes} classes")
     batch_size=min(16,max(64,n//32))
     batch_size = min(n,batch_size)
-    optimizer = nn.GradientDescent(batch_size, epochs, lr)
+    optimizer = nn.GradientDescent(batch_size, epochs//10, lr)
 
     if n_classes==2:
         sample_error=nn.BinaryCrossEntropy()
@@ -44,9 +44,9 @@ def evaluate_classification_model(dataset_name:str, model_generator:Callable, ep
 
 def evaluate_classification_model_datasets(model_generator, datasets_config):
 
-    for dataset_name,config in datasets_config.items():
+    for i,(dataset_name,config) in datasets_config.items():
         lr,epochs,min_accuracy = config.lr,config.epochs,config.min_accuracy
-        model,accuracy=evaluate_classification_model(dataset_name, model_generator, epochs, lr)
+        model,accuracy=evaluate_classification_model(dataset_name, model_generator, epochs, lr,str(i))
         assert min_accuracy<=accuracy,f"Model {model} achieved {accuracy} accuracy, less that  {min_accuracy} which is the expected for dataset {dataset_name}"
         print(f"Accuracy={accuracy} OK (expected more than {min_accuracy})\n")
     print("All models have satisfactory accuracies.\n")
@@ -59,7 +59,7 @@ def test_logistic_regression():
         "iris":ExperimentConfig(0.95,epochs=2000),
     }
 
-    def logistic_regression(din, classes):
+    def logistic_regression(din, classes,id):
         if classes==2:
             classes=1
             last_layer=nn.Sigmoid()
@@ -70,7 +70,7 @@ def test_logistic_regression():
                   nn.Bias(classes),
                   last_layer,
                   ]
-        return nn.Sequential(layers, "logistic_regression")
+        return nn.Sequential(layers, f"logistic_regression_{id}")
 
     evaluate_classification_model_datasets(logistic_regression, config_datasets)
 
@@ -83,7 +83,7 @@ def test_classification_network():
     }
 
 
-    def network(din,classes):
+    def network(din,classes,id):
 
         if classes==2:
             classes=1
@@ -96,7 +96,7 @@ def test_classification_network():
                   nn.Dense(din, classes),
                   last_layer,
                   ]
-        return nn.Sequential(layers, "network2")
+        return nn.Sequential(layers, f"network_{id}")
 
 
     evaluate_classification_model_datasets(network, config_datasets)

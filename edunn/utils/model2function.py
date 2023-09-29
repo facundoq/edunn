@@ -29,7 +29,7 @@ def common_layer_to_function(l:nn.ModelWithParameters):
     parameter_shapes = {k:v.shape for k,v in l.get_parameters().items()}
     return f,df,parameter_shapes
 
-def error_layer_to_function(l:nn.ErrorModel):
+def error_layer_to_function(l:nn.Model):
 
     def f(inputs:Dict[str,np.ndarray]):
         old_params = l.get_parameters().copy()
