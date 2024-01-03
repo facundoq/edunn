@@ -6,6 +6,16 @@ from ..initializers import Initializer,RandomNormal
 from .bias import Bias
 
 
+def dilate2d(x, dilation):
+    b, c, h, w = x.shape
+    x_dilated = np.zeros((b, c, h + (h-1)*(dilation-1), w + (w-1)*(dilation-1)))
+
+    ### YOUR IMPLEMENTATION START  ###
+    x_dilated[:, :, ::dilation, ::dilation] = x
+    ### YOUR IMPLEMENTATION END  ###
+
+    return x_dilated
+
 def pad2d(x, pad_size):
     b,c,h,w=x.shape
     new_shape = (b,c,h+2*pad_size,w+2*pad_size)
@@ -53,9 +63,11 @@ def conv2d_forward(w, x, strides = (1,1), pad_size = 0):
 
     return y
 
-def conv2d_backward_x(w, x, input_x, pad_size = 0):
-    ## Pad the input X before doing the convolution
+def conv2d_backward_x(w, x, input_x, strides = (1,1), pad_size = 0):
+    ## Dilate and pad the input X before doing the convolution
     ### YOUR IMPLEMENTATION START  ###
+    if strides[0]>1:
+        x = dilate2d(x, strides[0])
     if pad_size>0:
         x = pad2d(x, pad_size)
     ### YOUR IMPLEMENTATION END  ###
@@ -84,7 +96,15 @@ def conv2d_backward_x(w, x, input_x, pad_size = 0):
 
     return y
 
-def conv2d_backward_w(w, x, input_w):
+def conv2d_backward_w(w, x, input_w, strides = (1,1), pad_size = 0):
+    ## Pad the input X and dilate the filter W before doing the convolution
+    ### YOUR IMPLEMENTATION START  ###
+    if pad_size>0:
+        x = pad2d(x, pad_size)
+    if strides[0]>1:
+        w = dilate2d(w, strides[0])
+    ### YOUR IMPLEMENTATION END  ###
+
     bx,cx,hx,wx = x.shape
     bw,cw,hw,ww = w.shape
 
@@ -157,10 +177,10 @@ class Convolution2D(ModelWithParameters):
 
         ### YOUR IMPLEMENTATION START  ###
         w_flipped = np.flip(w,axis=(2,3))
-        full_pad = w.shape[-1]-1
-        δEδx = conv2d_backward_x(w_flipped,δEδy,x,full_pad)
+        full_pad = w.shape[-1]-1-self.pad_size
+        δEδx = conv2d_backward_x(w_flipped,δEδy,x,self.strides,full_pad)
 
-        δEδw = conv2d_backward_w(δEδy,x,w)
+        δEδw = conv2d_backward_w(δEδy,x,w,self.strides,self.pad_size)
         ### YOUR IMPLEMENTATION END  ###
 
         return δEδx, {"w":δEδw}
