@@ -8,21 +8,23 @@ from .bias import Bias
 
 def dilate2d(x, dilation):
     b, c, h, w = x.shape
-    x_dilated = np.zeros((b, c, h + (h-1)*(dilation-1), w + (w-1)*(dilation-1)))
+    dilation_h, dilation_w = dilation
+    x_dilated = np.zeros((b, c, h + (h-1)*(dilation_h-1), w + (w-1)*(dilation_w-1)))
 
     ### YOUR IMPLEMENTATION START  ###
-    x_dilated[:, :, ::dilation, ::dilation] = x
+    x_dilated[:, :, ::dilation_h, ::dilation_w] = x
     ### YOUR IMPLEMENTATION END  ###
 
     return x_dilated
 
 def pad2d(x, pad_size):
     b,c,h,w=x.shape
-    new_shape = (b,c,h+2*pad_size,w+2*pad_size)
+    pad_size_h, pad_size_w = pad_size
+    new_shape = (b,c,h+2*pad_size_h,w+2*pad_size_w)
     x_padded = np.zeros(new_shape)
 
     ### YOUR IMPLEMENTATION START  ###
-    x_padded[:,:,pad_size: -pad_size,pad_size: -pad_size] = x
+    x_padded[:,:,pad_size_h: -pad_size_h if pad_size_h>0 else h,pad_size_w: -pad_size_w] = x
     ### YOUR IMPLEMENTATION END  ###
 
     return x_padded
@@ -30,10 +32,10 @@ def pad2d(x, pad_size):
 def is_odd(x):
     return x%2 == 1
 
-def conv2d_forward(w, x, strides = (1,1), pad_size = 0):
+def conv2d_forward(w, x, strides = (1,1), pad_size = (0, 0)):
     ## Pad the input X before doing the convolution
     ### YOUR IMPLEMENTATION START  ###
-    if pad_size>0:
+    if pad_size[-1]>0:
         x = pad2d(x, pad_size)
     ### YOUR IMPLEMENTATION END  ###
 
@@ -63,12 +65,12 @@ def conv2d_forward(w, x, strides = (1,1), pad_size = 0):
 
     return y
 
-def conv2d_backward_x(w, x, input_x, strides = (1,1), pad_size = 0):
+def conv2d_backward_x(w, x, input_x, strides = (1,1), pad_size = (0, 0)):
     ## Dilate and pad the input X before doing the convolution
     ### YOUR IMPLEMENTATION START  ###
-    if strides[0]>1:
-        x = dilate2d(x, strides[0])
-    if pad_size>0:
+    if strides[-1]>1:
+        x = dilate2d(x, strides)
+    if pad_size[-1]>0:
         x = pad2d(x, pad_size)
     ### YOUR IMPLEMENTATION END  ###
 
@@ -96,13 +98,13 @@ def conv2d_backward_x(w, x, input_x, strides = (1,1), pad_size = 0):
 
     return y
 
-def conv2d_backward_w(w, x, input_w, strides = (1,1), pad_size = 0):
+def conv2d_backward_w(w, x, input_w, strides = (1,1), pad_size = (0, 0)):
     ## Pad the input X and dilate the filter W before doing the convolution
     ### YOUR IMPLEMENTATION START  ###
-    if pad_size>0:
+    if pad_size[-1]>0:
         x = pad2d(x, pad_size)
-    if strides[0]>1:
-        w = dilate2d(w, strides[0])
+    if strides[-1]>1:
+        w = dilate2d(w, strides)
     ### YOUR IMPLEMENTATION END  ###
 
     bx,cx,hx,wx = x.shape
@@ -141,11 +143,14 @@ class Convolution2D(ModelWithParameters):
         super().__init__(name=name)
         self.input_size=in_channels
         self.output_size=out_channels
-        self.strides = (stride, stride)
-        self.pad_size = padding
+        kh,kw=kernel_size
+        stride_h,pad_size_h=stride,padding
+        if kh==1: #Convolution1D
+            stride_h,pad_size_h=1,0
+        self.strides = (stride_h, stride)
+        self.pad_size = (pad_size_h, padding)
         if kernel_initializer is None:
             kernel_initializer = RandomNormal()
-        kh,kw=kernel_size
         shape = (out_channels,in_channels,kh,kw)
         w = kernel_initializer.create(shape)
         self.register_parameter("w", w)
@@ -177,7 +182,9 @@ class Convolution2D(ModelWithParameters):
 
         ### YOUR IMPLEMENTATION START  ###
         w_flipped = np.flip(w,axis=(2,3))
-        full_pad = w.shape[-1]-1-self.pad_size
+        ph = w.shape[2]-1-self.pad_size[0]
+        pw = w.shape[3]-1-self.pad_size[1]
+        full_pad = (ph,pw)
         δEδx = conv2d_backward_x(w_flipped,δEδy,x,self.strides,full_pad)
 
         δEδw = conv2d_backward_w(δEδy,x,w,self.strides,self.pad_size)
