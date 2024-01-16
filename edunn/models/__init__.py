@@ -10,6 +10,6 @@ from .dense import Dense
 from .linear_regression import LinearRegression
 from .convolution import Convolution2D
 from .flatten import Flatten
-from .pooling import MaxPool2d, MinPool2d, AvgPool2d
+from .pooling import MaxPool2d, AvgPool2d
 from .logistic_regression import LogisticRegression
 from .mean_error import MeanError
