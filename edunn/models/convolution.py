@@ -57,10 +57,7 @@ def conv2d_forward(w, x, strides = (1,1), pad_size = (0, 0)):
         for j in range(wy):
             for a in range(hw):
                 for b in range(ww):
-                    for k in range(cx):
-                        for l in range(bx):
-                            for m in range(bw):
-                                y[l,m,i,j] += w[m,k,a,b] * x[l,k,i*stride_h+a,j*stride_w+b]
+                    y[:,:,i,j] += np.einsum('mk,lk->lm', w[:,:,a,b], x[:,:,i*stride_h+a,j*stride_w+b])
     ### YOUR IMPLEMENTATION END  ###
 
     return y
@@ -90,10 +87,7 @@ def conv2d_backward_x(w, x, input_x, strides = (1,1), pad_size = (0, 0)):
         for j in range(wy):
             for a in range(hw):
                 for b in range(ww):
-                    for k in range(cw):
-                        for l in range(bw):
-                            for m in range(by):
-                                y[m,k,i,j] += w[l,k,a,b] * x[m,l,i+a,j+b]
+                    y[:,:,i,j] += np.einsum('lk,ml->mk', w[:,:,a,b], x[:,:,i+a,j+b])
     ### YOUR IMPLEMENTATION END  ###
 
     return y
@@ -122,10 +116,7 @@ def conv2d_backward_w(w, x, input_w, strides = (1,1), pad_size = (0, 0)):
         for j in range(wy):
             for a in range(hw):
                 for b in range(ww):
-                    for k in range(by):
-                        for l in range(cy):
-                            for m in range(bx):
-                                y[k,l,i,j] += w[m,k,a,b] * x[m,l,i+a,j+b]
+                    y[:,:,i,j] += np.einsum('mk,ml->kl', w[:,:,a,b], x[:,:,i+a,j+b])
     ### YOUR IMPLEMENTATION END  ###
 
     return y
