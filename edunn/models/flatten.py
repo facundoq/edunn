@@ -16,6 +16,6 @@ class Flatten(ModelWithoutParameters):
         δEδx = {}
         original_shape, = self.get_cache()
         ### YOUR IMPLEMENTATION START  ###
-        δEδx = δEδy.reshape(original_shape)
+        δEδx = δEδy.copy().reshape(original_shape)
         ### YOUR IMPLEMENTATION END  ###
         return δEδx, {}
