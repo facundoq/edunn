@@ -88,7 +88,7 @@ class XavierNormal(Initializer):
 class KaimingNormal(Initializer):
 
     def initialize(self,p:np.ndarray):
-        din,dout=p.shape
+        din,*dout=p.shape
         #TIP use np.random.normal(mu,std,shape)
         # to sample random numbers from a normal distribution
 
@@ -100,7 +100,7 @@ class KaimingNormal(Initializer):
 class KaimingUniform(Initializer):
 
     def initialize(self,p:np.ndarray):
-        din,dout=p.shape
+        din,*dout=p.shape
         #TIP use np.random.random_sample(shape)
         # to generate uniform randomnumbers between 0 and 1
 

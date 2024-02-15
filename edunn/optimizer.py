@@ -80,7 +80,7 @@ class BatchedGradientOptimizer(Optimizer):
         for epoch in bar:
             epoch_error=0
             for i,(x_batch,y_batch) in enumerate(batch_arrays(self.batch_size,x,y,shuffle=self.shuffle)):
-                δEδx, δEδps, batch_error = self.backpropagation(model, x, y, error_layer)
+                δEδx, δEδps, batch_error = self.backpropagation(model, x_batch, y_batch, error_layer)
                 self.optimize_batch(model,δEδps,epoch,i)
                 epoch_error+=batch_error
             epoch_error/=batches

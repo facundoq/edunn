@@ -16,8 +16,10 @@ study2d_easy = lambda: load_classification_dataset("study2d_easy.csv", ["Failed"
 study2d = lambda: load_classification_dataset("study2d.csv", ["Failed", "Passed"])
 study1d = lambda: load_classification_dataset("study1d.csv", ["Failed", "Passed"])
 iris = lambda: load_classification_dataset("iris.csv", ["setosa", "versicolor", "virginica"])
+mnist = lambda: load_classification_dataset("mnist.csv", [str(i) for i in range(10)])
 
 loaders = {
+    "mnist":mnist,
     "iris":iris,
     "study1d":study1d,
     "study2d":study2d,
