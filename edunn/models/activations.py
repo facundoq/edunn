@@ -1,5 +1,6 @@
 from edunn.model import ModelWithParameters,Cache,ModelWithoutParameters
 import numpy as np
+from scipy.special import erf
 
 class Identity(ModelWithParameters):
 
@@ -102,6 +103,36 @@ class ReLU(ModelWithoutParameters):
 
         return δEδx,{}
 
+
+def normal_pdf(x, mean=0, std=1):
+    # Calculate the probability density function of the normal distribution
+    pdf = np.zeros_like(x)
+    ### YOUR IMPLEMENTATION START  ###
+    pdf = (1 / (np.sqrt(2 * np.pi * std**2))) * np.exp(-((x - mean)**2) / (2 * std**2))
+    ### YOUR IMPLEMENTATION END  ###
+    return pdf
+
+class GELU(ModelWithoutParameters):
+
+    def forward(self, x:np.ndarray):
+        y = np.zeros_like(x)
+        cache = tuple()
+        ### YOUR IMPLEMENTATION START  ###
+        cdf = 0.5 * (1 + erf(x / 2.0**0.5))
+        y = x * cdf
+        cache = (x, cdf)
+        ### YOUR IMPLEMENTATION END  ###
+        self.set_cache(cache)
+        return y
+
+    def backward(self, δEδy:np.ndarray):
+        δEδx = np.zeros_like(δEδy)
+        (x, cdf), = self.get_cache()
+        ### YOUR IMPLEMENTATION START  ###
+        pdf_val = normal_pdf(x, 0, 1)
+        δEδx = δEδy * (cdf + x * pdf_val)
+        ### YOUR IMPLEMENTATION END  ###
+        return δEδx,{}
 
 class Sigmoid(ModelWithoutParameters):
 
