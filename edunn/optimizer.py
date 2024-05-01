@@ -111,6 +111,68 @@ class GradientDescent(BatchedGradientOptimizer):
                 p[:] = p - self.lr * δEδp
                 ### YOUR IMPLEMENTATION END  ###
 
+class RMSprop(BatchedGradientOptimizer):
+
+    def __init__(self,batch_size:int,epochs:int,lr:float=0.1,beta:float=0.99,eps:float=1e-8,shuffle=True):
+        super().__init__(batch_size,epochs,shuffle)
+        self.lr=lr
+        self.beta=beta
+        self.eps=eps
+        self.first=True
+        self.v={}
+
+    def optimize_batch(self, model:Model, δEδps:ParameterSet, epoch:int,iteration:int):
+        if self.first:
+            self.first=False
+            for k,p in model.get_parameters().items():
+                self.v[k]=np.zeros_like(p)
+
+        # Update parameters
+        parameters = model.get_parameters()
+        for parameter_name,δEδp in δEδps.items():
+                p = parameters[parameter_name]
+                # use p[:] so that updates are in-place
+                # instead of creating a new variable
+                ### YOUR IMPLEMENTATION START  ###
+                self.v[parameter_name] = self.beta * self.v[parameter_name] + (1 - self.beta) * δEδp * δEδp
+                p[:] = p - (self.lr / np.sqrt(self.v[parameter_name] + self.eps)) * δEδp
+                ### YOUR IMPLEMENTATION END  ###
+
+class Adam(BatchedGradientOptimizer):
+
+    def __init__(self,batch_size:int,epochs:int,lr:float=0.1,
+                 betas:tuple=(0.9, 0.999),eps:int=1e-08,shuffle=True):
+        super().__init__(batch_size,epochs,shuffle)
+        self.lr=lr
+        self.beta_1, self.beta_2 = betas
+        self.eps=eps
+        self.first=True
+        self.m={}
+        self.v={}
+
+    def optimize_batch(self, model:Model, δEδps:ParameterSet, epoch:int,iteration:int):
+        if self.first:
+            self.first=False
+            for k,p in model.get_parameters().items():
+                self.m[k]=np.zeros_like(p)
+                self.v[k]=np.zeros_like(p)
+        iteration+=1
+
+        # Update parameters
+        parameters = model.get_parameters()
+        for parameter_name,δEδp in δEδps.items():
+                p = parameters[parameter_name]
+                # use p[:] so that updates are in-place
+                # instead of creating a new variable
+                ### YOUR IMPLEMENTATION START  ###
+                self.m[parameter_name] = self.beta_1 * self.m[parameter_name] + (1 - self.beta_1) * δEδp
+                self.v[parameter_name] = self.beta_2 * self.v[parameter_name] + (1 - self.beta_2) * δEδp * δEδp
+                m_hat = self.m[parameter_name] / (1 - np.power(self.beta_1, iteration))
+                v_hat = self.v[parameter_name] / (1 - np.power(self.beta_2, iteration))
+                p[:] = p - self.lr * m_hat / (np.sqrt(v_hat) + self.eps)
+                ### YOUR IMPLEMENTATION END  ###
+
+
 class MomentumGD(BatchedGradientOptimizer):
 
     def __init__(self,batch_size:int,epochs:int,lr:float=0.1,gamma=0.9,shuffle=True):
