@@ -1,6 +1,6 @@
 from edunn.model import ModelWithParameters,Cache,ModelWithoutParameters
 import numpy as np
-from scipy.special import erf
+import math
 
 class Identity(ModelWithParameters):
 
@@ -103,6 +103,9 @@ class ReLU(ModelWithoutParameters):
 
         return δEδx,{}
 
+@np.vectorize
+def erf(x):
+    return math.erf(x)
 
 def normal_pdf(x, mean=0, std=1):
     # Calculate the probability density function of the normal distribution
