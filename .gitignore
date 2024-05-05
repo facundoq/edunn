@@ -131,7 +131,7 @@ dmypy.json
 results/
 tests/results
 
+# IDEs
 .idea
 generated/
 .vscode/
-.pytest_cache/
