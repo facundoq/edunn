@@ -133,5 +133,7 @@ tests/results
 
 # IDEs
 .idea
-generated/
 .vscode/
+
+# edunn
+generated/

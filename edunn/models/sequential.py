@@ -22,13 +22,13 @@ class Sequential(Model):
         assert len(layer_names) == len(layer_names_set), f"Layer names must be unique, found: {layer_names}"
 
     def forward(self, x: np.ndarray):
-        '''
-
+        """
         :param x: input to model
         :return: output of model with x as input
-        '''
-        y = 0
+        """
+
         ### YOUR IMPLEMENTATION START  ###
+        # default: y = np.zeros_like(x)
         for layer in self.layers:
             x = layer.forward(x)
         y = x
