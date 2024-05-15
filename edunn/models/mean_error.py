@@ -19,9 +19,9 @@ class MeanError(ModelWithoutParameters):
         self.sample_error_layer = sample_error
 
     def forward(self, y_true: np.ndarray, y: np.ndarray):
-        E = 0
-        ### YOUR IMPLEMENTATION START  ###
         Ei = self.sample_error_layer.forward(y_true, y)
+        ### YOUR IMPLEMENTATION START  ###
+        # default: E = 0
         E = np.mean(Ei)
         ### YOUR IMPLEMENTATION END  ###
         n = y_true.shape[0]

@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-import os,argparse
-from pathlib import Path
+
+import argparse
+import os
+import shutil
+import subprocess
 import sys
 import zipfile
-from export_code import generated_path,lib_name
-import subprocess
-import shutil
+from pathlib import Path
+from export_code import output_dir, lib_name, Language, supported_languages
 
 
 def delete_checkpoints(folderpath:Path):
@@ -14,12 +16,16 @@ def delete_checkpoints(folderpath:Path):
             print(f"    Deleting {f.absolute()}..")
             shutil.rmtree(f.absolute())
 
+
 def clear_notebooks(folderpath:Path):
     for f in folderpath.rglob("*.ipynb"):
         if not f.is_file():
             continue
-        command = f"jupyter nbconvert --clear-output --inplace '{f.absolute()}'"
+        command = (f"jupyter nbconvert --clear-output "
+                   f"--ClearOutputPreprocessor.remove_metadata_fields='[(\"ExecuteTime\")]' "
+                   f"--inplace '{f.absolute()}'")
         subprocess.run(command,shell=True)
+
 
 def zip_all(path,zip_file):
     for f in path.iterdir():
@@ -27,6 +33,7 @@ def zip_all(path,zip_file):
             zip_file.write(f, f.name)
         if f.is_dir():
             zipdir(f, zip_file)
+
 
 def zipdir(path, zip_file,skip_hidden=True):
     # ziph is zipfile handle
@@ -37,25 +44,16 @@ def zipdir(path, zip_file,skip_hidden=True):
             zip_file.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), os.path.join(path, '..')))
 
 
-if __name__ == '__main__':
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument(dest="language", help="Language of guide to export")
-    args=parser.parse_args()
-    language = args.language
-    print(f"""
-    ********************************************
-    * This script will compile and zip a guide *
-    * Only run this command from the root of   *
-    * the edunn library                        * 
-    ********************************************
-    """)
+def generate_zip(output_path: Path, lang: Language):
+    language = lang.value
+    final_path = output_path / language
 
     guides_folderpath=Path("guides")
     releases_folderpath=Path("releases")
     guide_folderpath = guides_folderpath / language
     if not guide_folderpath.exists():
-        sys.exit(f"Language {language} not found. Check `guides` folder for available languages.")
+        print(f"Language {language} not found. Check `guides` folder for available languages.", file=sys.stderr)
+        return
     print(f"Language *{language}* available.")
     print(f"Deleting checkpoints in {guide_folderpath}...")
     delete_checkpoints(guide_folderpath)
@@ -65,17 +63,43 @@ if __name__ == '__main__':
 
     zip_filepath = releases_folderpath / f"{lib_name}-{language}.zip"
 
-    if not generated_path.exists():
-        sys.exit(f"Code skeleton not found in {generated_path.absolute()}")
+    if not final_path.exists():
+        sys.exit(f"Code skeleton not found in {final_path.absolute()}")
 
     print(f"Creating zip file...")
     zip_file = zipfile.ZipFile(zip_filepath, 'w', zipfile.ZIP_DEFLATED)
     print(f"Adding guide to zip...")
     zip_all(guide_folderpath, zip_file)
     print(f"Adding code to zip...")
-    zip_all(generated_path,zip_file)
+    zip_all(final_path, zip_file)
 
     print(f"Saving to file...")
     zip_file.close()
     print(f"Done: {zip_filepath}")
-    
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    all_langs = [l.value for l in supported_languages]
+    parser.add_argument("-l", "--languages",
+                        nargs='*',
+                        choices=all_langs,
+                        default=all_langs,
+                        help="Language of guide to export")
+    args = parser.parse_args()
+
+    print(f"""
+    ********************************************
+    * This script will compile and zip a guide *
+    * Only run this command from the root of   *
+    * the edunn library                        * 
+    ********************************************
+    """)
+
+    languages = [Language[l] for l in args.languages]
+    print(f'Generating zip for languages: {", ".join([x.value for x in languages])}')
+
+    for language in languages:
+        print(language)
+        generate_zip(output_path=output_dir, lang=language)
+        print()
