@@ -1,33 +1,30 @@
 from edunn.model import ModelWithParameters
 import numpy as np
-from edunn.initializers import  Initializer,RandomNormal
+from edunn.initializers import Initializer, RandomNormal
+
 
 class Linear(ModelWithParameters):
-
-    '''
+    """
     The Linear layer outputs y = xw, where w is a matrix of parameters
+    """
 
-    '''
-    def __init__(self,input_size:int,output_size:int,initializer:Initializer=None,name=None):
+    def __init__(self, input_size: int, output_size: int, initializer: Initializer = None, name=None):
         super().__init__(name=name)
         if initializer is None:
             initializer = RandomNormal()
-        shape = (input_size,output_size)
+        shape = (input_size, output_size)
         w = initializer.create(shape)
         self.register_parameter("w", w)
 
-
-    def forward(self, x:np.ndarray):
-        n,d = x.shape
+    def forward(self, x: np.ndarray):
+        n, d = x.shape
         # Retrieve w
         w = self.get_parameters()["w"]
         # check sizes
-        din,dout = w.shape
-        assert din==d, f"#features of input ({d}) must match first dimension of W ({din})"
+        din, dout = w.shape
+        assert din == d, f"#features of input ({d}) must match first dimension of W ({din})"
 
-
-
-        y = np.zeros((n,dout))
+        y = np.zeros((n, dout))
         # calculate output
         ### YOUR IMPLEMENTATION START  ###
         y = x.dot(w)
@@ -37,7 +34,7 @@ class Linear(ModelWithParameters):
         self.set_cache(x)
         return y
 
-    def backward(self,δEδy:np.ndarray):
+    def backward(self, δEδy: np.ndarray):
         # Retrieve input from cache to calculate δEδw
         x, = self.get_cache()
         n = x.shape[0]
@@ -54,8 +51,8 @@ class Linear(ModelWithParameters):
         #      δEδx[i,:] = np.dot(w, δEδy[i,:])
 
         # Vectorized version
-        #δyδx = w.T
-        δEδx =δEδy.dot(w.T)
+        # δyδx = w.T
+        δEδx = δEδy.dot(w.T)
 
         ### YOUR IMPLEMENTATION END  ###
 
@@ -74,4 +71,4 @@ class Linear(ModelWithParameters):
 
         ### YOUR IMPLEMENTATION END  ###
 
-        return δEδx, {"w":δEδw}
+        return δEδx, {"w": δEδw}

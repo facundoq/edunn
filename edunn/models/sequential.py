@@ -3,18 +3,16 @@ from edunn.model import Model, Phase
 
 
 class Sequential(Model):
-    '''
+    """
         Models a neural network with a sequential (ie, linear) topology
         This network receives as input a single vector x
         And outputs a single vector y
-    '''
+    """
 
     def __init__(self, layers: [Model], name=None):
-        '''
-
+        """
         :param layers: List of models, in order
-
-        '''
+        """
         super().__init__(name)
         self.layers: [Model] = layers
         layer_names = [l.name for l in layers]
@@ -52,12 +50,11 @@ class Sequential(Model):
                 δEδp[new_name] = v
 
     def backward(self, δEδy: np.ndarray):
-        '''
-
+        """
         :param x: inputs
         :param y: expected output
         :return: gradients for every layer, prediction for inputs and error
-        '''
+        """
         δEδx = 0
         δEδp = {}
         # Hint: use `self.merge_gradients(m_i, δEδp_i, δEδp)`
@@ -84,9 +81,9 @@ class Sequential(Model):
         return parameters
 
     def summary(self) -> str:
-        '''
+        """
         :return: a summary of the models of the model and their parameters
-        '''
+        """
         separator = "-------------------------------"
         result = f"{separator}\n"
         parameters = 0

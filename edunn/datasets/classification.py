@@ -1,15 +1,16 @@
 import numpy as np
 from . import basepath
 
-classification_basepath=basepath/ "classification_data"
+classification_basepath = basepath / "classification_data"
 
-def load_classification_dataset(filename,classes):
-    data=np.loadtxt(classification_basepath / filename,skiprows=1,delimiter=",")
-    x = data[:,:-1]
-    y = data[:,-1:]
-    y=y.astype(int)
+
+def load_classification_dataset(filename, classes):
+    data = np.loadtxt(classification_basepath / filename, skiprows=1, delimiter=",")
+    x = data[:, :-1]
+    y = data[:, -1:]
+    y = y.astype(int)
     y = np.squeeze(y)
-    return x,y, classes
+    return x, y, classes
 
 
 study2d_easy = lambda: load_classification_dataset("study2d_easy.csv", ["Failed", "Passed"])
@@ -19,9 +20,9 @@ iris = lambda: load_classification_dataset("iris.csv", ["setosa", "versicolor", 
 mnist = lambda: load_classification_dataset("mnist.csv", [str(i) for i in range(10)])
 
 loaders = {
-    "mnist":mnist,
-    "iris":iris,
-    "study1d":study1d,
-    "study2d":study2d,
-    "study2d_easy":study2d_easy,
+    "mnist": mnist,
+    "iris": iris,
+    "study1d": study1d,
+    "study2d": study2d,
+    "study2d_easy": study2d_easy,
 }
