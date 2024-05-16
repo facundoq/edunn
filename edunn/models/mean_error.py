@@ -5,12 +5,12 @@ from edunn.model import ParameterSet
 
 
 class MeanError(ModelWithoutParameters):
-    '''
+    """
     Converts a Model that converts
     an error function for each sample
     into a mean error function with a single scalar output
     which can represent the final error of a network
-    '''
+    """
 
     def __init__(self, sample_error: Model, name=None):
         if name is None:
@@ -29,14 +29,13 @@ class MeanError(ModelWithoutParameters):
         return E
 
     def backward(self, δE: float = 1) -> (np.ndarray, ParameterSet):
-        '''
-
+        """
         :param δE:Scalar to scale the gradients
                 Needed to comply with Model's interface
                 Default is 1, which means no scaling
         :param cache: calculated from forward pass
         :return:
-        '''
+        """
         n, = self.get_cache()
         # Since we just calculate the mean over n values
         # and the mean is equivalent to multiplying by 1/n

@@ -3,15 +3,16 @@ import numpy as np
 from edunn.initializers import Initializer, Zero
 import edunn
 
+
 class Bias(ModelWithParameters):
-    '''
+    """
     The Bias layer outputs y = x+b, where b is a vector of parameters
     Input for forward:
     x: array of size (n,o)
     where $n$ is the batch size and $o$ is the number of both input and output features
     The number of columns of x, $o$, must match the size of $b$.
 
-    '''
+    """
 
     def __init__(self, output_size: int, initializer: edunn.initializers.Initializer = None, name=None):
         super().__init__(name=name)
