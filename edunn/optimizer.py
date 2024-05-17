@@ -142,7 +142,7 @@ class RMSprop(BatchedGradientOptimizer):
             # instead of creating a new variable
             ### YOUR IMPLEMENTATION START  ###
             self.v[parameter_name] = self.beta * self.v[parameter_name] + (1 - self.beta) * δEδp * δEδp
-            p[:] = p - (self.lr / np.sqrt(self.v[parameter_name] + self.eps)) * δEδp
+            p[:] = p - self.lr / (np.sqrt(self.v[parameter_name]) + self.eps) * δEδp
             ### YOUR IMPLEMENTATION END  ###
 
 
