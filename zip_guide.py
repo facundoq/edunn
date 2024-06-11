@@ -10,24 +10,24 @@ from pathlib import Path
 from export_code import output_dir, lib_name, Language, supported_languages
 
 
-def delete_checkpoints(folderpath:Path):
+def delete_checkpoints(folderpath: Path):
     for f in folderpath.rglob("*.ipynb_checkpoints"):
-        if f.is_dir() and f.name==".ipynb_checkpoints":
+        if f.is_dir() and f.name == ".ipynb_checkpoints":
             print(f"    Deleting {f.absolute()}..")
             shutil.rmtree(f.absolute())
 
 
-def clear_notebooks(folderpath:Path):
+def clear_notebooks(folderpath: Path):
     for f in folderpath.rglob("*.ipynb"):
         if not f.is_file():
             continue
         command = (f"jupyter nbconvert --clear-output "
                    f"--ClearOutputPreprocessor.remove_metadata_fields='[(\"ExecuteTime\")]' "
                    f"--inplace '{f.absolute()}'")
-        subprocess.run(command,shell=True)
+        subprocess.run(command, shell=True)
 
 
-def zip_all(path,zip_file):
+def zip_all(path, zip_file):
     for f in path.iterdir():
         if f.is_file():
             zip_file.write(f, f.name)
@@ -35,21 +35,22 @@ def zip_all(path,zip_file):
             zipdir(f, zip_file)
 
 
-def zipdir(path, zip_file,skip_hidden=True):
+def zipdir(path, zip_file, skip_hidden=True):
     # ziph is zipfile handle
     for root, dirs, files in os.walk(path):
         for file in files:
             if file.startswith(".") and skip_hidden:
                 continue
-            zip_file.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), os.path.join(path, '..')))
+            zip_file.write(os.path.join(root, file),
+                           os.path.relpath(os.path.join(root, file), os.path.join(path, '..')))
 
 
 def generate_zip(output_path: Path, lang: Language):
     language = lang.value
     final_path = output_path / language
 
-    guides_folderpath=Path("guides")
-    releases_folderpath=Path("releases")
+    guides_folderpath = Path("guides")
+    releases_folderpath = Path("releases")
     guide_folderpath = guides_folderpath / language
     if not guide_folderpath.exists():
         print(f"Language {language} not found. Check `guides` folder for available languages.", file=sys.stderr)

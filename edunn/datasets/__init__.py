@@ -3,9 +3,10 @@ import pathlib
 from typing import Dict, Callable
 
 from .. import utils
-from . import regression, classification
 
+# basepath definition must be before importing regression and classification due to circular reference
 basepath = pathlib.Path(__file__).parent.absolute()
+from . import regression, classification
 
 
 def shuffle_dataset(x, y):
