@@ -74,21 +74,21 @@ class Dense(ModelWithParameters):
         ### YOUR IMPLEMENTATION END  ###
         return y_activation
 
-    def backward(self, δEδy: np.ndarray):
+    def backward(self, dE_dy: np.ndarray):
         # Compute gradients for the parameters of the bias, linear and activation function
         # It is possible that the activation function does not have any parameters
-        # (ie, δEδactivation = {})
-        δEδbias, δEδlinear, δEδactivation = {}, {}, {}
-        δEδx = None
+        # (ie, dE_dactivation = {})
+        dE_dbias, dE_dlinear, dE_dactivation = {}, {}, {}
+        dE_dx = None
         ### YOUR IMPLEMENTATION START  ###
-        δEδx_activation, δEδactivation = self.activation.backward(δEδy)
-        δEδx_bias, δEδbias = self.bias.backward(δEδx_activation)
-        δEδx, δEδlinear = self.linear.backward(δEδx_bias)
+        dE_dx_activation, dE_dactivation = self.activation.backward(dE_dy)
+        dE_dx_bias, dE_dbias = self.bias.backward(dE_dx_activation)
+        dE_dx, dE_dlinear = self.linear.backward(dE_dx_bias)
         ### YOUR IMPLEMENTATION END  ###
 
         # combine gradients for parameters from dense, linear and activation models
-        δEδdense = {**δEδbias, **δEδlinear, **δEδactivation}
-        return δEδx, δEδdense
+        dE_ddense = {**dE_dbias, **dE_dlinear, **dE_dactivation}
+        return dE_dx, dE_ddense
 
     def get_parameters(self):
         # returns the combination of parameters of all models

@@ -1,3 +1,7 @@
+"""
+Converts layers into functions of the parameters, with the input fixed
+"""
+
 import edunn as nn
 import numpy as np
 from typing import Tuple, Dict, Callable
@@ -20,13 +24,13 @@ def common_layer_to_function(l: nn.ModelWithParameters):
         set_parameters_inplace(l, old_params)
         return y
 
-    def df(inputs: ParameterSet, δEδy: np.ndarray):
+    def df(inputs: ParameterSet, dE_dy: np.ndarray):
         old_params = l.get_parameters().copy()
         set_parameters_inplace(l, inputs)
         y = l.forward(inputs["x"])
-        δEδx, δEδp = l.backward(δEδy)
+        dE_dx, dE_dp = l.backward(dE_dy)
         set_parameters_inplace(l, old_params)
-        return {"x": δEδx, **δEδp}
+        return {"x": dE_dx, **dE_dp}
 
     parameter_shapes = {k: v.shape for k, v in l.get_parameters().items()}
     return f, df, parameter_shapes
@@ -44,9 +48,9 @@ def error_layer_to_function(l: nn.Model):
         old_params = l.get_parameters().copy()
         set_parameters_inplace(l, inputs)
         y = l.forward(inputs["y_true"], inputs["y"])
-        δEδy, δEδp = l.backward(np.ones_like(y))
+        dE_dy, dE_dp = l.backward(np.ones_like(y))
         set_parameters_inplace(l, old_params)
-        return {"y": δEδy, **δEδp}
+        return {"y": dE_dy, **dE_dp}
 
     parameter_shapes = {k: v.shape for k, v in l.get_parameters().items()}
 

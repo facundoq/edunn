@@ -3,9 +3,6 @@ import numpy as np
 from enum import Enum
 from typing import Tuple, Dict
 
-class_counter = {}
-model_name_registry = []
-
 
 class Phase(Enum):
     Training = "Training"
@@ -21,10 +18,13 @@ class Model(ABC):
     A Model can perform forward and backward operations
     Each model has a unique name. Also, it has a set of parameters that can be updated.
     The forward operation takes an input (x) and generates an output (y)
-    The backward takes an error gradient for the output (δEδy) and generates error gradients for the input (δEδx) and parameters (δEδp)
+    The backward takes an error gradient for the output (dE_dy) and generates error gradients for the input (dE_dx) and parameters (dE_dp)
     The backward operation must be defined explicitly and is not automatically derived from the forward.
     The model can be frozen, so that its parameters are not updated/optimized.
     """
+
+    model_name_registry = []
+    class_counter = {}
 
     def __init__(self, name=None):
         """
@@ -34,12 +34,12 @@ class Model(ABC):
         if name is None:
             ' auto generate a name if not provided'
             class_name = self.__class__.__name__
-            count = class_counter.get(class_name, 0)
+            count = self.class_counter.get(class_name, 0)
             name = f"{class_name}_{count}"
-            class_counter[class_name] = count + 1
-        assert not (name in model_name_registry), \
-            f"The model name {name} has already been used, see model_name_registry: {model_name_registry}."
-        model_name_registry.append(name)
+            self.class_counter[class_name] = count + 1
+        assert not (name in self.model_name_registry), \
+            f"The model name {name} has already been used, see model_name_registry: {self.model_name_registry}."
+        self.model_name_registry.append(name)
 
         self.phase = Phase.Training
 
@@ -79,7 +79,7 @@ class Model(ABC):
         pass
 
     @abstractmethod
-    def backward(self, δEδy: np.ndarray) -> (np.ndarray, ParameterSet):
+    def backward(self, dE_dy: np.ndarray) -> (np.ndarray, ParameterSet):
         pass
 
     def __repr__(self):

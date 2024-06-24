@@ -88,18 +88,24 @@ def remove_implementation(filepath: Path, lang: Language) -> int:
     return modifications
 
 
-def generate(output_path: Path, lang: Language):
+def generate(output_path: Path, lang: Language, keep: bool):
     final_path = output_path / lang.value
+    lib_path = final_path / lib_name
 
     print(f'Generating unimplemented library version to {final_path}')
 
-    if final_path.exists():
+    if not final_path.exists():
+        final_path.mkdir()
+    elif not keep:
         print(f'Deleting folder {final_path.absolute()}...')
         shutil.rmtree(final_path)
-    final_path.mkdir()
+        final_path.mkdir()
+    else:
+        print(f'Deleting folder {lib_path.absolute()}...')
+        shutil.rmtree(lib_path)
 
     print(f'Copying new version from {lib_name} to {final_path.absolute()}...')
-    shutil.copytree(lib_name, final_path / lib_name)
+    shutil.copytree(lib_name, lib_path)
 
     print(f"Removing implementation code...")
     total_files = 0
@@ -140,6 +146,11 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--output',
                         help=f'Output directory. Default is "{output_dir}"')
 
+    parser.add_argument('-k', '--keep',
+                        action=argparse.BooleanOptionalAction,
+                        default=False,
+                        help=f'Keep other files in target directory. Default is False')
+
     args = parser.parse_args()
 
     languages = [Language[l] for l in args.languages]
@@ -151,5 +162,5 @@ if __name__ == '__main__':
 
     for lang in languages:
         print(lang)
-        generate(output_path=output_dir, lang=lang)
+        generate(output_path=output_dir, lang=lang, keep=args.keep)
         print()

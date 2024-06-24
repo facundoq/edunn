@@ -35,21 +35,21 @@ class LogisticRegression(ModelWithParameters):
         ### YOUR IMPLEMENTATION END  ###
         return y
 
-    def backward(self, δEδy: np.ndarray):
+    def backward(self, dE_dy: np.ndarray):
         # Compute gradients for the parameters of the bias and linear models
-        δEδbias, δEδlinear, δEδsoftmax = {}, {}, {}
-        δEδx = np.zeros((δEδy.shape[0], self.input_size))  # default value
+        dE_dbias, dE_dlinear, dE_dsoftmax = {}, {}, {}
+        dE_dx = np.zeros((dE_dy.shape[0], self.input_size))  # default value
 
         ### YOUR IMPLEMENTATION START  ###
-        δEδx_softmax, δEδsoftmax = self.softmax.backward(δEδy)
-        δEδx_bias, δEδbias = self.bias.backward(δEδx_softmax)
-        δEδx, δEδlinear = self.linear.backward(δEδx_bias)
+        dE_dx_softmax, dE_dsoftmax = self.softmax.backward(dE_dy)
+        dE_dx_bias, dE_dbias = self.bias.backward(dE_dx_softmax)
+        dE_dx, dE_dlinear = self.linear.backward(dE_dx_bias)
         ### YOUR IMPLEMENTATION END  ###
 
         # combine gradients for parameters from linear and bias models
         # to obtain parameters for the Linear Regression (lr) model
-        δEδlr = {**δEδbias, **δEδlinear, **δEδsoftmax}
-        return δEδx, δEδlr
+        dE_dlr = {**dE_dbias, **dE_dlinear, **dE_dsoftmax}
+        return dE_dx, dE_dlr
 
     def get_parameters(self):
         # returns the combination of parameters of linear and bias models
