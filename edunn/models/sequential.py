@@ -37,37 +37,37 @@ class Sequential(Model):
         for l in self.layers:
             l.set_phase(phase)
 
-    def merge_gradients(self, m_i, δEδp_i, δEδp):
+    def merge_gradients(self, m_i, dE_dp_i, dE_dp):
         """
         :param m_i: model for ith layer
-        :param δEδp_i: derivatives parameters of model for ith layer
-        :param δEδp: all derivatives of parameters of Sequential
+        :param dE_dp_i: derivatives parameters of model for ith layer
+        :param dE_dp: all derivatives of parameters of Sequential
         """
 
         if not m_i.frozen:
-            for k, v in δEδp_i.items():
+            for k, v in dE_dp_i.items():
                 new_name = self.generate_parameter_name(m_i, k)
-                δEδp[new_name] = v
+                dE_dp[new_name] = v
 
-    def backward(self, δEδy: np.ndarray):
+    def backward(self, dE_dy: np.ndarray):
         """
         :param x: inputs
         :param y: expected output
         :return: gradients for every layer, prediction for inputs and error
         """
-        δEδx = 0
-        δEδp = {}
-        # Hint: use `self.merge_gradients(m_i, δEδp_i, δEδp)`
-        # to add the gradients `δEδp_i` of parameters of `m_i`
-        # to the final gradients `δEδp` dictionary
+        dE_dx = 0
+        dE_dp = {}
+        # Hint: use `self.merge_gradients(m_i, dE_dp_i, dE_dp)`
+        # to add the gradients `dE_dp_i` of parameters of `m_i`
+        # to the final gradients `dE_dp` dictionary
         ### YOUR IMPLEMENTATION START  ###
         for m_i in reversed(self.layers):
-            δEδy, δEδp_i = m_i.backward(δEδy)
-            self.merge_gradients(m_i, δEδp_i, δEδp)
-        δEδx = δEδy
+            dE_dy, dE_dp_i = m_i.backward(dE_dy)
+            self.merge_gradients(m_i, dE_dp_i, dE_dp)
+        dE_dx = dE_dy
         ### YOUR IMPLEMENTATION END  ###
 
-        return δEδx, δEδp
+        return dE_dx, dE_dp
 
     def generate_parameter_name(self, l: Model, parameter_name: str):
         return f"{l.name}({parameter_name})"

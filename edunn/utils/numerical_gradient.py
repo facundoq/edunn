@@ -1,10 +1,10 @@
 import numpy as np
 
 
-def numerical_gradient(f, x: np.ndarray, δEδy: np.ndarray = None, h=1e-5):
+def numerical_gradient(f, x: np.ndarray, dE_dy: np.ndarray = None, h=1e-5):
     """
     Calculates the numerical gradient of E wrt x
-    E is assumed to be a scalar, so that δEδy has size equal to y
+    E is assumed to be a scalar, so that dE_dy has size equal to y
     """
 
     def indices_generator(x):
@@ -16,7 +16,7 @@ def numerical_gradient(f, x: np.ndarray, δEδy: np.ndarray = None, h=1e-5):
             it.iternext()
 
     h2 = 2 * h
-    δEδx = np.zeros_like(x)
+    dE_dx = np.zeros_like(x)
     for i in indices_generator(x):
         oldval = x[i]
         # increment by h
@@ -30,9 +30,9 @@ def numerical_gradient(f, x: np.ndarray, δEδy: np.ndarray = None, h=1e-5):
         # reset
         x[i] = oldval
 
-        δyδxi = (fxph - fxmh) / h2
+        dy_dxi = (fxph - fxmh) / h2
 
-        δE = (δyδxi * δEδy)
-        δE = δE.sum()
-        δEδx[i] = δE
-    return δEδx
+        dE = (dy_dxi * dE_dy)
+        dE = dE.sum()
+        dE_dx[i] = dE
+    return dE_dx

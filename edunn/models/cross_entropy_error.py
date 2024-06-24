@@ -32,14 +32,14 @@ class CrossEntropyWithLabels(ModelWithoutParameters):
         self.set_cache(y_true, y)
         return E
 
-    def backward(self, δEδyi):
+    def backward(self, dE_dyi):
         y_true, y = self.get_cache()
 
-        δEδy = np.zeros_like(y)
+        dE_dy = np.zeros_like(y)
         n, classes = y.shape
         ### YOUR IMPLEMENTATION START  ###
         for i in range(n):
             p = y[i, y_true[i]]
-            δEδy[i, y_true[i]] = -1 / p
+            dE_dy[i, y_true[i]] = -1 / p
         ### YOUR IMPLEMENTATION END  ###
-        return δEδy * δEδyi, {}
+        return dE_dy * dE_dyi, {}

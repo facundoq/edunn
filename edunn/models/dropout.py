@@ -22,11 +22,11 @@ class Dropout(ModelWithoutParameters):
         self.set_cache(u)
         return y
 
-    def backward(self, δEδy: np.ndarray):
-        δEδx = {}
+    def backward(self, dE_dy: np.ndarray):
+        dE_dx = {}
         # Retrieve u from cache
         u, = self.get_cache()
         ### YOUR IMPLEMENTATION START  ###
-        δEδx = δEδy * u
+        dE_dx = dE_dy * u
         ### YOUR IMPLEMENTATION END  ###
-        return δEδx, {}
+        return dE_dx, {}

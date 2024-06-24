@@ -93,13 +93,13 @@ class MaxPool2d(ModelWithoutParameters):
         self.set_cache(x)
         return y
 
-    def backward(self, δEδy: np.ndarray):
-        δEδx = {}
+    def backward(self, dE_dy: np.ndarray):
+        dE_dx = {}
         x, = self.get_cache()
         ### YOUR IMPLEMENTATION START  ###
-        δEδx = conv2d_backward_max(δEδy, x, self.stride, self.kernel_size)
+        dE_dx = conv2d_backward_max(dE_dy, x, self.stride, self.kernel_size)
         ### YOUR IMPLEMENTATION END  ###
-        return δEδx, {}
+        return dE_dx, {}
 
 
 class AvgPool2d(ModelWithoutParameters):
@@ -117,10 +117,10 @@ class AvgPool2d(ModelWithoutParameters):
         ### YOUR IMPLEMENTATION END  ###
         return y
 
-    def backward(self, δEδy: np.ndarray):
-        δEδx = {}
+    def backward(self, dE_dy: np.ndarray):
+        dE_dx = {}
         x, = self.get_cache()
         ### YOUR IMPLEMENTATION START  ###
-        δEδx = conv2d_backward_avg(δEδy, x, self.stride, self.kernel_size)
+        dE_dx = conv2d_backward_avg(dE_dy, x, self.stride, self.kernel_size)
         ### YOUR IMPLEMENTATION END  ###
-        return δEδx, {}
+        return dE_dx, {}

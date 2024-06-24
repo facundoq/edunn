@@ -81,12 +81,12 @@ def conv2d_backward_x(w, x, input_x, strides=(1, 1), pad_size=(0, 0)):
     y = np.zeros_like(input_x)
     by, cy, hy, wy = y.shape
 
-    # Compute the convolution between X and W to get δEδx
+    # Compute the convolution between X and W to get dE_dx
     # Hint: use multiple for loops for the expected size
     ### YOUR IMPLEMENTATION START  ###
-    # Example: δEδx must be (2, 3, 7, 7) when X is (2,3,7,7) and W is (4,3,5,5)
-    # Then w_flipped is (4, 3, 5, 5) and δEδy (2, 4, 3, 3)
-    # When δEδy is padded (2, 4, 11, 11) which corresponds with int((hx - hd)) + 1 => 11-5+1=7
+    # Example: dE_dx must be (2, 3, 7, 7) when X is (2,3,7,7) and W is (4,3,5,5)
+    # Then w_flipped is (4, 3, 5, 5) and dE_dy (2, 4, 3, 3)
+    # When dE_dy is padded (2, 4, 11, 11) which corresponds with int((hx - hd)) + 1 => 11-5+1=7
     for i in range(hy):
         for j in range(wy):
             for a in range(hw):
@@ -112,11 +112,11 @@ def conv2d_backward_w(w, x, input_w, strides=(1, 1), pad_size=(0, 0)):
     y = np.zeros_like(input_w)
     by, cy, hy, wy = y.shape
 
-    # Compute the convolution between X and W to get δEδw
+    # Compute the convolution between X and W to get dE_dw
     # Hint: use multiple for loops for the expected size
     ### YOUR IMPLEMENTATION START  ###
-    # Example: δEδw must be (4,3,5,5) when X is (2,3,7,7) and W is (4,3,5,5)
-    # Then δEδy is (2,4,3,3) and X (2,3,7,7)
+    # Example: dE_dw must be (4,3,5,5) when X is (2,3,7,7) and W is (4,3,5,5)
+    # Then dE_dy is (2,4,3,3) and X (2,3,7,7)
     for i in range(hy):
         for j in range(wy):
             for a in range(hw):
@@ -164,15 +164,15 @@ class Conv2d(ModelWithParameters):
         y = conv2d_forward(w, x, self.strides, self.pad_size)
         ### YOUR IMPLEMENTATION END  ###
 
-        # add input to cache to calculate δEδw in backward step
+        # add input to cache to calculate dE_dw in backward step
         self.set_cache(x)
         return y
 
-    def backward(self, δEδy: np.ndarray):
+    def backward(self, dE_dy: np.ndarray):
         # Compute gradients for the parameters of the bias and convolution models
-        δEδx, δEδw = {}, {}
+        dE_dx, dE_dw = {}, {}
 
-        # Retrieve input from cache to calculate δEδw
+        # Retrieve input from cache to calculate dE_dw
         x, = self.get_cache()
 
         # Retrieve w
@@ -183,9 +183,9 @@ class Conv2d(ModelWithParameters):
         ph = w.shape[2] - 1 - self.pad_size[0]
         pw = w.shape[3] - 1 - self.pad_size[1]
         full_pad = (ph, pw)
-        δEδx = conv2d_backward_x(w_flipped, δEδy, x, self.strides, full_pad)
+        dE_dx = conv2d_backward_x(w_flipped, dE_dy, x, self.strides, full_pad)
 
-        δEδw = conv2d_backward_w(δEδy, x, w, self.strides, self.pad_size)
+        dE_dw = conv2d_backward_w(dE_dy, x, w, self.strides, self.pad_size)
         ### YOUR IMPLEMENTATION END  ###
 
-        return δEδx, {"w": δEδw}
+        return dE_dx, {"w": dE_dw}

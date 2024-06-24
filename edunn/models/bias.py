@@ -34,30 +34,30 @@ class Bias(ModelWithParameters):
         ### YOUR IMPLEMENTATION END  ###
         return y
 
-    def backward(self, δEδy: np.ndarray):
+    def backward(self, dE_dy: np.ndarray):
         b = self.get_parameters()["b"]
-        δEδx = np.zeros_like(δEδy)
+        dE_dx = np.zeros_like(dE_dy)
 
         # Calculate derivative of error E with respect to input x
         # Hints:
-        # δEδx = δEδy * δyδx = δEδy * [1,1,...,1] = δEδy
+        # dE_dx = dE_dy * dy_dx = dE_dy * [1,1,...,1] = dE_dy
         ### YOUR IMPLEMENTATION START  ###
-        δEδx = δEδy
+        dE_dx = dE_dy
         ### YOUR IMPLEMENTATION END  ###
 
         # Calculate derivative of error E with respect to parameter b
 
         # Hints:
-        # δEδb = δEδy * δyδb
-        # δyδb = [1, 1, 1, ..., 1]
-        n, d = δEδy.shape
-        δEδb = np.zeros_like(b)
+        # dE_db = dE_dy * dy_db
+        # dy_db = [1, 1, 1, ..., 1]
+        n, d = dE_dy.shape
+        dE_db = np.zeros_like(b)
         for i in range(n):
             # Calculate derivative of error for a sample i (a single sample)
-            # And accumulate to obtain δEδb
+            # And accumulate to obtain dE_db
             ### YOUR IMPLEMENTATION START  ###
-            δEδb_i = δEδy[i, :]  # * [1,1,1...,1]
-            δEδb += δEδb_i
+            dE_db_i = dE_dy[i, :]  # * [1,1,1...,1]
+            dE_db += dE_db_i
             ### YOUR IMPLEMENTATION END  ###
 
-        return δEδx, {"b": δEδb}
+        return dE_dx, {"b": dE_db}

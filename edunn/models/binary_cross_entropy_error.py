@@ -32,16 +32,16 @@ class BinaryCrossEntropy(ModelWithoutParameters):
         self.set_cache(y_true, y)
         return E
 
-    def backward(self, δEδyi):
+    def backward(self, dE_dyi):
         y_true, y = self.get_cache()
-        δEδy = np.zeros_like(y)
+        dE_dy = np.zeros_like(y)
         n, classes = y.shape
         ### YOUR IMPLEMENTATION START  ###
         for i in range(n):
             miss = y_true[i] * y[i] - (1 - y_true[i]) * (1 - y[i])
             if miss == 0:
                 miss += nn.eps
-            δEδy[i] = - 1 / miss
+            dE_dy[i] = - 1 / miss
         ### YOUR IMPLEMENTATION END  ###
 
-        return δEδy * δEδyi, {}
+        return dE_dy * dE_dyi, {}

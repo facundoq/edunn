@@ -44,20 +44,20 @@ class BatchNorm(ModelWithParameters):
         self.set_cache(cache)
         return y
 
-    def backward(self, δEδy: np.ndarray):
-        δEδx, δEδγ, δEδβ = {}, {}, {}
+    def backward(self, dE_dy: np.ndarray):
+        dE_dx, dE_dγ, dE_dβ = {}, {}, {}
         # Retrieve variables from cache
         (x_norm, std, gamma), = self.get_cache()
         ### YOUR IMPLEMENTATION START  ###
-        N = δEδy.shape[0]
+        N = dE_dy.shape[0]
 
-        δEδγ = (δEδy * x_norm).sum(axis=0)
-        δEδβ = δEδy.sum(axis=0)
+        dE_dγ = (dE_dy * x_norm).sum(axis=0)
+        dE_dβ = dE_dy.sum(axis=0)
 
-        dx_norm = δEδy * gamma
-        δEδx = 1 / N / std * (N * dx_norm
+        dx_norm = dE_dy * gamma
+        dE_dx = 1 / N / std * (N * dx_norm
                               - dx_norm.sum(axis=0)
                               - x_norm * (dx_norm * x_norm).sum(axis=0))
         ### YOUR IMPLEMENTATION END  ###
-        δEδbn = {"w": δEδγ, "b": δEδβ}
-        return δEδx, δEδbn
+        dE_dbn = {"w": dE_dγ, "b": dE_dβ}
+        return dE_dx, dE_dbn

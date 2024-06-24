@@ -30,12 +30,12 @@ class Linear(ModelWithParameters):
         y = x.dot(w)
         ### YOUR IMPLEMENTATION END  ###
 
-        # add input to cache to calculate δEδw in backward step
+        # add input to cache to calculate dE_dw in backward step
         self.set_cache(x)
         return y
 
-    def backward(self, δEδy: np.ndarray):
-        # Retrieve input from cache to calculate δEδw
+    def backward(self, dE_dy: np.ndarray):
+        # Retrieve input from cache to calculate dE_dw
         x, = self.get_cache()
         n = x.shape[0]
 
@@ -43,32 +43,32 @@ class Linear(ModelWithParameters):
         w = self.get_parameters()["w"]
 
         # Calculate derivative of error E with respect to input x
-        δEδx = np.zeros_like(x)
+        dE_dx = np.zeros_like(x)
         ### YOUR IMPLEMENTATION START  ###
 
         # Per sample version
         # for i in range(n):
-        #      δEδx[i,:] = np.dot(w, δEδy[i,:])
+        #      dE_dx[i,:] = np.dot(w, dE_dy[i,:])
 
         # Vectorized version
-        # δyδx = w.T
-        δEδx = δEδy.dot(w.T)
+        # dy_dx = w.T
+        dE_dx = dE_dy.dot(w.T)
 
         ### YOUR IMPLEMENTATION END  ###
 
         # Calculate derivative of error E with respect to parameter w
-        δEδw = np.zeros_like(w)
+        dE_dw = np.zeros_like(w)
 
         ### YOUR IMPLEMENTATION START  ###
 
         # Per sample version
         # for i in range(n):
-        #      δEδw_i = np.outer(x[i,:], δEδy[i,:])
-        #      δEδw += δEδw_i
+        #      dE_dw_i = np.outer(x[i,:], dE_dy[i,:])
+        #      dE_dw += dE_dw_i
 
         ## Vectorized version
-        δEδw = x.T.dot(δEδy)
+        dE_dw = x.T.dot(dE_dy)
 
         ### YOUR IMPLEMENTATION END  ###
 
-        return δEδx, {"w": δEδw}
+        return dE_dx, {"w": dE_dw}

@@ -15,13 +15,13 @@ class SquaredError(ModelWithoutParameters):
         self.set_cache(delta)
         return E
 
-    def backward(self, δEδEi):
+    def backward(self, dE_dEi):
         delta, = self.get_cache()
         # Calculate error w.r.t
         # y (the output of the model) and not y_true (which is a fixed value)
-        δEδy = np.zeros_like(delta)
+        dE_dy = np.zeros_like(delta)
         ### YOUR IMPLEMENTATION START  ###
-        δEiδy = 2 * delta
-        δEδy = δEiδy * δEδEi
+        dEi_dy = 2 * delta
+        dE_dy = dEi_dy * dE_dEi
         ### YOUR IMPLEMENTATION END  ###
-        return δEδy, {}
+        return dE_dy, {}

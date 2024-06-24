@@ -17,10 +17,10 @@ class FakeModel(nn.ModelWithParameters):
     def forward(self, x: np.ndarray):
         return x
 
-    def backward(self, δEδy: np.ndarray):
-        δEδx = 0
-        δEδp = {"parameter": self.gradient}
-        return δEδx, δEδp
+    def backward(self, dE_dy: np.ndarray):
+        dE_dx = 0
+        dE_dp = {"parameter": self.gradient}
+        return dE_dx, dE_dp
 
 
 class FakeError(nn.ModelWithoutParameters):
@@ -37,6 +37,6 @@ class FakeError(nn.ModelWithoutParameters):
         self.set_cache(y.shape)
         return self.error
 
-    def backward(self, δE: float):
+    def backward(self, dE: float):
         shape, = self.get_cache()
         return np.ones(shape) * self.derivative_value, {}

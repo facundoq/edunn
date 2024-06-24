@@ -63,10 +63,10 @@ class BatchedGradientOptimizer(Optimizer):
         E = error_layer.forward(y_true, y)
 
         # backward pass (error and model)
-        δEδy, _ = error_layer.backward(1)
-        δEδx, δEδps = model.backward(δEδy)
+        dE_dy, _ = error_layer.backward(1)
+        dE_dx, dE_dps = model.backward(dE_dy)
 
-        return δEδx, δEδps, E
+        return dE_dx, dE_dps, E
 
     def optimize(self, model: Model, x: np.ndarray, y: np.ndarray, error_layer: Model, verbose=True):
         """
@@ -85,8 +85,8 @@ class BatchedGradientOptimizer(Optimizer):
         for epoch in bar:
             epoch_error = 0
             for i, (x_batch, y_batch) in enumerate(batch_arrays(self.batch_size, x, y, shuffle=self.shuffle)):
-                δEδx, δEδps, batch_error = self.backpropagation(model, x, y, error_layer)
-                self.optimize_batch(model, δEδps, epoch, i)
+                dE_dx, dE_dps, batch_error = self.backpropagation(model, x, y, error_layer)
+                self.optimize_batch(model, dE_dps, epoch, i)
                 epoch_error += batch_error
             epoch_error /= batches
             history.append(epoch_error)
@@ -105,15 +105,15 @@ class GradientDescent(BatchedGradientOptimizer):
         super().__init__(batch_size, epochs, shuffle)
         self.lr = lr
 
-    def optimize_batch(self, model: Model, δEδps: ParameterSet, epoch: int, iteration: int):
+    def optimize_batch(self, model: Model, dE_dps: ParameterSet, epoch: int, iteration: int):
         # Update parameters
         parameters = model.get_parameters()
-        for parameter_name, δEδp in δEδps.items():
+        for parameter_name, dE_dp in dE_dps.items():
             p = parameters[parameter_name]
             # use p[:] so that updates are in-place
             # instead of creating a new variable
             ### YOUR IMPLEMENTATION START  ###
-            p[:] = p - self.lr * δEδp
+            p[:] = p - self.lr * dE_dp
             ### YOUR IMPLEMENTATION END  ###
 
 
@@ -126,7 +126,7 @@ class MomentumGD(BatchedGradientOptimizer):
         self.first = True
         self.v = {}
 
-    def optimize_batch(self, model: Model, δEδps: ParameterSet, epoch: int, iteration: int):
+    def optimize_batch(self, model: Model, dE_dps: ParameterSet, epoch: int, iteration: int):
         if self.first:
             self.first = False
             for k, p in model.get_parameters().items():
@@ -134,14 +134,14 @@ class MomentumGD(BatchedGradientOptimizer):
 
         # Update parameters
         parameters = model.get_parameters()
-        for k, δEδp in δEδps.items():
+        for k, dE_dp in dE_dps.items():
             # K = parameter name
             p = parameters[k]
             v = self.v[k]
             # use p[:] and v[:] so that updates are in-place
             # instead of creating a new variable
             ### YOUR IMPLEMENTATION START  ###
-            v[:] = self.gamma * v + self.lr * δEδp
+            v[:] = self.gamma * v + self.lr * dE_dp
             p[:] = p - v
             ### YOUR IMPLEMENTATION END  ###
 
@@ -155,7 +155,7 @@ class NesterovMomentumGD(BatchedGradientOptimizer):
         self.first = True
         self.v = {}
 
-    def optimize_batch(self, model: Model, δEδps: ParameterSet, epoch: int, iteration: int):
+    def optimize_batch(self, model: Model, dE_dps: ParameterSet, epoch: int, iteration: int):
         if self.first:
             self.first = False
             for k, p in model.get_parameters().items():
@@ -163,15 +163,15 @@ class NesterovMomentumGD(BatchedGradientOptimizer):
 
         # Update parameters
         parameters = model.get_parameters()
-        for k, δEδp in δEδps.items():
+        for k, dE_dp in dE_dps.items():
             # K = parameter name
             p = parameters[k]
             v = self.v[k]
             # use p[:] so that updates are in-place
             # instead of creating a new variable
             ### YOUR IMPLEMENTATION START  ###
-            v[:] = self.gamma * v + self.lr * δEδp
-            p[:] = p - (self.gamma * v + self.lr * δEδp)
+            v[:] = self.gamma * v + self.lr * dE_dp
+            p[:] = p - (self.gamma * v + self.lr * dE_dp)
             ### YOUR IMPLEMENTATION END  ###
 
 
@@ -182,14 +182,14 @@ class SignGD(BatchedGradientOptimizer):
         self.eps = eps
         self.lr = lr
 
-    def optimize_batch(self, model: Model, δEδps: ParameterSet, epoch: int, iteration: int):
+    def optimize_batch(self, model: Model, dE_dps: ParameterSet, epoch: int, iteration: int):
         # Update parameters
         parameters = model.get_parameters()
-        for parameter_name, δEδp in δEδps.items():
+        for parameter_name, dE_dp in dE_dps.items():
             p = parameters[parameter_name]
             # use p[:] so that updates are in-place
             # instead of creating a new variable
             ### YOUR IMPLEMENTATION START  ###
-            denom = np.sqrt(δEδp ** 2 + self.eps)
-            p[:] = p - self.lr * (δEδp / denom)
+            denom = np.sqrt(dE_dp ** 2 + self.eps)
+            p[:] = p - self.lr * (dE_dp / denom)
             ### YOUR IMPLEMENTATION END  ###

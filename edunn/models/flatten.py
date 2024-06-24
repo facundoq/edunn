@@ -12,10 +12,10 @@ class Flatten(ModelWithoutParameters):
         ### YOUR IMPLEMENTATION END  ###
         return y
 
-    def backward(self, δEδy: np.ndarray):
-        δEδx = {}
+    def backward(self, dE_dy: np.ndarray):
+        dE_dx = {}
         original_shape, = self.get_cache()
         ### YOUR IMPLEMENTATION START  ###
-        δEδx = δEδy.copy().reshape(original_shape)
+        dE_dx = dE_dy.copy().reshape(original_shape)
         ### YOUR IMPLEMENTATION END  ###
-        return δEδx, {}
+        return dE_dx, {}

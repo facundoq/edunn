@@ -8,10 +8,10 @@ class Identity(ModelWithParameters):
     def forward(self, x: np.ndarray):
         return x
 
-    def backward(self, δEδy: np.ndarray):
+    def backward(self, dE_dy: np.ndarray):
         # no parameters, no derivatives
-        δEδp = {}
-        return δEδy, δEδp
+        dE_dp = {}
+        return dE_dy, dE_dp
 
 
 class AddConstant(ModelWithParameters):
@@ -36,13 +36,13 @@ class AddConstant(ModelWithParameters):
         ### YOUR IMPLEMENTATION END  ###
         return y
 
-    def backward(self, δEδy: np.ndarray):
-        δEδx = np.zeros_like(δEδy)
+    def backward(self, dE_dy: np.ndarray):
+        dE_dx = np.zeros_like(dE_dy)
         ### YOUR IMPLEMENTATION START  ###
-        δEδx = δEδy
+        dE_dx = dE_dy
         ### YOUR IMPLEMENTATION END  ###
-        δEδp = {}  # no parameters, no derivatives
-        return δEδx, δEδp
+        dE_dp = {}  # no parameters, no derivatives
+        return dE_dx, dE_dp
 
 
 class MultiplyConstant(ModelWithParameters):
@@ -66,16 +66,16 @@ class MultiplyConstant(ModelWithParameters):
         ### YOUR IMPLEMENTATION END  ###
         return y
 
-    def backward(self, δEδy: np.ndarray):
-        δEδx = np.zeros_like(δEδy)
+    def backward(self, dE_dy: np.ndarray):
+        dE_dx = np.zeros_like(dE_dy)
 
         ### YOUR IMPLEMENTATION START  ###
-        δEδx = δEδy * self.value
+        dE_dx = dE_dy * self.value
         ### YOUR IMPLEMENTATION END  ###
 
         # no parameters, no derivatives
-        δEδp = {}
-        return δEδx, δEδp
+        dE_dp = {}
+        return dE_dx, dE_dp
 
 
 class ReLU(ModelWithoutParameters):
@@ -92,19 +92,19 @@ class ReLU(ModelWithoutParameters):
         self.set_cache(y)
         return y
 
-    def backward(self, δEδy: np.ndarray):
-        δEδx = np.zeros_like(δEδy)
+    def backward(self, dE_dy: np.ndarray):
+        dE_dx = np.zeros_like(dE_dy)
         y, = self.get_cache()
 
-        # TIP: δEδx = δEδy * δyδx
-        # δyδx is 1 if the output was greater than 0, and 0 otherwise
+        # TIP: dE_dx = dE_dy * dy_dx
+        # dy_dx is 1 if the output was greater than 0, and 0 otherwise
 
         ### YOUR IMPLEMENTATION START  ###
-        δyδx = y > 0
-        δEδx = δEδy * δyδx
+        dy_dx = y > 0
+        dE_dx = dE_dy * dy_dx
         ### YOUR IMPLEMENTATION END  ###
 
-        return δEδx, {}
+        return dE_dx, {}
 
 
 @np.vectorize
@@ -134,14 +134,14 @@ class GELU(ModelWithoutParameters):
         self.set_cache(cache)
         return y
 
-    def backward(self, δEδy: np.ndarray):
-        δEδx = np.zeros_like(δEδy)
+    def backward(self, dE_dy: np.ndarray):
+        dE_dx = np.zeros_like(dE_dy)
         (x, cdf), = self.get_cache()
         ### YOUR IMPLEMENTATION START  ###
         pdf_val = normal_pdf(x, 0, 1)
-        δEδx = δEδy * (cdf + x * pdf_val)
+        dE_dx = dE_dy * (cdf + x * pdf_val)
         ### YOUR IMPLEMENTATION END  ###
-        return δEδx, {}
+        return dE_dx, {}
 
 
 class Sigmoid(ModelWithoutParameters):
@@ -155,19 +155,19 @@ class Sigmoid(ModelWithoutParameters):
         self.set_cache(y)
         return y
 
-    def backward(self, δEδy: np.ndarray):
-        δEδx = np.zeros_like(δEδy)
+    def backward(self, dE_dy: np.ndarray):
+        dE_dx = np.zeros_like(dE_dy)
         y, = self.get_cache()
-        # TIP: δEδx = δEδy * δyδx
-        # First calculate δyδx
-        # then multiply by δEδy (provided)
+        # TIP: dE_dx = dE_dy * dy_dx
+        # First calculate dy_dx
+        # then multiply by dE_dy (provided)
 
         ### YOUR IMPLEMENTATION START  ###
-        δyδx = y * (1.0 - y)
-        δEδx = δEδy * δyδx
+        dy_dx = y * (1.0 - y)
+        dE_dx = dE_dy * dy_dx
         ### YOUR IMPLEMENTATION END  ###
 
-        return δEδx, {}
+        return dE_dx, {}
 
 
 class TanH(ModelWithoutParameters):
@@ -186,17 +186,17 @@ class TanH(ModelWithoutParameters):
         ### YOUR IMPLEMENTATION END  ###
         return y  # this layer's cache is the same as the sigmoid's cache
 
-    def backward(self, δEδy: np.ndarray):
-        δEδx = np.zeros_like(δEδy)
+    def backward(self, dE_dy: np.ndarray):
+        dE_dx = np.zeros_like(dE_dy)
         # TIP: If TanH2 is simply sigmoid*2-1
         # Calculate derivative of TanH
         # in terms of derivative of sigmoid
         ### YOUR IMPLEMENTATION START  ###
-        δEδx, δEδp = self.sigmoid.backward(δEδy)
-        δEδx = δEδx * 4
+        dE_dx, dE_dp = self.sigmoid.backward(dE_dy)
+        dE_dx = dE_dx * 4
         ### YOUR IMPLEMENTATION END  ###
 
-        return δEδx, {}
+        return dE_dx, {}
 
 
 class Softmax(ModelWithoutParameters):
@@ -226,51 +226,51 @@ class Softmax(ModelWithoutParameters):
         self.set_cache(y)
         return y
 
-    def backward(self, δEδy: np.ndarray):
-        # δEδx = δEδy * δyδx
+    def backward(self, dE_dY: np.ndarray):
+        # dE_dx = dE_dY * dy_dx
         y, = self.get_cache()
-        n, classes = δEδy.shape
-        δEδx = np.zeros_like(δEδy)
+        n, classes = dE_dY.shape
+        dE_dx = np.zeros_like(dE_dY)
         for i in range(n):
-            δEδx[i, :] = self.backward_sample(δEδy[i, :], y[i, :])
-        return δEδx, {}
+            dE_dx[i, :] = self.backward_sample(dE_dY[i, :], y[i, :])
+        return dE_dx, {}
 
-    def backward_sample(self, δEδy: np.ndarray, y: np.ndarray):
+    def backward_sample(self, dE_dy: np.ndarray, y: np.ndarray):
         # AYUDA PARA EL CÁLCULO
         # http://facundoq.github.io/guides/softmax_derivada.html
         """
-        :param δEδy: derivative of error wrt output for a *single sample*
+        :param dE_dy: derivative of error wrt output for a *single sample*
         :param y: output for a *single sample*
-        :return: δEδx for a *single sample*
+        :return: dE_dx for a *single sample*
         """
         classes = y.shape[0]
 
         # AYUDA PARA EL CÁLCULO
         # http://facundoq.github.io/guides/softmax_derivada.html
-        δyδx = np.zeros((classes, classes))
+        dy_dx = np.zeros((classes, classes))
         ### YOUR IMPLEMENTATION START  ###
         for i in range(classes):
             for j in range(classes):
                 if i == j:
-                    δyδx[i, j] = (1 - y[i]) * y[j]
+                    dy_dx[i, j] = (1 - y[i]) * y[j]
                 else:
-                    δyδx[i, j] = -y[i] * y[j]
+                    dy_dx[i, j] = -y[i] * y[j]
 
         # # Vectorized Version
         # id = np.identity(classes)
         # y = y[:,np.newaxis]
         # A = y.repeat(classes,axis=1)
         # B = y.T.repeat(classes,axis=0)
-        # δyδx = (id-A)*B
+        # dy_dx = (id-A)*B
 
         ### YOUR IMPLEMENTATION END  ###
 
-        δEδx = np.zeros_like(δEδy)
+        dE_dx = np.zeros_like(dE_dy)
         classes = y.shape[0]
         for j in range(classes):
-            δyδx_j = δyδx[:, j]
+            dy_dx_j = dy_dx[:, j]
 
             ### YOUR IMPLEMENTATION START  ###
-            δEδx[j] = δEδy.dot(δyδx_j)
+            dE_dx[j] = dE_dy.dot(dy_dx_j)
             ### YOUR IMPLEMENTATION END  ###
-        return δEδx
+        return dE_dx
