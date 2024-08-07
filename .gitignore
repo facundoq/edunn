@@ -137,3 +137,5 @@ tests/results
 
 # edunn
 generated/
+guides/*/edunn/
+guides/*/requirements.txt
