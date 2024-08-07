@@ -7,19 +7,19 @@ from edunn.utils.numerical_gradient import numerical_gradient
 from colorama import Fore, Back, Style
 
 
-def common_layer(l: nn.ModelWithParameters, x_shape: Tuple, samples: int = 1, tolerance=1e-7, break_on_error=True):
+def common_layer(layer: nn.ModelWithParameters, x_shape: Tuple, samples: int = 1, tolerance=1e-7, break_on_error=True):
     """
     Generates random inputs for samples of x, and random parameters to check
     forward: calculates numerical gradient
     backward: calculates analytical gradient
     and compares them
     """
-    f, df, parameter_shapes = common_layer_to_function(l)
+    f, df, parameter_shapes = common_layer_to_function(layer)
     shapes = {**parameter_shapes, "x": x_shape}
     input_generators = lambda: {k: np.random.normal(0, 1, shape) for k, shape in shapes.items()}
     y = f(input_generators())
     dE_dy_generator = lambda: np.random.normal(0, 1, y.shape)
-    common_layer_random_sample(l, f, df, input_generators, dE_dy_generator, samples=samples, tolerance=tolerance,
+    common_layer_random_sample(layer, f, df, input_generators, dE_dy_generator, samples=samples, tolerance=tolerance,
                                break_on_error=break_on_error)
 
 
@@ -84,10 +84,10 @@ def binary_cross_entropy_labels(l: nn.BinaryCrossEntropy, batch_size: int, sampl
                                tolerance=tolerance, break_on_error=break_on_error)
 
 
-def common_layer_random_sample(l: nn.Model, f, df, input_generator, dE_dy_generator, samples: int = 1, tolerance=1e-7,
+def common_layer_random_sample(layer: nn.Model, f, df, input_generator, dE_dy_generator, samples: int = 1, tolerance=1e-7,
                                break_on_error=True):
     checks, errors = 0, 0
-    print(f"{Back.LIGHTBLUE_EX}{Fore.BLACK}{l.name} layer:{Style.RESET_ALL}")
+    print(f"{Back.LIGHTBLUE_EX}{Fore.BLACK}{layer.name} layer:{Style.RESET_ALL}")
 
     for i in range(samples):
         inputs = input_generator()

@@ -100,7 +100,7 @@ def generate(output_path: Path, lang: Language, keep: bool):
         print(f'Deleting folder {final_path.absolute()}...')
         shutil.rmtree(final_path)
         final_path.mkdir()
-    else:
+    elif lib_path.exists():
         print(f'Deleting folder {lib_path.absolute()}...')
         shutil.rmtree(lib_path)
 

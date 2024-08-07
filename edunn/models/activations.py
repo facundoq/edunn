@@ -1,4 +1,4 @@
-from edunn.model import ModelWithParameters, Cache, ModelWithoutParameters
+from edunn.model import ModelWithParameters, ModelWithoutParameters
 import numpy as np
 import math
 
@@ -27,20 +27,22 @@ class AddConstant(ModelWithParameters):
     def forward(self, x: np.ndarray):
         """
         :param x: input vector/matrix
-        :return: x + a constant value, stored in self.value
+        :return: `x + a`, constant value, stored in `self.value`
         """
-        y = np.zeros_like(x)
-        ### YOUR IMPLEMENTATION START  ###
 
+        ### YOUR IMPLEMENTATION START  ###
+        # default: y = np.zeros_like(x)
         y = x + self.value
         ### YOUR IMPLEMENTATION END  ###
+
         return y
 
     def backward(self, dE_dy: np.ndarray):
-        dE_dx = np.zeros_like(dE_dy)
         ### YOUR IMPLEMENTATION START  ###
+        # default: dE_dx = np.zeros_like(dE_dy)
         dE_dx = dE_dy
         ### YOUR IMPLEMENTATION END  ###
+
         dE_dp = {}  # no parameters, no derivatives
         return dE_dx, dE_dp
 
@@ -58,18 +60,19 @@ class MultiplyConstant(ModelWithParameters):
     def forward(self, x: np.ndarray):
         """
         :param x: input vector/matrix
-        :return: x * a constant value, stored in self.value
+        :return: `x * a`, constant value, stored in `self.value`
         """
-        y = np.zeros_like(x)
+
         ### YOUR IMPLEMENTATION START  ###
+        # default: y = np.zeros_like(x)
         y = x * self.value
         ### YOUR IMPLEMENTATION END  ###
+
         return y
 
     def backward(self, dE_dy: np.ndarray):
-        dE_dx = np.zeros_like(dE_dy)
-
         ### YOUR IMPLEMENTATION START  ###
+        # default: dE_dx = np.zeros_like(dE_dy)
         dE_dx = dE_dy * self.value
         ### YOUR IMPLEMENTATION END  ###
 
