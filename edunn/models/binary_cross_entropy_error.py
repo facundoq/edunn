@@ -20,14 +20,14 @@ class BinaryCrossEntropy(ModelWithoutParameters):
         n, c = y.shape
 
         E = np.zeros((n, 1))
-        ### YOUR IMPLEMENTATION START  ###
+        """ YOUR IMPLEMENTATION START """
         for i in range(n):
             miss = y_true[i] * y[i] + (1 - y_true[i]) * (1 - y[i])
             if miss == 0:
                 miss += nn.eps
             E[i] = - np.log(miss)
         # print(error)
-        ### YOUR IMPLEMENTATION END  ###
+        """ YOUR IMPLEMENTATION END """
         assert np.all(np.squeeze(E).shape == y_true.shape)
         self.set_cache(y_true, y)
         return E
@@ -36,12 +36,12 @@ class BinaryCrossEntropy(ModelWithoutParameters):
         y_true, y = self.get_cache()
         dE_dy = np.zeros_like(y)
         n, classes = y.shape
-        ### YOUR IMPLEMENTATION START  ###
+        """ YOUR IMPLEMENTATION START """
         for i in range(n):
             miss = y_true[i] * y[i] - (1 - y_true[i]) * (1 - y[i])
             if miss == 0:
                 miss += nn.eps
             dE_dy[i] = - 1 / miss
-        ### YOUR IMPLEMENTATION END  ###
+        """ YOUR IMPLEMENTATION END """
 
         return dE_dy * dE_dyi, {}

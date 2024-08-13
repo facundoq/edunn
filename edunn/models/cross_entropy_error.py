@@ -14,8 +14,8 @@ class CrossEntropyWithLabels(ModelWithoutParameters):
         expected probability of 1, and 0 for the rest)
     """
 
-    ### Ayuda para implementar:
-    ### http://facundoq.github.io/guides/crossentropy_derivative.html
+    # Ayuda para implementar:
+    # http://facundoq.github.io/guides/crossentropy_derivative.html
     def forward(self, y_true: np.ndarray, y: np.ndarray):
         y_true = np.squeeze(y_true)
         assert len(y_true.shape) == 1
@@ -23,11 +23,11 @@ class CrossEntropyWithLabels(ModelWithoutParameters):
         n, c = y.shape
 
         E = np.zeros((n, 1))
-        ### YOUR IMPLEMENTATION START  ###
+        """ YOUR IMPLEMENTATION START """
         for i in range(n):
             probability = y[i, y_true[i]]
             E[i] = -np.log(probability)
-        ### YOUR IMPLEMENTATION END  ###
+        """ YOUR IMPLEMENTATION END """
         assert np.all(np.squeeze(E).shape == y_true.shape)
         self.set_cache(y_true, y)
         return E
@@ -37,9 +37,9 @@ class CrossEntropyWithLabels(ModelWithoutParameters):
 
         dE_dy = np.zeros_like(y)
         n, classes = y.shape
-        ### YOUR IMPLEMENTATION START  ###
+        """ YOUR IMPLEMENTATION START """
         for i in range(n):
             p = y[i, y_true[i]]
             dE_dy[i, y_true[i]] = -1 / p
-        ### YOUR IMPLEMENTATION END  ###
+        """ YOUR IMPLEMENTATION END """
         return dE_dy * dE_dyi, {}

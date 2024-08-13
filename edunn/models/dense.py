@@ -67,11 +67,11 @@ class Dense(ModelWithParameters):
     def forward(self, x: np.ndarray):
         # calculate and return activation(bias(linear(x)))
         y_activation = None
-        ### YOUR IMPLEMENTATION START  ###
+        """ YOUR IMPLEMENTATION START """
         y_linear = self.linear.forward(x)
         y_bias = self.bias.forward(y_linear)
         y_activation = self.activation.forward(y_bias)
-        ### YOUR IMPLEMENTATION END  ###
+        """ YOUR IMPLEMENTATION END """
         return y_activation
 
     def backward(self, dE_dy: np.ndarray):
@@ -80,11 +80,11 @@ class Dense(ModelWithParameters):
         # (ie, dE_dactivation = {})
         dE_dbias, dE_dlinear, dE_dactivation = {}, {}, {}
         dE_dx = None
-        ### YOUR IMPLEMENTATION START  ###
+        """ YOUR IMPLEMENTATION START """
         dE_dx_activation, dE_dactivation = self.activation.backward(dE_dy)
         dE_dx_bias, dE_dbias = self.bias.backward(dE_dx_activation)
         dE_dx, dE_dlinear = self.linear.backward(dE_dx_bias)
-        ### YOUR IMPLEMENTATION END  ###
+        """ YOUR IMPLEMENTATION END """
 
         # combine gradients for parameters from dense, linear and activation models
         dE_ddense = {**dE_dbias, **dE_dlinear, **dE_dactivation}

@@ -10,7 +10,7 @@ We are open to contributions! Specifically:
 ## :bulb: Project organization
 A **release** of the library is a copy of the library without the key code that learners must implement.
 
-To generate a **release**, EduNN's reference implementation in folder `edunn` is stripped of `### YOUR IMPLEMENTATION START  ###` and `### YOUR IMPLEMENTATION END  ###` comment pairs, and all the code in between. The resulting code is stored in the `generated` folder.
+To generate a **release**, EduNN's reference implementation in folder `edunn` is stripped of `""" YOUR IMPLEMENTATION START """` and `""" YOUR IMPLEMENTATION END """` comment pairs, and all the code in between. The resulting code is stored in the `generated` folder.
  
 Guides can be written for different languages (english, spanish, etc), and are zipped with a release to generate a downloadable guide. 
 

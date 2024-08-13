@@ -28,11 +28,11 @@ class LogisticRegression(ModelWithParameters):
         # calculate and return softmax(bias(linear(x)))
         y = np.zeros((x.shape[0], self.output_size))  # default value
 
-        ### YOUR IMPLEMENTATION START  ###
+        """ YOUR IMPLEMENTATION START """
         y_linear = self.linear.forward(x)
         y_bias = self.bias.forward(y_linear)
         y = self.softmax.forward(y_bias)
-        ### YOUR IMPLEMENTATION END  ###
+        """ YOUR IMPLEMENTATION END """
         return y
 
     def backward(self, dE_dy: np.ndarray):
@@ -40,11 +40,11 @@ class LogisticRegression(ModelWithParameters):
         dE_dbias, dE_dlinear, dE_dsoftmax = {}, {}, {}
         dE_dx = np.zeros((dE_dy.shape[0], self.input_size))  # default value
 
-        ### YOUR IMPLEMENTATION START  ###
+        """ YOUR IMPLEMENTATION START """
         dE_dx_softmax, dE_dsoftmax = self.softmax.backward(dE_dy)
         dE_dx_bias, dE_dbias = self.bias.backward(dE_dx_softmax)
         dE_dx, dE_dlinear = self.linear.backward(dE_dx_bias)
-        ### YOUR IMPLEMENTATION END  ###
+        """ YOUR IMPLEMENTATION END """
 
         # combine gradients for parameters from linear and bias models
         # to obtain parameters for the Linear Regression (lr) model
