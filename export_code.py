@@ -56,6 +56,9 @@ def remove_implementation(filepath: Path, lang: Language) -> int:
     def is_end(s: str):
         return s.strip() == end_marker
 
+    def is_delimiter(s: str):
+        return is_start(s) or is_end(s)
+
     modifications = 0
     with open(filepath, 'r+') as f:
         is_inside_implementation = False
@@ -63,7 +66,7 @@ def remove_implementation(filepath: Path, lang: Language) -> int:
 
         for line in f.readlines():
             if (is_comment_lang(line) and get_comment_lang(line) != lang) \
-                    or (is_inside_implementation and not is_comment(line)):
+                    or (is_inside_implementation and not is_comment(line) and not is_delimiter(line)):
                 continue
 
             if is_start(line):
