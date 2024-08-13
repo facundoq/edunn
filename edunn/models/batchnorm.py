@@ -30,7 +30,7 @@ class BatchNorm(ModelWithParameters):
         w = self.get_parameters()["w"]
         b = self.get_parameters()["b"]
 
-        ### YOUR IMPLEMENTATION START  ###
+        """ YOUR IMPLEMENTATION START """
         x_mean = x.mean(axis=0)
         x_var = x.var(axis=0)
 
@@ -39,7 +39,7 @@ class BatchNorm(ModelWithParameters):
         y = w * x_norm + b
 
         cache = (x_norm, std, w)
-        ### YOUR IMPLEMENTATION END  ###
+        """ YOUR IMPLEMENTATION END """
 
         self.set_cache(cache)
         return y
@@ -48,7 +48,7 @@ class BatchNorm(ModelWithParameters):
         dE_dx, dE_dγ, dE_dβ = {}, {}, {}
         # Retrieve variables from cache
         (x_norm, std, gamma), = self.get_cache()
-        ### YOUR IMPLEMENTATION START  ###
+        """ YOUR IMPLEMENTATION START """
         N = dE_dy.shape[0]
 
         dE_dγ = (dE_dy * x_norm).sum(axis=0)
@@ -58,6 +58,6 @@ class BatchNorm(ModelWithParameters):
         dE_dx = 1 / N / std * (N * dx_norm
                               - dx_norm.sum(axis=0)
                               - x_norm * (dx_norm * x_norm).sum(axis=0))
-        ### YOUR IMPLEMENTATION END  ###
+        """ YOUR IMPLEMENTATION END """
         dE_dbn = {"w": dE_dγ, "b": dE_dβ}
         return dE_dx, dE_dbn

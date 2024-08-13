@@ -12,12 +12,12 @@ class Language(Enum):
     es = 'es'
 
 
-start_marker = '### YOUR IMPLEMENTATION START  ###'
-end_marker = '### YOUR IMPLEMENTATION END  ###'
+start_marker = '""" YOUR IMPLEMENTATION START """'
+end_marker = '""" YOUR IMPLEMENTATION END """'
 default_marker = '# default: '
 
 supported_languages = (Language.en, Language.es)
-marker_delimiter = '###'
+marker_delimiter = '"""'
 start_marker_lang = {Language.en: 'YOUR IMPLEMENTATION START', Language.es: 'COMIENZO DE TU IMPLEMENTACION'}
 end_marker_lang = {Language.en: 'YOUR IMPLEMENTATION END', Language.es: 'FIN DE TU IMPLEMENTACION'}
 

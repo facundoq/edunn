@@ -24,10 +24,10 @@ class LinearRegression(ModelWithParameters):
     def forward(self, x: np.ndarray):
         # calculate and return bias(linear(x))
         y = np.zeros((x.shape[0], self.output_size))  # default value
-        ### YOUR IMPLEMENTATION START  ###
+        """ YOUR IMPLEMENTATION START """
         y_linear = self.linear.forward(x)
         y = self.bias.forward(y_linear)
-        ### YOUR IMPLEMENTATION END  ###
+        """ YOUR IMPLEMENTATION END """
         return y
 
     def backward(self, dE_dy: np.ndarray):
@@ -35,10 +35,10 @@ class LinearRegression(ModelWithParameters):
         dE_dbias, dE_dlinear = {}, {}
         dE_dx = np.zeros((dE_dy.shape[0], self.input_size))  # default value
 
-        ### YOUR IMPLEMENTATION START  ###
+        """ YOUR IMPLEMENTATION START """
         dE_dx_bias, dE_dbias = self.bias.backward(dE_dy)
         dE_dx, dE_dlinear = self.linear.backward(dE_dx_bias)
-        ### YOUR IMPLEMENTATION END  ###
+        """ YOUR IMPLEMENTATION END """
 
         # combine gradients for parameters from linear and bias models
         # to obtain parameters for the Linear Regression (lr) model

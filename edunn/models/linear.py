@@ -26,9 +26,9 @@ class Linear(ModelWithParameters):
 
         y = np.zeros((n, dout))
         # calculate output
-        ### YOUR IMPLEMENTATION START  ###
+        """ YOUR IMPLEMENTATION START """
         y = x.dot(w)
-        ### YOUR IMPLEMENTATION END  ###
+        """ YOUR IMPLEMENTATION END """
 
         # add input to cache to calculate dE_dw in backward step
         self.set_cache(x)
@@ -44,7 +44,7 @@ class Linear(ModelWithParameters):
 
         # Calculate derivative of error E with respect to input x
         dE_dx = np.zeros_like(x)
-        ### YOUR IMPLEMENTATION START  ###
+        """ YOUR IMPLEMENTATION START """
 
         # Per sample version
         # for i in range(n):
@@ -54,12 +54,12 @@ class Linear(ModelWithParameters):
         # dy_dx = w.T
         dE_dx = dE_dy.dot(w.T)
 
-        ### YOUR IMPLEMENTATION END  ###
+        """ YOUR IMPLEMENTATION END """
 
         # Calculate derivative of error E with respect to parameter w
         dE_dw = np.zeros_like(w)
 
-        ### YOUR IMPLEMENTATION START  ###
+        """ YOUR IMPLEMENTATION START """
 
         # Per sample version
         # for i in range(n):
@@ -69,6 +69,6 @@ class Linear(ModelWithParameters):
         ## Vectorized version
         dE_dw = x.T.dot(dE_dy)
 
-        ### YOUR IMPLEMENTATION END  ###
+        """ YOUR IMPLEMENTATION END """
 
         return dE_dx, {"w": dE_dw}

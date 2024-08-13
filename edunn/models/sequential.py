@@ -25,12 +25,12 @@ class Sequential(Model):
         :return: output of model with x as input
         """
 
-        ### YOUR IMPLEMENTATION START  ###
+        """ YOUR IMPLEMENTATION START """
         # default: y = np.zeros_like(x)
         for layer in self.layers:
             x = layer.forward(x)
         y = x
-        ### YOUR IMPLEMENTATION END  ###
+        """ YOUR IMPLEMENTATION END """
         return y
 
     def set_phase(self, phase: Phase):
@@ -60,12 +60,12 @@ class Sequential(Model):
         # Hint: use `self.merge_gradients(m_i, dE_dp_i, dE_dp)`
         # to add the gradients `dE_dp_i` of parameters of `m_i`
         # to the final gradients `dE_dp` dictionary
-        ### YOUR IMPLEMENTATION START  ###
+        """ YOUR IMPLEMENTATION START """
         for m_i in reversed(self.layers):
             dE_dy, dE_dp_i = m_i.backward(dE_dy)
             self.merge_gradients(m_i, dE_dp_i, dE_dp)
         dE_dx = dE_dy
-        ### YOUR IMPLEMENTATION END  ###
+        """ YOUR IMPLEMENTATION END """
 
         return dE_dx, dE_dp
 

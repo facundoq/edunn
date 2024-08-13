@@ -112,9 +112,9 @@ class GradientDescent(BatchedGradientOptimizer):
             p = parameters[parameter_name]
             # use p[:] so that updates are in-place
             # instead of creating a new variable
-            ### YOUR IMPLEMENTATION START  ###
+            """ YOUR IMPLEMENTATION START """
             p[:] = p - self.lr * dE_dp
-            ### YOUR IMPLEMENTATION END  ###
+            """ YOUR IMPLEMENTATION END """
 
 
 class RMSprop(BatchedGradientOptimizer):
@@ -140,10 +140,10 @@ class RMSprop(BatchedGradientOptimizer):
             p = parameters[parameter_name]
             # use p[:] so that updates are in-place
             # instead of creating a new variable
-            ### YOUR IMPLEMENTATION START  ###
+            """ YOUR IMPLEMENTATION START """
             self.v[parameter_name] = self.beta * self.v[parameter_name] + (1 - self.beta) * dE_dp * dE_dp
             p[:] = p - self.lr / (np.sqrt(self.v[parameter_name]) + self.eps) * dE_dp
-            ### YOUR IMPLEMENTATION END  ###
+            """ YOUR IMPLEMENTATION END """
 
 
 class Adam(BatchedGradientOptimizer):
@@ -172,13 +172,13 @@ class Adam(BatchedGradientOptimizer):
             p = parameters[parameter_name]
             # use p[:] so that updates are in-place
             # instead of creating a new variable
-            ### YOUR IMPLEMENTATION START  ###
+            """ YOUR IMPLEMENTATION START """
             self.m[parameter_name] = self.beta_1 * self.m[parameter_name] + (1 - self.beta_1) * dE_dp
             self.v[parameter_name] = self.beta_2 * self.v[parameter_name] + (1 - self.beta_2) * dE_dp * dE_dp
             m_hat = self.m[parameter_name] / (1 - np.power(self.beta_1, iteration))
             v_hat = self.v[parameter_name] / (1 - np.power(self.beta_2, iteration))
             p[:] = p - self.lr * m_hat / (np.sqrt(v_hat) + self.eps)
-            ### YOUR IMPLEMENTATION END  ###
+            """ YOUR IMPLEMENTATION END """
 
 
 class MomentumGD(BatchedGradientOptimizer):
@@ -204,10 +204,10 @@ class MomentumGD(BatchedGradientOptimizer):
             v = self.v[k]
             # use p[:] and v[:] so that updates are in-place
             # instead of creating a new variable
-            ### YOUR IMPLEMENTATION START  ###
+            """ YOUR IMPLEMENTATION START """
             v[:] = self.gamma * v + self.lr * dE_dp
             p[:] = p - v
-            ### YOUR IMPLEMENTATION END  ###
+            """ YOUR IMPLEMENTATION END """
 
 
 class NesterovMomentumGD(BatchedGradientOptimizer):
@@ -233,10 +233,10 @@ class NesterovMomentumGD(BatchedGradientOptimizer):
             v = self.v[k]
             # use p[:] so that updates are in-place
             # instead of creating a new variable
-            ### YOUR IMPLEMENTATION START  ###
+            """ YOUR IMPLEMENTATION START """
             v[:] = self.gamma * v + self.lr * dE_dp
             p[:] = p - (self.gamma * v + self.lr * dE_dp)
-            ### YOUR IMPLEMENTATION END  ###
+            """ YOUR IMPLEMENTATION END """
 
 
 class SignGD(BatchedGradientOptimizer):
@@ -253,7 +253,7 @@ class SignGD(BatchedGradientOptimizer):
             p = parameters[parameter_name]
             # use p[:] so that updates are in-place
             # instead of creating a new variable
-            ### YOUR IMPLEMENTATION START  ###
+            """ YOUR IMPLEMENTATION START """
             denom = np.sqrt(dE_dp ** 2 + self.eps)
             p[:] = p - self.lr * (dE_dp / denom)
-            ### YOUR IMPLEMENTATION END  ###
+            """ YOUR IMPLEMENTATION END """
