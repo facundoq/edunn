@@ -9,7 +9,7 @@ class Initializer(abc.ABC):
     def initialize(self, p: np.ndarray):
         pass
 
-    def create(self, shape: Tuple[int, ...]):
+    def create(self, shape: Tuple[int, ...]) -> np.ndarray:
         p = np.zeros(shape)
         self.initialize(p)
         return p
