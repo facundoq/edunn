@@ -1,7 +1,7 @@
-from edunn.model import ModelWithParameters
 import numpy as np
-from edunn.initializers import Initializer, Zero
+
 import edunn
+from edunn.model import ModelWithParameters
 
 
 class Bias(ModelWithParameters):
@@ -11,37 +11,33 @@ class Bias(ModelWithParameters):
     x: array of size (n,o)
     where $n$ is the batch size and $o$ is the number of both input and output features
     The number of columns of x, $o$, must match the size of $b$.
-
     """
 
-    def __init__(self, output_size: int, initializer: edunn.initializers.Initializer = None, name=None):
+    def __init__(self, output_size: int, initializer: edunn.initializers.Initializer = edunn.initializers.Zero(), name=None):
         super().__init__(name=name)
-        if initializer is None:
-            initializer = edunn.initializers.Zero()
         b = initializer.create((output_size,))
-        self.register_parameter("b", b)
+        self.register_parameter('b', b)
 
     def forward(self, x: np.ndarray):
         n, d = x.shape
-        b = self.get_parameters()["b"]
+        b = self.get_parameters()['b']
         dout, = b.shape
         assert dout == d, f"#features of input ({d}) must match size of b ({dout})"
-        y = np.zeros_like(x)
+
         """ YOUR IMPLEMENTATION START """
-
+        # default: y = np.zeros_like(x)
         y = x + b
-
         """ YOUR IMPLEMENTATION END """
         return y
 
     def backward(self, dE_dy: np.ndarray):
-        b = self.get_parameters()["b"]
-        dE_dx = np.zeros_like(dE_dy)
+        b = self.get_parameters()['b']
 
         # Calculate derivative of error E with respect to input x
         # Hints:
         # dE_dx = dE_dy * dy_dx = dE_dy * [1,1,...,1] = dE_dy
         """ YOUR IMPLEMENTATION START """
+        # default: dE_dx = np.zeros_like(dE_dy)
         dE_dx = dE_dy
         """ YOUR IMPLEMENTATION END """
 
