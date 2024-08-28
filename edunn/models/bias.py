@@ -1,6 +1,5 @@
 import numpy as np
 
-import edunn
 from edunn import initializers
 from edunn.model import ModelWithParameters
 

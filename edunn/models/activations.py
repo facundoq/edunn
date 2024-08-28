@@ -1,9 +1,9 @@
-from edunn.model import ModelWithParameters, ModelWithoutParameters
+from edunn.model import ModelWithoutParameters
 import numpy as np
 import math
 
 
-class Identity(ModelWithParameters):
+class Identity(ModelWithoutParameters):
 
     def forward(self, x: np.ndarray):
         return x
@@ -14,7 +14,7 @@ class Identity(ModelWithParameters):
         return dE_dy, dE_dp
 
 
-class AddConstant(ModelWithParameters):
+class AddConstant(ModelWithoutParameters):
     """
     A layer that adds a constant
     This layer has NO parameters
@@ -47,7 +47,7 @@ class AddConstant(ModelWithParameters):
         return dE_dx, dE_dp
 
 
-class MultiplyConstant(ModelWithParameters):
+class MultiplyConstant(ModelWithoutParameters):
     """
     A layer that multiplies by a constant
     This layer has NO parameters
