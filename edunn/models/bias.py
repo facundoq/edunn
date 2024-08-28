@@ -1,6 +1,7 @@
 import numpy as np
 
 import edunn
+from edunn import initializers
 from edunn.model import ModelWithParameters
 
 
@@ -13,8 +14,10 @@ class Bias(ModelWithParameters):
     The number of columns of x, $o$, must match the size of $b$.
     """
 
-    def __init__(self, output_size: int, initializer: edunn.initializers.Initializer = edunn.initializers.Zero(), name=None):
+    def __init__(self, output_size: int, initializer: initializers.Initializer = None, name=None):
         super().__init__(name=name)
+        if initializer is None:
+            initializer = initializers.Zero()
         b = initializer.create((output_size,))
         self.register_parameter('b', b)
 
