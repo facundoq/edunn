@@ -1,3 +1,7 @@
+"""
+Typically, Activations are layers without parameters, applied element-wise.
+"""
+
 from edunn.model import ModelWithoutParameters
 import numpy as np
 import math

@@ -1,15 +1,26 @@
-import abc
+from abc import ABC, abstractmethod
 import numpy as np
 from typing import Tuple
 
 
-class Initializer(abc.ABC):
+class Initializer(ABC):
 
-    @abc.abstractmethod
+    @abstractmethod
     def initialize(self, p: np.ndarray):
+        """
+        Internal method to initialize the parameters of the layer. Called by the `create` method.
+        The implementation should fill the vector p with the desired initial values for each initializer.
+        :param p: parameter of the layer to be initialized.
+        """
         pass
 
     def create(self, shape: Tuple[int, ...]) -> np.ndarray:
+        """
+        Creates an initialization vector.
+        This method needs to be called to create the initialization vector.
+        :param shape: shape of the initialization vector
+        :return: initialized parameter
+        """
         p = np.zeros(shape)
         self.initialize(p)
         return p
@@ -26,14 +37,14 @@ class Constant(Initializer):
 
     def initialize(self, p: np.ndarray):
         """ YOUR IMPLEMENTATION START """
+        # default: pass
         p[:] = self.c
         """ YOUR IMPLEMENTATION END """
 
 
 class RandomUniform(Initializer):
     """
-    A random initializer with samples from a Uniform distribution
-    with mean 0 and range -a,a
+    A random initializer with samples from a Uniform distribution with mean 0 and range -a,a
     """
 
     def __init__(self, a: float = 1e-10):
@@ -45,6 +56,7 @@ class RandomUniform(Initializer):
         # es: TIP usar np.random.uniform(a,b,shape) para generar numeros aleatorios uniformes entre a y b
 
         """ YOUR IMPLEMENTATION START """
+        # default: pass
         p[:] = np.random.uniform(-self.a, self.a, p.shape)
         """ YOUR IMPLEMENTATION END """
 
@@ -61,6 +73,7 @@ class RandomNormal(Initializer):
         # es: muestreados de una distribucion normal con media μ y desvio σ
 
         """ YOUR IMPLEMENTATION START """
+        # default: pass
         p[:] = np.random.normal(0, self.std, p.shape)
         """ YOUR IMPLEMENTATION END """
 

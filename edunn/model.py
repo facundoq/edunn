@@ -70,9 +70,8 @@ class Model(ABC):
             result += p.size
         return result
 
-    @abstractmethod
     def get_parameters(self):
-        pass
+        return {}
 
     @abstractmethod
     def forward(self, *x) -> np.ndarray:
@@ -109,6 +108,3 @@ class ModelWithoutParameters(Model):
 
     def __init__(self, name=None):
         super().__init__(name=name)
-
-    def get_parameters(self):
-        return {}
