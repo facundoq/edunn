@@ -44,7 +44,7 @@ class Constant(Initializer):
 
 class RandomUniform(Initializer):
     """
-    A random initializer with samples from a Uniform distribution with mean 0 and range -a,a
+    A random initializer with samples from a Uniform distribution with mean 0 and range -a, a
     """
 
     def __init__(self, a: float = 1e-10):
@@ -52,8 +52,8 @@ class RandomUniform(Initializer):
         self.a = a
 
     def initialize(self, p: np.ndarray):
-        # en: TIP use np.random.uniform(a,b,shape) to generate uniform random numbers between a and b
-        # es: TIP usar np.random.uniform(a,b,shape) para generar numeros aleatorios uniformes entre a y b
+        # en: TIP use np.random.uniform(a, b, shape) to generate uniform random numbers between a and b
+        # es: TIP usar np.random.uniform(a, b, shape) para generar numeros aleatorios uniformes entre a y b
 
         """ YOUR IMPLEMENTATION START """
         # default: pass
