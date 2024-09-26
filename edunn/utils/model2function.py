@@ -15,7 +15,7 @@ def set_parameters_inplace(l: nn.Model, parameters: ParameterSet):
         l.get_parameters()[k][:] = parameters[k]
 
 
-def common_layer_to_function(l: nn.ModelWithParameters):
+def common_layer_to_function(l: nn.Model):
     def f(inputs: Dict[str, np.ndarray]):
         old_params = l.get_parameters().copy()
         set_parameters_inplace(l, inputs)

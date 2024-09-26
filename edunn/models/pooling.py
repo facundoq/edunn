@@ -1,5 +1,5 @@
 import numpy as np
-from ..model import ModelWithoutParameters
+from ..model import Model
 
 
 def conv2d_forward(x, func, stride=(1, 1), pool_size=(1, 1)):
@@ -78,7 +78,7 @@ def conv2d_backward_avg(dy, x, stride=(1, 1), pool_size=(1, 1)):
     return dx
 
 
-class MaxPool2d(ModelWithoutParameters):
+class MaxPool2d(Model):
 
     def __init__(self, kernel_size: int, stride: int = 1, name=None):
         super().__init__(name=name)
@@ -102,7 +102,7 @@ class MaxPool2d(ModelWithoutParameters):
         return dE_dx, {}
 
 
-class AvgPool2d(ModelWithoutParameters):
+class AvgPool2d(Model):
 
     def __init__(self, kernel_size: int, stride: int = 1, name=None):
         super().__init__(name=name)

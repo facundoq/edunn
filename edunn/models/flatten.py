@@ -1,8 +1,8 @@
 import numpy as np
-from ..model import ModelWithoutParameters
+from ..model import Model
 
 
-class Flatten(ModelWithoutParameters):
+class Flatten(Model):
 
     def forward(self, x: np.ndarray):
         y = {}

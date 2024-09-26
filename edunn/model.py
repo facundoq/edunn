@@ -28,11 +28,11 @@ class Model(ABC):
 
     def __init__(self, name=None):
         """
-        Create a model with a name. Name's should be unique so that gradients from different models can be updated independently.
+        Create a model with a name.
+        Names should be unique so that gradients from different models can be updated independently.
         """
-
         if name is None:
-            ' auto generate a name if not provided'
+            # auto generate a name if not provided
             class_name = self.__class__.__name__
             count = self.class_counter.get(class_name, 0)
             name = f"{class_name}_{count}"
@@ -46,6 +46,8 @@ class Model(ABC):
         self.name = name
         self.frozen = False
         self.cache = None
+
+        self.parameters = {}
 
     def set_cache(self, *values):
         self.cache = values
@@ -70,8 +72,11 @@ class Model(ABC):
             result += p.size
         return result
 
+    def register_parameter(self, name, value):
+        self.parameters[name] = value
+
     def get_parameters(self):
-        return {}
+        return self.parameters
 
     @abstractmethod
     def forward(self, *x) -> np.ndarray:
@@ -83,28 +88,3 @@ class Model(ABC):
 
     def __repr__(self):
         return f"{self.name}"
-
-
-class ModelWithParameters(Model):
-    """
-    Helper class to implement layers with parameters
-    """
-
-    def __init__(self, name=None):
-        super().__init__(name=name)
-        self.parameters = {}
-
-    def register_parameter(self, name, value):
-        self.parameters[name] = value
-
-    def get_parameters(self):
-        return self.parameters
-
-
-class ModelWithoutParameters(Model):
-    """
-    Helper class to implement layers _without_ parameters
-    """
-
-    def __init__(self, name=None):
-        super().__init__(name=name)

@@ -1,9 +1,9 @@
 import numpy as np
 
-from ..model import ModelWithoutParameters
+from ..model import Model
 
 
-class SquaredError(ModelWithoutParameters):
+class SquaredError(Model):
     def forward(self, y_true: np.ndarray, y: np.ndarray):
         delta = (y - y_true)
 

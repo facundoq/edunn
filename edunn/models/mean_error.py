@@ -1,10 +1,10 @@
 import numpy as np
 
-from edunn import ModelWithoutParameters, Model
+from edunn import Model
 from edunn.model import ParameterSet
 
 
-class MeanError(ModelWithoutParameters):
+class MeanError(Model):
     """
     Converts a Model that converts
     an error function for each sample

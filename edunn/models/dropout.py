@@ -1,9 +1,9 @@
 import numpy as np
-from ..model import ModelWithoutParameters, Phase
+from ..model import Model, Phase
 from ..initializers import Initializer, RandomNormal
 
 
-class Dropout(ModelWithoutParameters):
+class Dropout(Model):
 
     def __init__(self, p: float = 0.5, name=None):
         super().__init__(name=name)

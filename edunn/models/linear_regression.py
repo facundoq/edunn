@@ -1,5 +1,5 @@
 import numpy as np
-from ..model import ModelWithParameters
+from ..model import Model
 
 from ..initializers import Initializer
 
@@ -7,7 +7,7 @@ from .linear import Linear
 from .bias import Bias
 
 
-class LinearRegression(ModelWithParameters):
+class LinearRegression(Model):
     """
     A LinearRegression model applies a linear and bias function, in that order, to an input, ie
     y = wx+b, where w and b are the parameters of the Linear and Bias models,

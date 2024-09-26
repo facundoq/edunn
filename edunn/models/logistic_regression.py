@@ -1,5 +1,5 @@
 import numpy as np
-from ..model import ModelWithParameters
+from ..model import Model
 
 from ..initializers import Initializer
 
@@ -8,7 +8,7 @@ from .bias import Bias
 from .activations import Softmax
 
 
-class LogisticRegression(ModelWithParameters):
+class LogisticRegression(Model):
     """
     A LogisticRegression model applies a softmax function to linear and bias function, in that order, to an input, ie
     y = softmax(wx+b), where w and b are the parameters of the Linear and Bias models

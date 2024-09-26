@@ -1,9 +1,9 @@
-from edunn.model import ModelWithParameters
+from edunn.model import Model
 import numpy as np
 from edunn.initializers import Initializer, RandomNormal
 
 
-class Linear(ModelWithParameters):
+class Linear(Model):
     """
     The Linear layer outputs y = xw, where w is a matrix of parameters
     """

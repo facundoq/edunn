@@ -1,4 +1,4 @@
-from .model import Model, Phase, ModelWithParameters, ModelWithoutParameters
+from .model import Model, Phase
 from .optimizer import Optimizer, BatchedGradientOptimizer, GradientDescent, RMSprop, Adam, MomentumGD, \
     NesterovMomentumGD, SignGD
 from . import initializers, plot

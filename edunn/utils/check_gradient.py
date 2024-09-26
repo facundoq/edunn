@@ -7,7 +7,7 @@ from edunn.utils.numerical_gradient import numerical_gradient
 from colorama import Fore, Back, Style
 
 
-def common_layer(layer: nn.ModelWithParameters, x_shape: Tuple, samples: int = 1, tolerance=1e-7, break_on_error=True):
+def common_layer(layer: nn.Model, x_shape: Tuple, samples: int = 1, tolerance=1e-7, break_on_error=True):
     """
     Generates random inputs for samples of x, and random parameters to check
     forward: calculates numerical gradient

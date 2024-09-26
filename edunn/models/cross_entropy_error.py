@@ -1,9 +1,9 @@
 import numpy as np
 
-from ..model import ModelWithoutParameters
+from ..model import Model
 
 
-class CrossEntropyWithLabels(ModelWithoutParameters):
+class CrossEntropyWithLabels(Model):
     """
         Returns the CrossEntropy between two class distributions
         Receives a matrix of probabilities NxC for each sample and a vector
