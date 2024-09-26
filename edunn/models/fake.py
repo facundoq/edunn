@@ -2,7 +2,7 @@ import edunn as nn
 import numpy as np
 
 
-class FakeModel(nn.ModelWithParameters):
+class FakeModel(nn.Model):
     # Fake model with a single parameter array with a parameter items
     # Parameters always initialized as `parameter`
     # Derivative of parameters is always `gradient`
@@ -23,7 +23,7 @@ class FakeModel(nn.ModelWithParameters):
         return dE_dx, dE_dp
 
 
-class FakeError(nn.ModelWithoutParameters):
+class FakeError(nn.Model):
     def __init__(self, error=1, derivative_value=1, name=None):
         super().__init__(name=name)
         self.error = error

@@ -1,10 +1,10 @@
 import numpy as np
 
-from ..model import ModelWithoutParameters
+from ..model import Model
 import edunn as nn
 
 
-class BinaryCrossEntropy(ModelWithoutParameters):
+class BinaryCrossEntropy(Model):
     """
     Returns the CrossEntropy between two binary class distributions
     Receives a matrix of probabilities Nx1 for each sample, with the probability

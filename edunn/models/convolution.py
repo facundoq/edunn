@@ -1,5 +1,5 @@
 import numpy as np
-from ..model import ModelWithParameters
+from ..model import Model
 
 from ..initializers import Initializer, RandomNormal
 
@@ -127,7 +127,7 @@ def conv2d_backward_w(w, x, input_w, strides=(1, 1), pad_size=(0, 0)):
     return y
 
 
-class Conv2d(ModelWithParameters):
+class Conv2d(Model):
     """
     A LinearRegression model applies a linear and bias function, in that order, to an input, ie
     y = wx+b, where w and b are the parameters of the Linear and Bias models,

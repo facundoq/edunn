@@ -1,10 +1,10 @@
 import numpy as np
 
 from edunn import initializers
-from edunn.model import ModelWithParameters
+from edunn.model import Model
 
 
-class Bias(ModelWithParameters):
+class Bias(Model):
     """
     The Bias layer outputs y = x+b, where b is a vector of parameters
     Input for forward:

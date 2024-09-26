@@ -2,12 +2,12 @@
 Typically, Activations are layers without parameters, applied element-wise.
 """
 
-from edunn.model import ModelWithoutParameters
+from edunn.model import Model
 import numpy as np
 import math
 
 
-class Identity(ModelWithoutParameters):
+class Identity(Model):
 
     def forward(self, x: np.ndarray):
         return x
@@ -18,7 +18,7 @@ class Identity(ModelWithoutParameters):
         return dE_dy, dE_dp
 
 
-class AddConstant(ModelWithoutParameters):
+class AddConstant(Model):
     """
     A layer that adds a constant
     This layer has NO parameters
@@ -51,7 +51,7 @@ class AddConstant(ModelWithoutParameters):
         return dE_dx, dE_dp
 
 
-class MultiplyConstant(ModelWithoutParameters):
+class MultiplyConstant(Model):
     """
     A layer that multiplies by a constant
     This layer has NO parameters
@@ -85,7 +85,7 @@ class MultiplyConstant(ModelWithoutParameters):
         return dE_dx, dE_dp
 
 
-class ReLU(ModelWithoutParameters):
+class ReLU(Model):
 
     def forward(self, x: np.ndarray):
         y = np.zeros_like(x)
@@ -128,7 +128,7 @@ def normal_pdf(x, mean=0, std=1):
     return pdf
 
 
-class GELU(ModelWithoutParameters):
+class GELU(Model):
 
     def forward(self, x: np.ndarray):
         y = np.zeros_like(x)
@@ -151,7 +151,7 @@ class GELU(ModelWithoutParameters):
         return dE_dx, {}
 
 
-class Sigmoid(ModelWithoutParameters):
+class Sigmoid(Model):
 
     def forward(self, x: np.ndarray):
         y = np.zeros_like(x)
@@ -177,7 +177,7 @@ class Sigmoid(ModelWithoutParameters):
         return dE_dx, {}
 
 
-class TanH(ModelWithoutParameters):
+class TanH(Model):
     def __init__(self, name=None):
         super().__init__(name=name)
         self.sigmoid = Sigmoid()
@@ -206,7 +206,7 @@ class TanH(ModelWithoutParameters):
         return dE_dx, {}
 
 
-class Softmax(ModelWithoutParameters):
+class Softmax(Model):
     def __init__(self, name=None, smoothing=1e-16):
         super().__init__(name)
         self.smoothing = smoothing

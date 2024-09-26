@@ -1,9 +1,9 @@
 import numpy as np
-from ..model import ModelWithParameters
+from ..model import Model
 from ..initializers import Initializer, RandomNormal
 
 
-class BatchNorm(ModelWithParameters):
+class BatchNorm(Model):
 
     def __init__(self, num_features: int, eps: float = 1e-5,  # momemtum: float = 0.1, affine: bool = True,
                  gamma_initializer: Initializer = None, beta_initializer: Initializer = None, name=None):

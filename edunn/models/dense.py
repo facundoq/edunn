@@ -1,5 +1,5 @@
 import numpy as np
-from ..model import ModelWithParameters
+from ..model import Model
 
 from ..initializers import Initializer, Zero, RandomNormal
 
@@ -15,7 +15,7 @@ activation_dict = {"id": activations.Identity,
                    }
 
 
-class Dense(ModelWithParameters):
+class Dense(Model):
     """
     A Dense layer simplifies the definition of networks by producing a common block
     that applies a linear, bias and activation function, in that order, to an input, ie
