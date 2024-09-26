@@ -84,14 +84,14 @@ class Sequential(Model):
         """
         :return: a summary of the models of the model and their parameters
         """
-        separator = "-------------------------------"
+        separator = '-' * 31
         result = f"{separator}\n"
         parameters = 0
         result += f"Model {self.name}:\n"
-        for l in self.layers:
-            layer_parameters = l.n_parameters()
+        for layer in self.layers:
+            layer_parameters = layer.parameter_count()
             parameters += layer_parameters
-            l_summary = f"{l.name} → params: {layer_parameters}"
+            l_summary = f"{layer.name} → params: {layer_parameters}"
             result += l_summary + "\n"
         result += f"Total parameters: {parameters}\n"
         result += f"{separator}\n"
