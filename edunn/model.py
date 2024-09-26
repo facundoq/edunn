@@ -63,7 +63,7 @@ class Model(ABC):
         """
         self.phase = phase
 
-    def n_parameters(self) -> int:
+    def parameter_count(self) -> int:
         """
         :return: number of individual parameters of the network
         """
