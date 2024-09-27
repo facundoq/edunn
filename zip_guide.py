@@ -3,9 +3,9 @@
 import argparse
 import os
 import shutil
-import subprocess
 import sys
 import zipfile
+from clear_notebooks import clear_notebooks
 from pathlib import Path
 from export_code import output_dir, lib_name, Language, supported_languages
 
@@ -15,16 +15,6 @@ def delete_checkpoints(folderpath: Path):
         if f.is_dir() and f.name == ".ipynb_checkpoints":
             print(f"    Deleting {f.absolute()}..")
             shutil.rmtree(f.absolute())
-
-
-def clear_notebooks(folderpath: Path):
-    for f in folderpath.rglob("*.ipynb"):
-        if not f.is_file():
-            continue
-        command = (f"jupyter nbconvert --clear-output "
-                   f"--ClearOutputPreprocessor.remove_metadata_fields='[(\"ExecuteTime\")]' "
-                   f"--inplace '{f.absolute()}'")
-        subprocess.run(command, shell=True)
 
 
 def zip_all(path, zip_file):
