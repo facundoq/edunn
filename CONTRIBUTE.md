@@ -18,9 +18,10 @@ Guides can be written for different languages (english, spanish, etc), and are z
 # :hammer: How to contribute
 
 1. Clone the repository
-2. Create a venv, install packages in `requirements.txt` and `requirements_dev.txt`
-2. Run `edit_guides.sh` to fire up a jupyter-notebook server that can import `edunn` correctly (recommended to avoid path issues, but you can do this in other ways if you are knowledgeable in python)
+2. Create a venv, install packages in `requirements.txt` and `requirements_dev.txt`, also run `pre-commit install`
+2. Run `edit_guides.sh` to fire up a jupyter-notebook server that can import `edunn` correctly (recommended to avoid path issues, but you can do this in other ways if you are knowledgeable in python[^import])
 2. Add/modify guide and/or a `edunn` component
+2. Before commit, run `clear_notebooks.py`
 3. Generate a release for guides and/or `edunn`  (see next steps)
 
 ##  :package: New `edunn` releases 
@@ -44,3 +45,4 @@ If you modified a guide of language `<lang>`:
 3. Create pull request 
 4. Add release to github (maintainers only)
 
+[^import]: `import sys; sys.path.insert(0, "../..");`
