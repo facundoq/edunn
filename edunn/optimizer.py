@@ -40,7 +40,7 @@ def batch_arrays(batch_size: int, *arrays, shuffle=False):
     for i in batch_list:
         start = i * batch_size
         end = start + batch_size
-        batch = [a[start:end, ] for a in arrays]
+        batch = [a[start:end,] for a in arrays]
         yield tuple(batch)
 
 
@@ -119,8 +119,9 @@ class GradientDescent(BatchedGradientOptimizer):
 
 class RMSprop(BatchedGradientOptimizer):
 
-    def __init__(self, batch_size: int, epochs: int, lr: float = 0.1, beta: float = 0.99, eps: float = 1e-8,
-                 shuffle=True):
+    def __init__(
+        self, batch_size: int, epochs: int, lr: float = 0.1, beta: float = 0.99, eps: float = 1e-8, shuffle=True
+    ):
         super().__init__(batch_size, epochs, shuffle)
         self.lr = lr
         self.beta = beta
@@ -148,8 +149,9 @@ class RMSprop(BatchedGradientOptimizer):
 
 class Adam(BatchedGradientOptimizer):
 
-    def __init__(self, batch_size: int, epochs: int, lr: float = 0.1,
-                 betas: tuple = (0.9, 0.999), eps: int = 1e-08, shuffle=True):
+    def __init__(
+        self, batch_size: int, epochs: int, lr: float = 0.1, betas: tuple = (0.9, 0.999), eps: int = 1e-08, shuffle=True
+    ):
         super().__init__(batch_size, epochs, shuffle)
         self.lr = lr
         self.beta_1, self.beta_2 = betas
@@ -254,6 +256,6 @@ class SignGD(BatchedGradientOptimizer):
             # use p[:] so that updates are in-place
             # instead of creating a new variable
             """ YOUR IMPLEMENTATION START """
-            denom = np.sqrt(dE_dp ** 2 + self.eps)
+            denom = np.sqrt(dE_dp**2 + self.eps)
             p[:] = p - self.lr * (dE_dp / denom)
             """ YOUR IMPLEMENTATION END """

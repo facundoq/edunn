@@ -36,7 +36,7 @@ class Constant(Initializer):
         self.c = c
 
     def initialize(self, p: np.ndarray):
-        """ YOUR IMPLEMENTATION START """
+        """YOUR IMPLEMENTATION START"""
         # default: pass
         p[:] = self.c
         """ YOUR IMPLEMENTATION END """
@@ -55,7 +55,7 @@ class RandomUniform(Initializer):
         # en: TIP use np.random.uniform(a, b, shape) to generate uniform random numbers between a and b
         # es: TIP usar np.random.uniform(a, b, shape) para generar numeros aleatorios uniformes entre a y b
 
-        """ YOUR IMPLEMENTATION START """
+        """YOUR IMPLEMENTATION START"""
         # default: pass
         p[:] = np.random.uniform(-self.a, self.a, p.shape)
         """ YOUR IMPLEMENTATION END """
@@ -72,7 +72,7 @@ class RandomNormal(Initializer):
         # es: TIP usar np.random.normal(μ, σ, shape) para generar numeros aleatorios
         # es: muestreados de una distribucion normal con media μ y desvio σ
 
-        """ YOUR IMPLEMENTATION START """
+        """YOUR IMPLEMENTATION START"""
         # default: pass
         p[:] = np.random.normal(0, self.std, p.shape)
         """ YOUR IMPLEMENTATION END """
@@ -99,7 +99,7 @@ class XavierNormal(Initializer):
 
         """ YOUR IMPLEMENTATION START """
         std = np.sqrt(6 / (din + dout))
-        p[:] = (np.random.normal(0, std, p.shape))
+        p[:] = np.random.normal(0, std, p.shape)
         """ YOUR IMPLEMENTATION END """
 
 
@@ -112,7 +112,7 @@ class KaimingNormal(Initializer):
 
         """ YOUR IMPLEMENTATION START """
         std = np.sqrt(2 / din)
-        p[:] = (np.random.normal(0, std, p.shape))
+        p[:] = np.random.normal(0, std, p.shape)
         """ YOUR IMPLEMENTATION END """
 
 

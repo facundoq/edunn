@@ -29,7 +29,7 @@ def load_classification(dataset_name: str, onehot=False):
 
 
 def load(dataset_name: str, loaders: Dict[str, Callable], title: str):
-    if not dataset_name in loaders:
+    if dataset_name not in loaders:
         raise ValueError(f"Unknown dataset {dataset_name}. Valid choices for {title} datasets:\n {loaders.keys()}.")
 
     dataset_loader = loaders[dataset_name]

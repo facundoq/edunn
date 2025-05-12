@@ -8,24 +8,24 @@ from pathlib import Path
 
 
 class Language(Enum):
-    en = 'en'
-    es = 'es'
+    en = "en"
+    es = "es"
 
 
 start_marker = '""" YOUR IMPLEMENTATION START """'
 end_marker = '""" YOUR IMPLEMENTATION END """'
-default_marker = '# default: '
+default_marker = "# default: "
 
 supported_languages = (Language.en, Language.es)
 marker_delimiter = '"""'
-start_marker_lang = {Language.en: 'YOUR IMPLEMENTATION START', Language.es: 'COMIENZO DE TU IMPLEMENTACION'}
-end_marker_lang = {Language.en: 'YOUR IMPLEMENTATION END', Language.es: 'FIN DE TU IMPLEMENTACION'}
+start_marker_lang = {Language.en: "YOUR IMPLEMENTATION START", Language.es: "COMIENZO DE TU IMPLEMENTACION"}
+end_marker_lang = {Language.en: "YOUR IMPLEMENTATION END", Language.es: "FIN DE TU IMPLEMENTACION"}
 
 
 def remove_implementation(filepath: Path, lang: Language) -> int:
 
     def line_indent(s: str) -> str:
-        return ' ' * (len(s) - len(s.lstrip()))
+        return " " * (len(s) - len(s.lstrip()))
 
     def is_start(s: str):
         return s.strip() == start_marker
@@ -38,20 +38,20 @@ def remove_implementation(filepath: Path, lang: Language) -> int:
 
     def convert_default_line(s: str):
         # just in case the line has the default marker in other place, only replace first occurrence
-        return line_indent(s) + s.lstrip().replace(default_marker, '', 1)
+        return line_indent(s) + s.lstrip().replace(default_marker, "", 1)
 
     def is_comment_lang(s: str) -> bool:
         return get_comment_lang(s) is not None
 
     def get_comment_lang(s: str) -> Language | None:
         for language in supported_languages:
-            if s.lstrip().startswith(f'# {language.value}:'):
+            if s.lstrip().startswith(f"# {language.value}:"):
                 return language
         return None
 
     def convert_locale_comment(s: str, lang: Language) -> str:
         # just in case the line has the lang prefix in other place, only replace first occurrence
-        return line_indent(s) + s.lstrip().replace(f'# {lang.value}:', '#', 1)
+        return line_indent(s) + s.lstrip().replace(f"# {lang.value}:", "#", 1)
 
     def is_end(s: str):
         return s.strip() == end_marker
@@ -60,23 +60,28 @@ def remove_implementation(filepath: Path, lang: Language) -> int:
         return is_start(s) or is_end(s)
 
     modifications = 0
-    with open(filepath, 'r+') as f:
+    with open(filepath, "r+") as f:
         is_inside_implementation = False
         new_lines = []
 
         for line in f.readlines():
-            if (is_comment_lang(line) and get_comment_lang(line) != lang) \
-                    or (is_inside_implementation and not is_comment(line) and not is_delimiter(line)):
+            if (is_comment_lang(line) and get_comment_lang(line) != lang) or (
+                is_inside_implementation and not is_comment(line) and not is_delimiter(line)
+            ):
                 continue
 
             if is_start(line):
                 is_inside_implementation = True
                 modifications += 1
-                new_lines.append(line.replace(start_marker, f'{marker_delimiter} {start_marker_lang[lang]} {marker_delimiter}'))
+                new_lines.append(
+                    line.replace(start_marker, f"{marker_delimiter} {start_marker_lang[lang]} {marker_delimiter}")
+                )
             elif is_end(line):
                 is_inside_implementation = False
-                new_lines.append(f'{line_indent(line)}pass\n')
-                new_lines.append(line.replace(end_marker, f'{marker_delimiter} {end_marker_lang[lang]} {marker_delimiter}'))
+                new_lines.append(f"{line_indent(line)}pass\n")
+                new_lines.append(
+                    line.replace(end_marker, f"{marker_delimiter} {end_marker_lang[lang]} {marker_delimiter}")
+                )
             elif is_default_line(line):
                 new_lines.append(convert_default_line(line))
             elif is_comment_lang(line) and get_comment_lang(line) == lang:
@@ -95,22 +100,22 @@ def generate(output_path: Path, lang: Language, keep: bool):
     final_path = output_path / lang.value
     lib_path = final_path / lib_name
 
-    print(f'Generating unimplemented library version to {final_path}')
+    print(f"Generating unimplemented library version to {final_path}")
 
     if not final_path.exists():
         final_path.mkdir()
     elif not keep:
-        print(f'Deleting folder {final_path.absolute()}...')
+        print(f"Deleting folder {final_path.absolute()}...")
         shutil.rmtree(final_path)
         final_path.mkdir()
     elif lib_path.exists():
-        print(f'Deleting folder {lib_path.absolute()}...')
+        print(f"Deleting folder {lib_path.absolute()}...")
         shutil.rmtree(lib_path)
 
-    print(f'Copying new version from {lib_name} to {final_path.absolute()}...')
+    print(f"Copying new version from {lib_name} to {final_path.absolute()}...")
     shutil.copytree(lib_name, lib_path)
 
-    print(f"Removing implementation code...")
+    print("Removing implementation code...")
     total_files = 0
     modified_files = 0
     total_modifications = 0
@@ -124,7 +129,7 @@ def generate(output_path: Path, lang: Language, keep: bool):
                 if modifications > 0:
                     modified_files += 1
 
-    print(f'Done, {total_modifications} modifications in {modified_files} files out of {total_files} python files.')
+    print(f"Done, {total_modifications} modifications in {modified_files} files out of {total_files} python files.")
 
     extra_files = ["requirements.txt"]
     print("Copying additional files...")
@@ -135,24 +140,29 @@ def generate(output_path: Path, lang: Language, keep: bool):
 
 
 output_dir = Path("generated")
-lib_name = 'edunn'
+lib_name = "edunn"
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     all_langs = [l.value for l in supported_languages]
-    parser.add_argument('-l', '--languages',
-                        nargs='+',
-                        choices=all_langs,
-                        default=all_langs,
-                        help='Target language of the generated files')
+    parser.add_argument(
+        "-l",
+        "--languages",
+        nargs="+",
+        choices=all_langs,
+        default=all_langs,
+        help="Target language of the generated files",
+    )
 
-    parser.add_argument('-o', '--output',
-                        help=f'Output directory. Default is "{output_dir}"')
+    parser.add_argument("-o", "--output", help=f'Output directory. Default is "{output_dir}"')
 
-    parser.add_argument('-k', '--keep',
-                        action=argparse.BooleanOptionalAction,
-                        default=False,
-                        help=f'Keep other files in target directory. Default is False')
+    parser.add_argument(
+        "-k",
+        "--keep",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Keep other files in target directory. Default is False",
+    )
 
     args = parser.parse_args()
 

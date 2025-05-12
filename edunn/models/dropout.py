@@ -1,6 +1,7 @@
 import numpy as np
 from ..model import Model, Phase
-from ..initializers import Initializer, RandomNormal
+
+# from ..initializers import Initializer, RandomNormal
 
 
 class Dropout(Model):
@@ -25,7 +26,7 @@ class Dropout(Model):
     def backward(self, dE_dy: np.ndarray):
         dE_dx = {}
         # Retrieve u from cache
-        u, = self.get_cache()
+        (u,) = self.get_cache()
         """ YOUR IMPLEMENTATION START """
         dE_dx = dE_dy * u
         """ YOUR IMPLEMENTATION END """

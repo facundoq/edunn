@@ -34,7 +34,7 @@ def precision(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     check_label_array(y_pred)
     check_binary(y_true)
     check_binary(y_pred)
-    n = len(y_true)
+    # n = len(y_true)
     pred_true_indices = y_pred == 1
     true_positives = np.logical_and(y_true == 1, y_pred == 1)
 
@@ -75,8 +75,8 @@ def confusion(y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
 
 
 def classification_summary_onehot(y_true: np.ndarray, y_pred: np.ndarray):
-    assert (len(y_true.shape) == 2)
-    assert (np.all(y_true.shape == y_pred.shape))
+    assert len(y_true.shape) == 2
+    assert np.all(y_true.shape == y_pred.shape)
     y_true = utils.onehot2labels(y_true)
     y_pred = utils.onehot2labels(y_pred)
     classification_summary(y_true, y_pred)
@@ -91,7 +91,7 @@ def classification_summary(y_true: np.ndarray, y_pred: np.ndarray):
         print(f"Precision: {p}")
         print(f"Recall: {r}")
         print(f"F-score: {f}")
-    print(f"Confusion matrix: (rows true, columns pred)")
+    print("Confusion matrix: (rows true, columns pred)")
     c = confusion(y_true, y_pred)
     print(c)
 

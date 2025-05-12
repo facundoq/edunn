@@ -14,7 +14,7 @@ class Flatten(Model):
 
     def backward(self, dE_dy: np.ndarray):
         dE_dx = {}
-        original_shape, = self.get_cache()
+        (original_shape,) = self.get_cache()
         """ YOUR IMPLEMENTATION START """
         dE_dx = dE_dy.copy().reshape(original_shape)
         """ YOUR IMPLEMENTATION END """

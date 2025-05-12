@@ -1,6 +1,16 @@
+# flake8: noqa
+
 from .model import Model, Phase
-from .optimizer import Optimizer, BatchedGradientOptimizer, GradientDescent, RMSprop, Adam, MomentumGD, \
-    NesterovMomentumGD, SignGD
+from .optimizer import (
+    Optimizer,
+    BatchedGradientOptimizer,
+    GradientDescent,
+    RMSprop,
+    Adam,
+    MomentumGD,
+    NesterovMomentumGD,
+    SignGD,
+)
 from . import initializers, plot
 
 from .models import *

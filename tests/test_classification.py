@@ -2,7 +2,7 @@ import sys
 
 import edunn.models.mean_error
 
-sys.path.insert(0, '..')
+sys.path.insert(0, "..")
 import edunn as nn
 import numpy as np
 from edunn import metrics, datasets
@@ -21,7 +21,7 @@ def evaluate_classification_model(dataset_name: str, model_generator: Callable, 
     x = x - x.mean(axis=0)
     x /= x.std(axis=0)
     n, din = x.shape
-    assert (n == len(y))
+    assert n == len(y)
     n_classes = len(classes)
     model = model_generator(din, n_classes, id)
     print(f"Testing model {model} on dataset {dataset_name}: {n} samples, {din} features, {n_classes} classes")
@@ -47,7 +47,9 @@ def evaluate_classification_model_datasets(model_generator, datasets_config):
     for i, (dataset_name, config) in enumerate(datasets_config.items()):
         lr, epochs, min_accuracy = config.lr, config.epochs, config.min_accuracy
         model, accuracy = evaluate_classification_model(dataset_name, model_generator, epochs, lr, str(i))
-        assert min_accuracy <= accuracy, f"Model {model} achieved {accuracy} accuracy, less that  {min_accuracy} which is the expected for dataset {dataset_name}"
+        assert (
+            min_accuracy <= accuracy
+        ), f"Model {model} achieved {accuracy} accuracy, less that  {min_accuracy} which is the expected for dataset {dataset_name}"
         print(f"Accuracy={accuracy} OK (expected more than {min_accuracy})\n")
     print("All models have satisfactory accuracies.\n")
 
@@ -67,10 +69,11 @@ def test_logistic_regression():
         else:
             last_layer = nn.Softmax()
 
-        layers = [nn.Linear(din, classes),
-                  nn.Bias(classes),
-                  last_layer,
-                  ]
+        layers = [
+            nn.Linear(din, classes),
+            nn.Bias(classes),
+            last_layer,
+        ]
         return nn.Sequential(layers, f"logistic_regression_{id}")
 
     evaluate_classification_model_datasets(logistic_regression, config_datasets)
@@ -92,11 +95,12 @@ def test_classification_network():
         else:
             last_layer = nn.Softmax()
 
-        layers = [nn.Dense(din, din),
-                  nn.ReLU(),
-                  nn.Dense(din, classes),
-                  last_layer,
-                  ]
+        layers = [
+            nn.Dense(din, din),
+            nn.ReLU(),
+            nn.Dense(din, classes),
+            last_layer,
+        ]
         return nn.Sequential(layers, f"classification_network_{id}")
 
     evaluate_classification_model_datasets(network, config_datasets)

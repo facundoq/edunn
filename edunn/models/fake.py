@@ -11,7 +11,7 @@ class FakeModel(nn.Model):
         super().__init__(name=name)
         self.parameter = parameter
         self.gradient = gradient
-        assert (np.all(parameter.shape == gradient.shape))
+        assert np.all(parameter.shape == gradient.shape)
         self.register_parameter("parameter", self.parameter)
 
     def forward(self, x: np.ndarray):
@@ -38,5 +38,5 @@ class FakeError(nn.Model):
         return self.error
 
     def backward(self, dE: float):
-        shape, = self.get_cache()
+        (shape,) = self.get_cache()
         return np.ones(shape) * self.derivative_value, {}

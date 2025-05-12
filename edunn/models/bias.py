@@ -18,12 +18,12 @@ class Bias(Model):
         if initializer is None:
             initializer = initializers.Zero()
         b = initializer.create((output_size,))
-        self.register_parameter('b', b)
+        self.register_parameter("b", b)
 
     def forward(self, x: np.ndarray):
         n, d = x.shape
-        b = self.get_parameters()['b']
-        dout, = b.shape
+        b = self.get_parameters()["b"]
+        (dout,) = b.shape
         assert dout == d, f"#features of input ({d}) must match size of b ({dout})"
 
         """ YOUR IMPLEMENTATION START """
@@ -33,7 +33,7 @@ class Bias(Model):
         return y
 
     def backward(self, dE_dy: np.ndarray):
-        b = self.get_parameters()['b']
+        b = self.get_parameters()["b"]
 
         # Calculate derivative of error E with respect to input x
         # Hints:
@@ -53,7 +53,7 @@ class Bias(Model):
         for i in range(n):
             # Calculate derivative of error for a sample i (a single sample)
             # And accumulate to obtain dE_db
-            """ YOUR IMPLEMENTATION START """
+            """YOUR IMPLEMENTATION START"""
             dE_db_i = dE_dy[i, :]  # * [1,1,1...,1]
             dE_db += dE_db_i
             """ YOUR IMPLEMENTATION END """

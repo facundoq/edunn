@@ -5,18 +5,18 @@ from ..model import Model
 
 class SquaredError(Model):
     def forward(self, y_true: np.ndarray, y: np.ndarray):
-        delta = (y - y_true)
+        delta = y - y_true
 
         n = y_true.shape[0]
         E = np.zeros((n, 1))
         """ YOUR IMPLEMENTATION START """
-        E = np.sum(delta ** 2, axis=1, keepdims=True)
+        E = np.sum(delta**2, axis=1, keepdims=True)
         """ YOUR IMPLEMENTATION END """
         self.set_cache(delta)
         return E
 
     def backward(self, dE_dEi):
-        delta, = self.get_cache()
+        (delta,) = self.get_cache()
         # Calculate error w.r.t
         # y (the output of the model) and not y_true (which is a fixed value)
         dE_dy = np.zeros_like(delta)

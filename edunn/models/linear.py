@@ -36,8 +36,8 @@ class Linear(Model):
 
     def backward(self, dE_dy: np.ndarray):
         # Retrieve input from cache to calculate dE_dw
-        x, = self.get_cache()
-        n = x.shape[0]
+        (x,) = self.get_cache()
+        n = x.shape[0]  # noqa
 
         # Retrieve w
         w = self.get_parameters()["w"]
@@ -66,7 +66,7 @@ class Linear(Model):
         #      dE_dw_i = np.outer(x[i,:], dE_dy[i,:])
         #      dE_dw += dE_dw_i
 
-        ## Vectorized version
+        # Vectorized version
         dE_dw = x.T.dot(dE_dy)
 
         """ YOUR IMPLEMENTATION END """

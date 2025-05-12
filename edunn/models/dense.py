@@ -1,18 +1,19 @@
 import numpy as np
 from ..model import Model
 
-from ..initializers import Initializer, Zero, RandomNormal
+from ..initializers import Initializer  # , Zero, RandomNormal
 
 from .linear import Linear
 from . import activations
 from .bias import Bias
 
-activation_dict = {"id": activations.Identity,
-                   "relu": activations.ReLU,
-                   "tanh": activations.TanH,
-                   "sigmoid": activations.Sigmoid,
-                   "softmax": activations.Softmax,
-                   }
+activation_dict = {
+    "id": activations.Identity,
+    "relu": activations.ReLU,
+    "tanh": activations.TanH,
+    "sigmoid": activations.Sigmoid,
+    "softmax": activations.Softmax,
+}
 
 
 class Dense(Model):
@@ -47,8 +48,15 @@ class Dense(Model):
     * softmax
     """
 
-    def __init__(self, input_size: int, output_size: int, activation_name: str = None,
-                 linear_initializer: Initializer = None, bias_initializer: Initializer = None, name=None):
+    def __init__(
+        self,
+        input_size: int,
+        output_size: int,
+        activation_name: str = None,
+        linear_initializer: Initializer = None,
+        bias_initializer: Initializer = None,
+        name=None,
+    ):
         self.linear = Linear(input_size, output_size, initializer=linear_initializer)
         self.bias = Bias(output_size, initializer=bias_initializer)
 
@@ -58,7 +66,8 @@ class Dense(Model):
             self.activation = activation_dict[activation_name]()
         else:
             raise ValueError(
-                f"Unknown activation function {activation_name}. Available activations: {','.join(activation_dict.keys())}")
+                f"Unknown activation function {activation_name}. Available activations: {','.join(activation_dict.keys())}"
+            )
 
         super().__init__(name=name)
         # add activation name to Dense name

@@ -4,9 +4,9 @@ from edunn.model import Model, Phase
 
 class Sequential(Model):
     """
-        Models a neural network with a sequential (ie, linear) topology
-        This network receives as input a single vector x
-        And outputs a single vector y
+    Models a neural network with a sequential (ie, linear) topology
+    This network receives as input a single vector x
+    And outputs a single vector y
     """
 
     def __init__(self, layers: [Model], name=None):
@@ -84,7 +84,7 @@ class Sequential(Model):
         """
         :return: a summary of the models of the model and their parameters
         """
-        separator = '-' * 31
+        separator = "-" * 31
         result = f"{separator}\n"
         parameters = 0
         result += f"Model {self.name}:\n"

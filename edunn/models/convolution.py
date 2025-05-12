@@ -3,13 +3,14 @@ from ..model import Model
 
 from ..initializers import Initializer, RandomNormal
 
-from .bias import Bias
+# from .bias import Bias
 
 
 def dilate2d(x, dilation):
     b, c, h, w = x.shape
     dilation_h, dilation_w = dilation
-    x_dilated = np.zeros((b, c, h + (h - 1) * (dilation_h - 1), w + (w - 1) * (dilation_w - 1)))
+    new_shape = (b, c, h + (h - 1) * (dilation_h - 1), w + (w - 1) * (dilation_w - 1))
+    x_dilated = np.zeros(new_shape)
 
     """ YOUR IMPLEMENTATION START """
     x_dilated[:, :, ::dilation_h, ::dilation_w] = x
@@ -25,7 +26,7 @@ def pad2d(x, pad_size):
     x_padded = np.zeros(new_shape)
 
     """ YOUR IMPLEMENTATION START """
-    x_padded[:, :, pad_size_h: -pad_size_h if pad_size_h > 0 else h, pad_size_w: -pad_size_w] = x
+    x_padded[:, :, pad_size_h : -pad_size_h if pad_size_h > 0 else h, pad_size_w:-pad_size_w] = x
     """ YOUR IMPLEMENTATION END """
 
     return x_padded
@@ -37,7 +38,7 @@ def is_odd(x):
 
 def conv2d_forward(w, x, strides=(1, 1), pad_size=(0, 0)):
     # Pad the input X before doing the convolution
-    """ YOUR IMPLEMENTATION START """
+    """YOUR IMPLEMENTATION START"""
     if pad_size[-1] > 0:
         x = pad2d(x, pad_size)
     """ YOUR IMPLEMENTATION END """
@@ -60,7 +61,7 @@ def conv2d_forward(w, x, strides=(1, 1), pad_size=(0, 0)):
         for j in range(wy):
             for a in range(hw):
                 for b in range(ww):
-                    y[:, :, i, j] += np.einsum('mk,lk->lm', w[:, :, a, b], x[:, :, i * stride_h + a, j * stride_w + b])
+                    y[:, :, i, j] += np.einsum("mk,lk->lm", w[:, :, a, b], x[:, :, i * stride_h + a, j * stride_w + b])
     """ YOUR IMPLEMENTATION END """
 
     return y
@@ -68,7 +69,7 @@ def conv2d_forward(w, x, strides=(1, 1), pad_size=(0, 0)):
 
 def conv2d_backward_x(w, x, input_x, strides=(1, 1), pad_size=(0, 0)):
     # Dilate and pad the input X before doing the convolution
-    """ YOUR IMPLEMENTATION START """
+    """YOUR IMPLEMENTATION START"""
     if strides[-1] > 1:
         x = dilate2d(x, strides)
     if pad_size[-1] > 0:
@@ -91,15 +92,15 @@ def conv2d_backward_x(w, x, input_x, strides=(1, 1), pad_size=(0, 0)):
         for j in range(wy):
             for a in range(hw):
                 for b in range(ww):
-                    y[:, :, i, j] += np.einsum('lk,ml->mk', w[:, :, a, b], x[:, :, i + a, j + b])
+                    y[:, :, i, j] += np.einsum("lk,ml->mk", w[:, :, a, b], x[:, :, i + a, j + b])
     """ YOUR IMPLEMENTATION END """
 
     return y
 
 
 def conv2d_backward_w(w, x, input_w, strides=(1, 1), pad_size=(0, 0)):
-    ## Pad the input X and dilate the filter W before doing the convolution
-    """ YOUR IMPLEMENTATION START """
+    # Pad the input X and dilate the filter W before doing the convolution
+    """YOUR IMPLEMENTATION START"""
     if pad_size[-1] > 0:
         x = pad2d(x, pad_size)
     if strides[-1] > 1:
@@ -121,7 +122,7 @@ def conv2d_backward_w(w, x, input_w, strides=(1, 1), pad_size=(0, 0)):
         for j in range(wy):
             for a in range(hw):
                 for b in range(ww):
-                    y[:, :, i, j] += np.einsum('mk,ml->kl', w[:, :, a, b], x[:, :, i + a, j + b])
+                    y[:, :, i, j] += np.einsum("mk,ml->kl", w[:, :, a, b], x[:, :, i + a, j + b])
     """ YOUR IMPLEMENTATION END """
 
     return y
@@ -134,16 +135,24 @@ class Conv2d(Model):
 
     """
 
-    def __init__(self, in_channels: int, out_channels: int,
-                 kernel_size: tuple, stride: int = 1, padding: int = 0, bias: bool = True,
-                 kernel_initializer: Initializer = None, bias_initializer: Initializer = None, name=None):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        kernel_size: tuple,
+        stride: int = 1,
+        padding: int = 0,
+        bias: bool = True,
+        kernel_initializer: Initializer = None,
+        bias_initializer: Initializer = None,
+        name=None,
+    ):
         super().__init__(name=name)
         self.input_size = in_channels
         self.output_size = out_channels
         kh, kw = kernel_size
         stride_h, pad_size_h = stride, padding
-        # Convolution1D
-        if kh == 1:
+        if kh == 1:  # Conv1d
             stride_h, pad_size_h = 1, 0
         self.strides = (stride_h, stride)
         self.pad_size = (pad_size_h, padding)
@@ -173,7 +182,7 @@ class Conv2d(Model):
         dE_dx, dE_dw = {}, {}
 
         # Retrieve input from cache to calculate dE_dw
-        x, = self.get_cache()
+        (x,) = self.get_cache()
 
         # Retrieve w
         w = self.get_parameters()["w"]

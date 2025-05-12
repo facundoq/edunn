@@ -25,7 +25,12 @@ def evaluate_regression_model(dataset_name: str, model_generator: Callable, epoc
     optimizer = nn.GradientDescent(batch_size, epochs, lr)
     error = edunn.models.mean_error.MeanError(nn.SquaredError())
 
-    optimizer.optimize(model, x, y, error, )
+    optimizer.optimize(
+        model,
+        x,
+        y,
+        error,
+    )
     y_pred = model.forward(x)
     mse, mae = metrics.rmse(y, y_pred), metrics.mae(y, y_pred)
 
@@ -36,7 +41,9 @@ def evaluate_regression_model_datasets(model_generator, datasets_config):
     for i, (dataset_name, config) in enumerate(datasets_config.items()):
         lr, epochs, max_mse = config.lr, config.epochs, config.max_mse
         model, mse, mae = evaluate_regression_model(dataset_name, model_generator, epochs, lr, str(i))
-        assert mse < config.max_mse, f"Model {model} achieved {mse} rmse, more than  {max_mse} which is the maximum expected for dataset {dataset_name}."
+        assert (
+            mse < config.max_mse
+        ), f"Model {model} achieved {mse} rmse, more than  {max_mse} which is the maximum expected for dataset {dataset_name}."
         print(f"\nRMSE={mse} OK (expected less than {max_mse}).")
     print("All models have satisfactory errors.")
 
@@ -53,9 +60,7 @@ def test_linear_regression():
     }
 
     def linear_regression(din, dout, id):
-        layers = [nn.Linear(din, dout),
-                  nn.Bias(dout)
-                  ]
+        layers = [nn.Linear(din, dout), nn.Bias(dout)]
         return nn.Sequential(layers, f"linear_regression_{id}")
 
     evaluate_regression_model_datasets(linear_regression, config_datasets)
@@ -73,9 +78,11 @@ def test_regression_network():
     }
 
     def network(din, dout, id):
-        layers = [nn.Dense(din, din),
-                  nn.ReLU(),
-                  nn.Dense(din, dout), ]
+        layers = [
+            nn.Dense(din, din),
+            nn.ReLU(),
+            nn.Dense(din, dout),
+        ]
         return nn.Sequential(layers, f"regression_network_{id}")
 
     evaluate_regression_model_datasets(network, config_datasets)

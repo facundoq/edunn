@@ -1,6 +1,6 @@
-from .comparisons import *
-from . import check_gradient
-from .numerical_gradient import numerical_gradient
+# from .comparisons import *
+# from . import check_gradient
+# from .numerical_gradient import numerical_gradient
 
 import numpy as np
 

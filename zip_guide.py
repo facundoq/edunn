@@ -31,8 +31,9 @@ def zipdir(path, zip_file, skip_hidden=True):
         for file in files:
             if file.startswith(".") and skip_hidden:
                 continue
-            zip_file.write(os.path.join(root, file),
-                           os.path.relpath(os.path.join(root, file), os.path.join(path, '..')))
+            zip_file.write(
+                os.path.join(root, file), os.path.relpath(os.path.join(root, file), os.path.join(path, ".."))
+            )
 
 
 def generate_zip(output_path: Path, lang: Language):
@@ -57,35 +58,35 @@ def generate_zip(output_path: Path, lang: Language):
     if not final_path.exists():
         sys.exit(f"Code skeleton not found in {final_path.absolute()}")
 
-    print(f"Creating zip file...")
-    zip_file = zipfile.ZipFile(zip_filepath, 'w', zipfile.ZIP_DEFLATED)
-    print(f"Adding guide to zip...")
+    print("Creating zip file...")
+    zip_file = zipfile.ZipFile(zip_filepath, "w", zipfile.ZIP_DEFLATED)
+    print("Adding guide to zip...")
     zip_all(guide_folderpath, zip_file)
-    print(f"Adding code to zip...")
+    print("Adding code to zip...")
     zip_all(final_path, zip_file)
 
-    print(f"Saving to file...")
+    print("Saving to file...")
     zip_file.close()
     print(f"Done: {zip_filepath}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     all_langs = [l.value for l in supported_languages]
-    parser.add_argument("-l", "--languages",
-                        nargs='*',
-                        choices=all_langs,
-                        default=all_langs,
-                        help="Language of guide to export")
+    parser.add_argument(
+        "-l", "--languages", nargs="*", choices=all_langs, default=all_langs, help="Language of guide to export"
+    )
     args = parser.parse_args()
 
-    print(f"""
+    print(
+        """
     ********************************************
     * This script will compile and zip a guide *
     * Only run this command from the root of   *
-    * the edunn library                        * 
+    * the edunn library                        *
     ********************************************
-    """)
+    """
+    )
 
     languages = [Language[l] for l in args.languages]
     print(f'Generating zip for languages: {", ".join([x.value for x in languages])}')

@@ -34,7 +34,7 @@ class ReLU(Model):
 
     def backward(self, dE_dy: np.ndarray):
         dE_dx = np.zeros_like(dE_dy)
-        y, = self.get_cache()
+        (y,) = self.get_cache()
 
         # TIP: dE_dx = dE_dy * dy_dx
         # dy_dx is 1 if the output was greater than 0, and 0 otherwise
@@ -56,7 +56,7 @@ def normal_pdf(x, mean=0, std=1):
     # Calculate the probability density function of the normal distribution
     pdf = np.zeros_like(x)
     """ YOUR IMPLEMENTATION START """
-    pdf = (1 / (np.sqrt(2 * np.pi * std ** 2))) * np.exp(-((x - mean) ** 2) / (2 * std ** 2))
+    pdf = (1 / (np.sqrt(2 * np.pi * std**2))) * np.exp(-((x - mean) ** 2) / (2 * std**2))
     """ YOUR IMPLEMENTATION END """
     return pdf
 
@@ -67,7 +67,7 @@ class GELU(Model):
         y = np.zeros_like(x)
         cache = tuple()
         """ YOUR IMPLEMENTATION START """
-        cdf = 0.5 * (1 + erf(x / 2.0 ** 0.5))
+        cdf = 0.5 * (1 + erf(x / 2.0**0.5))
         y = x * cdf
         cache = (x, cdf)
         """ YOUR IMPLEMENTATION END """
@@ -76,7 +76,7 @@ class GELU(Model):
 
     def backward(self, dE_dy: np.ndarray):
         dE_dx = np.zeros_like(dE_dy)
-        (x, cdf), = self.get_cache()
+        ((x, cdf),) = self.get_cache()
         """ YOUR IMPLEMENTATION START """
         pdf_val = normal_pdf(x, 0, 1)
         dE_dx = dE_dy * (cdf + x * pdf_val)
@@ -92,12 +92,12 @@ class Sigmoid(Model):
         y = 1.0 / (1.0 + np.exp(-x))
         """ YOUR IMPLEMENTATION END """
         cache = (y,)
-        self.set_cache(y)
+        self.set_cache(cache)
         return y
 
     def backward(self, dE_dy: np.ndarray):
         dE_dx = np.zeros_like(dE_dy)
-        y, = self.get_cache()
+        (y,) = self.get_cache()
         # TIP: dE_dx = dE_dy * dy_dx
         # First calculate dy_dx
         # then multiply by dE_dy (provided)
@@ -168,7 +168,7 @@ class Softmax(Model):
 
     def backward(self, dE_dY: np.ndarray):
         # dE_dx = dE_dY * dy_dx
-        y, = self.get_cache()
+        (y,) = self.get_cache()
         n, classes = dE_dY.shape
         dE_dx = np.zeros_like(dE_dY)
         for i in range(n):

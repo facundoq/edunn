@@ -1,9 +1,7 @@
 import edunn as nn
 
 from edunn.utils.check_gradient import common_layer
-from edunn.utils.check_gradient import cross_entropy_labels, \
-    squared_error, \
-    binary_cross_entropy_labels
+from edunn.utils.check_gradient import cross_entropy_labels, squared_error, binary_cross_entropy_labels
 
 
 def test_gradients():

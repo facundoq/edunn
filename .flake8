@@ -1,7 +1,10 @@
 [flake8]
-max-line-length = 79
+max-line-length = 999
 ignore =
     E203,
+    E402,
+    E731,
+    E741,
     W503,
 select = C,E,F,W,B,B9
 exclude =
@@ -10,4 +13,4 @@ exclude =
     build,
     dist,
     .venv
-max-complexity = 18
+max-complexity = 999

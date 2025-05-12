@@ -36,7 +36,7 @@ class MeanError(Model):
         :param cache: calculated from forward pass
         :return:
         """
-        n, = self.get_cache()
+        (n,) = self.get_cache()
         # Since we just calculate the mean over n values
         # and the mean is equivalent to multiplying by 1/n
         # the gradient is simply 1/n for each value
@@ -45,6 +45,8 @@ class MeanError(Model):
         dE_dy *= dE
         # Calculate gradient for each sample
         dE_dy_sample, dE_dp_sample = self.sample_error_layer.backward(dE_dy)
-        assert_message = f"sample_error_layer's gradient must have n values (found {dE_dy_sample.shape[0]}, expected {n})"
+        assert_message = (
+            f"sample_error_layer's gradient must have n values (found {dE_dy_sample.shape[0]}, expected {n})"
+        )
         assert dE_dy_sample.shape[0] == n, assert_message
         return dE_dy_sample, dE_dp_sample

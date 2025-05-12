@@ -12,8 +12,8 @@ import io
 from pathlib import Path
 
 # Package meta-data.
-NAME = 'edunn'
-URL="https://github.com/facundoq/edunn"
+NAME = "edunn"
+URL = "https://github.com/facundoq/edunn"
 
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -21,8 +21,8 @@ here = os.path.abspath(os.path.dirname(__file__))
 # Import the README and use it as the long-description.
 # Note: this will only work if 'README.md' is present in your MANIFEST.in file!
 try:
-    with io.open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
-        long_description = '\n' + f.read()
+    with io.open(os.path.join(here, "README.md"), encoding="utf-8") as f:
+        long_description = "\n" + f.read()
 except FileNotFoundError:
     long_description = "No README.md in your MANIFEST.in"
 
@@ -33,13 +33,13 @@ VERSION = "0.1.6"
 class UploadCommand(Command):
     """Support setup.py upload."""
 
-    description = 'Build and publish the package.'
+    description = "Build and publish the package."
     user_options = []
 
     @staticmethod
     def status(s):
         """Prints things in bold."""
-        print('\033[1m{0}\033[0m'.format(s))
+        print("\033[1m{0}\033[0m".format(s))
 
     def initialize_options(self):
         pass
@@ -48,23 +48,21 @@ class UploadCommand(Command):
         pass
 
     def run(self):
-        
-        dist_path=Path(here)/'dist'
+
+        dist_path = Path(here) / "dist"
         if dist_path.exists():
-            self.status('Removing previous builds…')
+            self.status("Removing previous builds…")
             rmtree(dist_path)
 
+        self.status("Building Source and Wheel (universal) distribution…")
+        os.system("{0} setup.py sdist bdist_wheel --universal".format(sys.executable))
 
-        self.status('Building Source and Wheel (universal) distribution…')
-        os.system(
-            '{0} setup.py sdist bdist_wheel --universal'.format(sys.executable))
+        self.status("Uploading the package to PyPI via Twine…")
+        os.system("twine upload dist/*")
 
-        self.status('Uploading the package to PyPI via Twine…')
-        os.system('twine upload dist/*')
-
-        self.status('Pushing git tags…')
-        os.system('git tag v{0}'.format(VERSION))
-        os.system('git push --tags')
+        self.status("Pushing git tags…")
+        os.system("git tag v{0}".format(VERSION))
+        os.system("git push --tags")
 
         sys.exit()
 
@@ -73,35 +71,33 @@ class UploadCommand(Command):
 setup(
     name=NAME,
     version=VERSION,
-    description='An educational implementation of a Keras-like neural network framework. ',
+    description="An educational implementation of a Keras-like neural network framework. ",
     long_description=long_description,
-    long_description_content_type='text/markdown',
-    author='Facundo Quiroga',
-    author_email='fquiroga@lidi.info.unlp.edu.ar',
-    python_requires='>=3.6.0',
+    long_description_content_type="text/markdown",
+    author="Facundo Quiroga",
+    author_email="fquiroga@lidi.info.unlp.edu.ar",
+    python_requires=">=3.6.0",
     url=URL,
     project_urls={
-        "Bug Tracker": URL+"/issues",
+        "Bug Tracker": URL + "/issues",
         "Documentation": URL,
         "Source Code": URL,
     },
-     packages=find_packages(exclude=('samples',"guides","releases","generated","tests")),
+    packages=find_packages(exclude=("samples", "guides", "releases", "generated", "tests")),
     # If your package is a single module, use this instead of 'packages':
-    
-
     # entry_points={
     #     'console_scripts': ['mycli=mymodule:cli'],
     # },
-    install_requires= [ 'numpy','matplotlib','tqdm','colorama'],
+    install_requires=["numpy", "matplotlib", "tqdm", "colorama"],
     include_package_data=True,
-    license='GNU Affero General Public License v3 or later (AGPLv3+)',
+    license="GNU Affero General Public License v3 or later (AGPLv3+)",
     classifiers=[
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: Implementation :: CPython',
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: Implementation :: CPython",
         # 'Programming Language :: Python :: Implementation :: PyPy',
         # 'Programming Language :: Python :: 3 :: Only',
         "License :: OSI Approved :: Python Software Foundation License",
@@ -109,6 +105,6 @@ setup(
     ],
     # $ setup.py publish support.
     cmdclass={
-        'upload': UploadCommand,
+        "upload": UploadCommand,
     },
 )

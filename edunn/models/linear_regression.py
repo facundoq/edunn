@@ -13,8 +13,14 @@ class LinearRegression(Model):
     y = wx+b, where w and b are the parameters of the Linear and Bias models,
     """
 
-    def __init__(self, input_size: int, output_size: int,
-                 linear_initializer: Initializer = None, bias_initializer: Initializer = None, name=None):
+    def __init__(
+        self,
+        input_size: int,
+        output_size: int,
+        linear_initializer: Initializer = None,
+        bias_initializer: Initializer = None,
+        name=None,
+    ):
         self.output_size = output_size
         self.input_size = input_size
         self.linear = Linear(input_size, output_size, initializer=linear_initializer)

@@ -5,13 +5,13 @@ from ..model import Model
 
 class CrossEntropyWithLabels(Model):
     """
-        Returns the CrossEntropy between two class distributions
-        Receives a matrix of probabilities NxC for each sample and a vector
-        of class labels, also one for each sample,.
-        For each sample, this layer receives a vector of probabilities for each class,
-        (which must sum to 1)
-        and the label of the sample (which implies that class has an
-        expected probability of 1, and 0 for the rest)
+    Returns the CrossEntropy between two class distributions
+    Receives a matrix of probabilities NxC for each sample and a vector
+    of class labels, also one for each sample,.
+    For each sample, this layer receives a vector of probabilities for each class,
+    (which must sum to 1)
+    and the label of the sample (which implies that class has an
+    expected probability of 1, and 0 for the rest)
     """
 
     # Ayuda para implementar:

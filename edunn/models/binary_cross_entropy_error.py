@@ -14,7 +14,7 @@ class BinaryCrossEntropy(Model):
 
     def forward(self, y_true: np.ndarray, y: np.ndarray):
         y_true = np.squeeze(y_true)
-        assert (len(y_true.shape) == 1)
+        assert len(y_true.shape) == 1
         assert y.min() >= 0
 
         n, c = y.shape
@@ -25,7 +25,7 @@ class BinaryCrossEntropy(Model):
             miss = y_true[i] * y[i] + (1 - y_true[i]) * (1 - y[i])
             if miss == 0:
                 miss += nn.eps
-            E[i] = - np.log(miss)
+            E[i] = -np.log(miss)
         # print(error)
         """ YOUR IMPLEMENTATION END """
         assert np.all(np.squeeze(E).shape == y_true.shape)
@@ -41,7 +41,7 @@ class BinaryCrossEntropy(Model):
             miss = y_true[i] * y[i] - (1 - y_true[i]) * (1 - y[i])
             if miss == 0:
                 miss += nn.eps
-            dE_dy[i] = - 1 / miss
+            dE_dy[i] = -1 / miss
         """ YOUR IMPLEMENTATION END """
 
         return dE_dy * dE_dyi, {}

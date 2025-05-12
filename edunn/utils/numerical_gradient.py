@@ -8,7 +8,7 @@ def numerical_gradient(f, x: np.ndarray, dE_dy: np.ndarray = None, h=1e-5) -> np
     """
 
     def indices_generator(x):
-        it = np.nditer(x, flags=['multi_index'], op_flags=['readwrite'])
+        it = np.nditer(x, flags=["multi_index"], op_flags=["readwrite"])
         while not it.finished:
             # evaluate function at x+h
             ix = it.multi_index
@@ -32,7 +32,7 @@ def numerical_gradient(f, x: np.ndarray, dE_dy: np.ndarray = None, h=1e-5) -> np
 
         dy_dxi = (fxph - fxmh) / h2
 
-        dE = (dy_dxi * dE_dy)
+        dE = dy_dxi * dE_dy
         dE = dE.sum()
         dE_dx[i] = dE
     return dE_dx

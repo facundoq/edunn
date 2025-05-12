@@ -1,3 +1,5 @@
+# flake8: noqa
+
 from .sequential import Sequential
 from .bias import Bias
 from .linear import Linear

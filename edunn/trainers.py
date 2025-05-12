@@ -40,7 +40,7 @@ def batch_arrays(batch_size: int, *arrays, shuffle=False):
     for i in batch_list:
         start = i * batch_size
         end = start + batch_size
-        batch = [a[start:end, ] for a in arrays]
+        batch = [a[start:end,] for a in arrays]
         yield tuple(batch)
 
 
@@ -190,6 +190,6 @@ class SignGD(BatchedGradientOptimizer):
             # use p[:] so that updates are in-place
             # instead of creating a new variable
             """ YOUR IMPLEMENTATION START """
-            denom = np.sqrt(dE_dp ** 2 + self.eps)
+            denom = np.sqrt(dE_dp**2 + self.eps)
             p[:] = p - self.lr * (dE_dp / denom)
             """ YOUR IMPLEMENTATION END """

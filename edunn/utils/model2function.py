@@ -4,7 +4,7 @@ Converts layers into functions of the parameters, with the input fixed
 
 import edunn as nn
 import numpy as np
-from typing import Tuple, Dict, Callable
+from typing import Dict  # , Tuple, Callable
 
 ParameterSet = Dict[str, np.ndarray]
 
@@ -27,7 +27,7 @@ def common_layer_to_function(l: nn.Model):
     def df(inputs: ParameterSet, dE_dy: np.ndarray):
         old_params = l.get_parameters().copy()
         set_parameters_inplace(l, inputs)
-        y = l.forward(inputs["x"])
+        y = l.forward(inputs["x"])  # noqa
         dE_dx, dE_dp = l.backward(dE_dy)
         set_parameters_inplace(l, old_params)
         return {"x": dE_dx, **dE_dp}

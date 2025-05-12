@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import edunn as nn
 
-plt.style.use('bmh')
+plt.style.use("bmh")
 
 
 def plot_history(history, error_name="Error", filepath=None):
@@ -34,16 +34,16 @@ def plot_model_dataset_1d(x: np.ndarray, y: np.ndarray, model: nn.Model, filepat
         plt.close()
 
 
-def plot_model_dataset_2d_classification(x: np.ndarray, y: np.ndarray, model: nn.Model, filepath=None, detail=0.1,
-                                         title=""):
+def plot_model_dataset_2d_classification(
+    x: np.ndarray, y: np.ndarray, model: nn.Model, filepath=None, detail=0.1, title=""
+):
     assert x.shape[1] == 2, f"x must have only two input variables (received x with {x.shape[1]} dimensions)"
 
     plt.figure()
     # Plot decision regions
     x_min, x_max = x[:, 0].min() - 1, x[:, 0].max() + 1
     y_min, y_max = x[:, 1].min() - 1, x[:, 1].max() + 1
-    xx, yy = np.meshgrid(np.arange(x_min, x_max, detail),
-                         np.arange(y_min, y_max, detail))
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, detail), np.arange(y_min, y_max, detail))
 
     Z = np.c_[xx.ravel(), yy.ravel()]
 
@@ -105,8 +105,8 @@ def plot_activation_functions(models: [nn.Model], range=(-10, 10), backward=Fals
     start, end = range
     x = np.linspace(start, end, 100)
     names = [m.__class__.__name__ for m in models]
-    fig = plt.figure()
-    ax = fig.gca()
+    # fig = plt.figure()
+    # ax = fig.gca()
     # spines_origin(ax)
     for m in models:
         y = m.forward(x)
@@ -128,7 +128,7 @@ def plot_activation_functions(models: [nn.Model], range=(-10, 10), backward=Fals
 
 def spines_origin(ax):
     ax.grid(True)
-    ax.spines['left'].set_position('zero')
-    ax.spines['right'].set_color('none')
-    ax.spines['bottom'].set_position('zero')
-    ax.spines['top'].set_color('none')
+    ax.spines["left"].set_position("zero")
+    ax.spines["right"].set_color("none")
+    ax.spines["bottom"].set_position("zero")
+    ax.spines["top"].set_color("none")
