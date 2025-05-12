@@ -1,0 +1,12 @@
+[tool.black]
+line-length = 999
+target-version = ["py38"]      # ajusta la versión de Python de tu proyecto
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | build
+  | dist
+)/
+'''

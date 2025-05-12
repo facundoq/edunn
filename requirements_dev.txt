@@ -1,3 +1,4 @@
 # dev requirements
 twine
 pytest
+pre-commit
