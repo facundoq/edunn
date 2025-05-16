@@ -53,7 +53,7 @@ class Bias(Model):
         for i in range(n):
             # Calculate derivative of error for a sample i (a single sample)
             # And accumulate to obtain dE_db
-            """YOUR IMPLEMENTATION START"""
+            """ YOUR IMPLEMENTATION START """  # fmt: skip
             dE_db_i = dE_dy[i, :]  # * [1,1,1...,1]
             dE_db += dE_db_i
             """ YOUR IMPLEMENTATION END """

@@ -38,7 +38,7 @@ def is_odd(x):
 
 def conv2d_forward(w, x, strides=(1, 1), pad_size=(0, 0)):
     # Pad the input X before doing the convolution
-    """YOUR IMPLEMENTATION START"""
+    """ YOUR IMPLEMENTATION START """  # fmt: skip
     if pad_size[-1] > 0:
         x = pad2d(x, pad_size)
     """ YOUR IMPLEMENTATION END """
@@ -69,7 +69,7 @@ def conv2d_forward(w, x, strides=(1, 1), pad_size=(0, 0)):
 
 def conv2d_backward_x(w, x, input_x, strides=(1, 1), pad_size=(0, 0)):
     # Dilate and pad the input X before doing the convolution
-    """YOUR IMPLEMENTATION START"""
+    """ YOUR IMPLEMENTATION START """  # fmt: skip
     if strides[-1] > 1:
         x = dilate2d(x, strides)
     if pad_size[-1] > 0:
@@ -100,7 +100,7 @@ def conv2d_backward_x(w, x, input_x, strides=(1, 1), pad_size=(0, 0)):
 
 def conv2d_backward_w(w, x, input_w, strides=(1, 1), pad_size=(0, 0)):
     # Pad the input X and dilate the filter W before doing the convolution
-    """YOUR IMPLEMENTATION START"""
+    """ YOUR IMPLEMENTATION START """  # fmt: skip
     if pad_size[-1] > 0:
         x = pad2d(x, pad_size)
     if strides[-1] > 1:
