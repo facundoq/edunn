@@ -18,6 +18,73 @@ class Identity(Model):
         return dE_dy, dE_dp
 
 
+class AddConstant(Model):
+    """
+    A layer that adds a constant
+    This layer has NO parameters
+    """
+
+    def __init__(self, value: float, name=None):
+        super().__init__(name=name)
+        self.value = value
+
+    def forward(self, x: np.ndarray):
+        """
+        :param x: input vector/matrix
+        :return: `x + a`, constant value, stored in `self.value`
+        """
+
+        """ YOUR IMPLEMENTATION START """
+        # default: y = np.zeros_like(x)
+        y = x + self.value
+        """ YOUR IMPLEMENTATION END """
+
+        return y
+
+    def backward(self, dE_dy: np.ndarray):
+        """ YOUR IMPLEMENTATION START """
+        # default: dE_dx = np.zeros_like(dE_dy)
+        dE_dx = dE_dy
+        """ YOUR IMPLEMENTATION END """
+
+        dE_dp = {}  # no parameters, no derivatives
+        return dE_dx, dE_dp
+
+
+class MultiplyConstant(Model):
+    """
+    A layer that multiplies by a constant
+    This layer has NO parameters
+    """
+
+    def __init__(self, value: float, name=None):
+        super().__init__(name=name)
+        self.value = value
+
+    def forward(self, x: np.ndarray):
+        """
+        :param x: input vector/matrix
+        :return: `x * a`, constant value, stored in `self.value`
+        """
+
+        """ YOUR IMPLEMENTATION START """
+        # default: y = np.zeros_like(x)
+        y = x * self.value
+        """ YOUR IMPLEMENTATION END """
+
+        return y
+
+    def backward(self, dE_dy: np.ndarray):
+        """ YOUR IMPLEMENTATION START """
+        # default: dE_dx = np.zeros_like(dE_dy)
+        dE_dx = dE_dy * self.value
+        """ YOUR IMPLEMENTATION END """
+
+        # no parameters, no derivatives
+        dE_dp = {}
+        return dE_dx, dE_dp
+
+
 class ReLU(Model):
 
     def forward(self, x: np.ndarray):

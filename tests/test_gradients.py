@@ -10,6 +10,12 @@ def test_gradients():
     shape = (n, features)
     samples = 100
 
+    ac = nn.AddConstant(4)
+    common_layer(ac, shape, samples=samples)
+
+    mc = nn.MultiplyConstant(4)
+    common_layer(mc, shape, samples=samples)
+
     layer = nn.Bias(features, initializer=nn.initializers.RandomUniform())
     common_layer(layer, shape, samples=samples)
 
