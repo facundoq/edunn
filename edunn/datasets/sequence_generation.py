@@ -6,6 +6,7 @@ classification_basepath = basepath / "sequence_data"
 
 def load_sequence_dataset(filename, vocabulary_size):
     unk_token = "<UNK>"
+    pad_token = "<PAD>"
     sos_token = "<SOS>"
     eos_token = "<EOS>"
 
@@ -32,9 +33,9 @@ def load_sequence_dataset(filename, vocabulary_size):
     words = words[idx_sorted]
     counts = counts[idx_sorted]
 
-    # filter vocabulary size (-1 for unk_token)
-    vocab = words[: vocabulary_size - 1]
-    index_to_word = np.concatenate([vocab, [unk_token]])
+    # filter vocabulary size (-2 for unk_token and pad_token)
+    vocab = words[: vocabulary_size - 2]
+    index_to_word = np.concatenate([[unk_token], [pad_token], vocab])
     word_to_index = {w: i for i, w in enumerate(index_to_word)}
 
     # set unk for out of vocabulary words
