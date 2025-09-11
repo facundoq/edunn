@@ -26,10 +26,10 @@ class Bias(Model):
         (dout,) = b.shape
         assert dout == d, f"#features of input ({d}) must match size of b ({dout})"
 
-        """ YOUR IMPLEMENTATION START """
+        """YOUR IMPLEMENTATION START"""
         # default: y = np.zeros_like(x)
         y = x + b
-        """ YOUR IMPLEMENTATION END """
+        """YOUR IMPLEMENTATION END"""
         return y
 
     def backward(self, dE_dy: np.ndarray):
@@ -38,10 +38,10 @@ class Bias(Model):
         # Calculate derivative of error E with respect to input x
         # Hints:
         # dE_dx = dE_dy * dy_dx = dE_dy * [1,1,...,1] = dE_dy
-        """ YOUR IMPLEMENTATION START """
+        """YOUR IMPLEMENTATION START"""
         # default: dE_dx = np.zeros_like(dE_dy)
         dE_dx = dE_dy
-        """ YOUR IMPLEMENTATION END """
+        """YOUR IMPLEMENTATION END"""
 
         # Calculate derivative of error E with respect to parameter b
 
@@ -53,9 +53,9 @@ class Bias(Model):
         for i in range(n):
             # Calculate derivative of error for a sample i (a single sample)
             # And accumulate to obtain dE_db
-            """ YOUR IMPLEMENTATION START """  # fmt: skip
+            """YOUR IMPLEMENTATION START"""
             dE_db_i = dE_dy[i, :]  # * [1,1,1...,1]
             dE_db += dE_db_i
-            """ YOUR IMPLEMENTATION END """
+            """YOUR IMPLEMENTATION END"""
 
         return dE_dx, {"b": dE_db}

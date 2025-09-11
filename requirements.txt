@@ -7,5 +7,4 @@ colorama
 # guide requirements
 ipython
 jupyter
-scikit-learn
-
+scikit - learn

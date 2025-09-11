@@ -12,8 +12,8 @@ class Language(Enum):
     es = "es"
 
 
-start_marker = '""" YOUR IMPLEMENTATION START """'
-end_marker = '""" YOUR IMPLEMENTATION END """'
+start_marker = '"""YOUR IMPLEMENTATION START"""'
+end_marker = '"""YOUR IMPLEMENTATION END"""'
 default_marker = "# default: "
 
 supported_languages = (Language.en, Language.es)

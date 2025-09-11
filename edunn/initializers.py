@@ -36,10 +36,10 @@ class Constant(Initializer):
         self.c = c
 
     def initialize(self, p: np.ndarray):
-        """ YOUR IMPLEMENTATION START """  # fmt: skip
+        """YOUR IMPLEMENTATION START"""
         # default: pass
         p[:] = self.c
-        """ YOUR IMPLEMENTATION END """
+        """YOUR IMPLEMENTATION END"""
 
 
 class RandomUniform(Initializer):
@@ -55,10 +55,10 @@ class RandomUniform(Initializer):
         # en: TIP use np.random.uniform(a, b, shape) to generate uniform random numbers between a and b
         # es: TIP usar np.random.uniform(a, b, shape) para generar numeros aleatorios uniformes entre a y b
 
-        """ YOUR IMPLEMENTATION START """  # fmt: skip
+        """YOUR IMPLEMENTATION START"""
         # default: pass
         p[:] = np.random.uniform(-self.a, self.a, p.shape)
-        """ YOUR IMPLEMENTATION END """
+        """YOUR IMPLEMENTATION END"""
 
 
 class RandomNormal(Initializer):
@@ -72,10 +72,10 @@ class RandomNormal(Initializer):
         # es: TIP usar np.random.normal(μ, σ, shape) para generar numeros aleatorios
         # es: muestreados de una distribucion normal con media μ y desvio σ
 
-        """ YOUR IMPLEMENTATION START """  # fmt: skip
+        """YOUR IMPLEMENTATION START"""
         # default: pass
         p[:] = np.random.normal(0, self.std, p.shape)
-        """ YOUR IMPLEMENTATION END """
+        """YOUR IMPLEMENTATION END"""
 
 
 class XavierUniform(Initializer):
@@ -84,10 +84,10 @@ class XavierUniform(Initializer):
         din, dout = p.shape
         # en: TIP use np.random.random_sample(shape) to generate uniform randomnumbers between 0 and 1
         # es: TIP usar np.random.random_sample(shape) para generar numeros aleatorios entre 0 y 1
-        """ YOUR IMPLEMENTATION START """
+        """YOUR IMPLEMENTATION START"""
         factor = np.sqrt(6 / (din + dout))
         p[:] = (np.random.random_sample(p.shape) * 2 - 1) * factor
-        """ YOUR IMPLEMENTATION END """
+        """YOUR IMPLEMENTATION END"""
 
 
 class XavierNormal(Initializer):
@@ -97,10 +97,10 @@ class XavierNormal(Initializer):
         # en: TIP use np.random.normal(mu,std,shape) to sample random numbers from a normal distribution
         # es: TIP usar np.random.normal(mu,std,shape) para muestrear numeros aleatorios de una distribucion normal
 
-        """ YOUR IMPLEMENTATION START """
+        """YOUR IMPLEMENTATION START"""
         std = np.sqrt(6 / (din + dout))
         p[:] = np.random.normal(0, std, p.shape)
-        """ YOUR IMPLEMENTATION END """
+        """YOUR IMPLEMENTATION END"""
 
 
 class KaimingNormal(Initializer):
@@ -110,10 +110,10 @@ class KaimingNormal(Initializer):
         # en: TIP use np.random.normal(mu,std,shape) to sample random numbers from a normal distribution
         # es: TIP usar np.random.normal(mu,std,shape) para muestrear numeros aleatorios de una distribucion normal
 
-        """ YOUR IMPLEMENTATION START """
+        """YOUR IMPLEMENTATION START"""
         std = np.sqrt(2 / din)
         p[:] = np.random.normal(0, std, p.shape)
-        """ YOUR IMPLEMENTATION END """
+        """YOUR IMPLEMENTATION END"""
 
 
 class KaimingUniform(Initializer):
@@ -123,7 +123,7 @@ class KaimingUniform(Initializer):
         # en: TIP use np.random.random_sample(shape) to generate uniform random numbers between 0 and 1
         # es: TIP usar np.random.random_sample(shape) para generar numeros aleatorios entre 0 y 1
 
-        """ YOUR IMPLEMENTATION START """
+        """YOUR IMPLEMENTATION START"""
         factor = np.sqrt(2 / din)
         p[:] = (np.random.random_sample(p.shape) * 2 - 1) * factor
-        """ YOUR IMPLEMENTATION END """
+        """YOUR IMPLEMENTATION END"""

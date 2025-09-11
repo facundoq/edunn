@@ -44,12 +44,12 @@ class RNN(Model):
         y = np.zeros((batch_size, timesteps, self.output_dim))
         h_prev = np.zeros((batch_size, self.hidden_dim))
 
-        """ YOUR IMPLEMENTATION START """
+        """YOUR IMPLEMENTATION START"""
         for t in range(timesteps):
             h_current = np.tanh(x[:, t, :] @ U.T + h_prev @ W.T)
             y[:, t, :] = h_current @ V.T
             h[:, t, :], h_prev = h_current, h_current
-        """ YOUR IMPLEMENTATION END """
+        """YOUR IMPLEMENTATION END"""
 
         self.set_cache(x, h)
         return y
@@ -67,7 +67,7 @@ class RNN(Model):
         dE_dx = np.zeros_like(x)
         dh_next = np.zeros((batch_size, self.hidden_dim))
 
-        """ YOUR IMPLEMENTATION START """
+        """YOUR IMPLEMENTATION START"""
         # steps_back = min(self.bptt_truncate, t)
         for t in reversed(range(timesteps)):
             # (vocab_size, batch_size) x (batch_size, hidden_dim) = (vocab_size, hidden_dim)
@@ -90,7 +90,7 @@ class RNN(Model):
                 dh_next = dh_raw @ W
             else:
                 dh_next = np.zeros((batch_size, self.hidden_dim))
-        """ YOUR IMPLEMENTATION END """
+        """YOUR IMPLEMENTATION END"""
 
         # clip to mitigate exploding gradients
         for grad in [dE_dU, dE_dW, dE_dV]:
