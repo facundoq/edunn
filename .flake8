@@ -1,0 +1,21 @@
+[flake8]
+max-line-length = 999
+ignore =
+    E203,
+    E401,
+    E402,
+    E731,
+    E741,
+    F401,
+    F403,
+    F541,
+    F841,
+    W503
+select = C,E,F,W,B,B9
+exclude =
+    .git,
+    __pycache__,
+    build,
+    dist,
+    .venv
+max-complexity = 999
