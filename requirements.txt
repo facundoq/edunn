@@ -8,4 +8,3 @@ colorama
 ipython
 jupyter
 sklearn
-

@@ -7,27 +7,27 @@ class FakeModel(nn.ModelWithParameters):
     # Parameters always initialized as `parameter`
     # Derivative of parameters is always `gradient`
     # Derivative of input is always 0
-    def __init__(self,parameter:np.ndarray,gradient:np.ndarray,name=None):
+    def __init__(self, parameter: np.ndarray, gradient: np.ndarray, name=None):
         super().__init__(name=name)
         self.parameter = parameter
         self.gradient = gradient
-        assert (np.all(parameter.shape==gradient.shape))
+        assert np.all(parameter.shape == gradient.shape)
         self.register_parameter("parameter", self.parameter)
 
-    def forward(self, x:np.ndarray):
+    def forward(self, x: np.ndarray):
         return x
 
-    def backward(self, δEδy:np.ndarray):
+    def backward(self, δEδy: np.ndarray):
         δEδx = 0
         δEδp = {"parameter": self.gradient}
         return δEδx, δEδp
 
 
 class FakeError(nn.ModelWithoutParameters):
-    def __init__(self,error=1,derivative_value=1,name=None):
+    def __init__(self, error=1, derivative_value=1, name=None):
         super().__init__(name=name)
-        self.error=error
-        self.derivative_value=derivative_value
+        self.error = error
+        self.derivative_value = derivative_value
 
     # Fake error function without parameters
     # forward always returns self.error
@@ -37,6 +37,6 @@ class FakeError(nn.ModelWithoutParameters):
         self.set_cache(y.shape)
         return self.error
 
-    def backward(self, δE:float):
-        shape, = self.get_cache()
-        return np.ones(shape)*self.derivative_value, {}
+    def backward(self, δE: float):
+        (shape,) = self.get_cache()
+        return np.ones(shape) * self.derivative_value, {}
