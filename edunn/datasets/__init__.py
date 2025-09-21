@@ -4,7 +4,7 @@ from typing import Dict, Callable
 
 basepath = pathlib.Path(__file__).parent.absolute()
 from .. import utils
-from . import regression, classification
+from . import regression, classification, sequence_generation
 
 
 def shuffle_dataset(x, y):
@@ -24,6 +24,10 @@ def load_classification(dataset_name: str, onehot=False):
     if onehot:
         y = utils.labels2onehot(y, len(classes))
     return x, y, classes
+
+
+def load_sequence_generation(dataset_name: str):
+    return load(dataset_name, sequence_generation.loaders, "sequence_generation")
 
 
 def load(dataset_name: str, loaders: Dict[str, Callable], title: str):

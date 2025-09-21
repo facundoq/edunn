@@ -4,7 +4,7 @@ from .linear import Linear
 from .activations import Sigmoid, TanH, ReLU, GELU, MultiplyConstant, AddConstant, Softmax
 
 from .binary_cross_entropy_error import BinaryCrossEntropy
-from .cross_entropy_error import CrossEntropyWithLabels
+from .cross_entropy_error import CrossEntropyWithLabels, SequenceCrossEntropyWithLabels
 from .squared_error import SquaredError
 from .dense import Dense
 from .linear_regression import LinearRegression
@@ -15,3 +15,4 @@ from .batchnorm import BatchNorm
 from .dropout import Dropout
 from .logistic_regression import LogisticRegression
 from .mean_error import MeanError
+from .rnn import RNN
