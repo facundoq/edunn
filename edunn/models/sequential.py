@@ -3,18 +3,18 @@ from edunn.model import Model, Phase
 
 
 class Sequential(Model):
-    '''
-        Models a neural network with a sequential (ie, linear) topology
-        This network receives as input a single vector x
-        And outputs a single vector y
-    '''
+    """
+    Models a neural network with a sequential (ie, linear) topology
+    This network receives as input a single vector x
+    And outputs a single vector y
+    """
 
     def __init__(self, layers: [Model], name=None):
-        '''
+        """
 
         :param layers: List of models, in order
 
-        '''
+        """
         super().__init__(name)
         self.layers: [Model] = layers
         layer_names = [l.name for l in layers]
@@ -22,17 +22,17 @@ class Sequential(Model):
         assert len(layer_names) == len(layer_names_set), f"Layer names must be unique, found: {layer_names}"
 
     def forward(self, x: np.ndarray):
-        '''
+        """
 
         :param x: input to model
         :return: output of model with x as input
-        '''
+        """
         y = 0
-        ### YOUR IMPLEMENTATION START  ###
+        """YOUR IMPLEMENTATION START"""
         for layer in self.layers:
             x = layer.forward(x)
         y = x
-        ### YOUR IMPLEMENTATION END  ###
+        """YOUR IMPLEMENTATION END"""
         return y
 
     def set_phase(self, phase: Phase):
@@ -52,23 +52,23 @@ class Sequential(Model):
                 δEδp[new_name] = v
 
     def backward(self, δEδy: np.ndarray):
-        '''
+        """
 
         :param x: inputs
         :param y: expected output
         :return: gradients for every layer, prediction for inputs and error
-        '''
+        """
         δEδx = 0
         δEδp = {}
         # Hint: use `self.merge_gradients(m_i, δEδp_i, δEδp)`
         # to add the gradients `δEδp_i` of parameters of `m_i`
         # to the final gradients `δEδp` dictionary
-        ### YOUR IMPLEMENTATION START  ###
+        """YOUR IMPLEMENTATION START"""
         for m_i in reversed(self.layers):
             δEδy, δEδp_i = m_i.backward(δEδy)
             self.merge_gradients(m_i, δEδp_i, δEδp)
         δEδx = δEδy
-        ### YOUR IMPLEMENTATION END  ###
+        """YOUR IMPLEMENTATION END"""
 
         return δEδx, δEδp
 
@@ -84,9 +84,9 @@ class Sequential(Model):
         return parameters
 
     def summary(self) -> str:
-        '''
+        """
         :return: a summary of the models of the model and their parameters
-        '''
+        """
         separator = "-------------------------------"
         result = f"{separator}\n"
         parameters = 0
