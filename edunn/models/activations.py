@@ -239,7 +239,7 @@ class Softmax(ModelWithoutParameters):
 
     def backward_sample(self, δEδy: np.ndarray, y: np.ndarray):
         # AYUDA PARA EL CÁLCULO
-        # http://facundoq.github.io/guides/softmax_derivada.html
+        # http://facundoq.github.io/edunn/material/softmax_derivada.html
         """
         :param δEδy: derivative of error wrt output for a *single sample*
         :param y: output for a *single sample*
@@ -248,7 +248,7 @@ class Softmax(ModelWithoutParameters):
         classes = y.shape[0]
 
         # AYUDA PARA EL CÁLCULO
-        # http://facundoq.github.io/guides/softmax_derivada.html
+        # http://facundoq.github.io/edunn/material/softmax_derivada.html
         δyδx = np.zeros((classes, classes))
         """YOUR IMPLEMENTATION START"""
         for i in range(classes):
