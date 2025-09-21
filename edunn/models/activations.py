@@ -3,7 +3,7 @@ import numpy as np
 import math
 
 
-class Identity(ModelWithParameters):
+class Identity(ModelWithoutParameters):
 
     def forward(self, x: np.ndarray):
         return x
@@ -13,7 +13,7 @@ class Identity(ModelWithParameters):
         return δEδy, δEδp
 
 
-class AddConstant(ModelWithParameters):
+class AddConstant(ModelWithoutParameters):
     """
     A layer that adds a constant
     This layer has NO parameters
@@ -44,7 +44,7 @@ class AddConstant(ModelWithParameters):
         return δEδx, δEδp
 
 
-class MultiplyConstant(ModelWithParameters):
+class MultiplyConstant(ModelWithoutParameters):
     """
     A layer that multiplies by a constant
     This layer has NO parameters

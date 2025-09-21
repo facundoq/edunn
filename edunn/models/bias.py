@@ -14,10 +14,10 @@ class Bias(ModelWithParameters):
 
     """
 
-    def __init__(self, output_size: int, initializer: edunn.initializers.Initializer = None, name=None):
+    def __init__(self, output_size: int, initializer: Initializer = None, name=None):
         super().__init__(name=name)
         if initializer is None:
-            initializer = edunn.initializers.Zero()
+            initializer = Zero()
         b = initializer.create((output_size,))
         self.register_parameter("b", b)
 

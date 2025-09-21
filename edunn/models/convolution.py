@@ -9,7 +9,8 @@ from .bias import Bias
 def dilate2d(x, dilation):
     b, c, h, w = x.shape
     dilation_h, dilation_w = dilation
-    x_dilated = np.zeros((b, c, h + (h - 1) * (dilation_h - 1), w + (w - 1) * (dilation_w - 1)))
+    new_shape = (b, c, h + (h - 1) * (dilation_h - 1), w + (w - 1) * (dilation_w - 1))
+    x_dilated = np.zeros(new_shape)
 
     """YOUR IMPLEMENTATION START"""
     x_dilated[:, :, ::dilation_h, ::dilation_w] = x
@@ -151,7 +152,7 @@ class Conv2d(ModelWithParameters):
         self.output_size = out_channels
         kh, kw = kernel_size
         stride_h, pad_size_h = stride, padding
-        if kh == 1:  # Convolution1D
+        if kh == 1:  # Conv1d
             stride_h, pad_size_h = 1, 0
         self.strides = (stride_h, stride)
         self.pad_size = (pad_size_h, padding)
