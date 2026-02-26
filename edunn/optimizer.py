@@ -2,113 +2,60 @@
 # "An overview of gradient descent optimization algorithms" https://ruder.io/optimizing-gradient-descent/
 
 
-from typing import Dict
 import numpy as np
-from .model import Model, Phase
-from .model import ParameterSet
-import sys, abc
-from tqdm.auto import tqdm
+from .model import Model, ParameterSet
+import abc
 
 
 class Optimizer(abc.ABC):
+    """
+    Base class for optimization algorithms.
+
+    An Optimizer defines *how* to update model parameters given their gradients.
+    It does NOT handle the training loop (batching, epochs, etc.) -- that is the
+    responsibility of a Trainer (see trainers.py).
+
+    Subclasses must implement:
+        - step(parameters, gradients, epoch, iteration): apply a single parameter update
+    Subclasses may optionally override:
+        - initialize(parameters): set up internal state (momentum buffers, etc.)
+    """
+
+    def initialize(self, parameters: ParameterSet):
+        """
+        Initialize any internal state needed by the optimizer (e.g., momentum buffers).
+        Called once before the first call to step().
+
+        :param parameters: dictionary mapping parameter names to numpy arrays
+        """
+        pass
 
     @abc.abstractmethod
-    def optimize(self, model: Model, *args):
+    def step(self, parameters: ParameterSet, gradients: ParameterSet, epoch: int, iteration: int):
+        """
+        Perform a single parameter update.
+
+        :param parameters: dictionary mapping parameter names to numpy arrays (mutable, update in-place)
+        :param gradients: dictionary mapping parameter names to their gradient arrays
+        :param epoch: current epoch number
+        :param iteration: current iteration (batch) number within the epoch
+        """
         pass
 
 
-def all_equal(list: []):
-    return len(list) == 0 or list.count(list[0]) == len(list)
+class SGD(Optimizer):
+    """
+    Stochastic Gradient Descent optimizer.
 
-
-import random
-
-
-def batch_arrays(batch_size: int, *arrays, shuffle=False):
+    Updates parameters using the rule:
+        p = p - lr * gradient
     """
 
-    :param batch_size: size of batches
-    :param arrays: variable number of numpy arrays
-    :return: a generator that returns the arrays in batches
-    """
-
-    sample_sizes = [a.shape[0] for a in arrays]
-    assert all_equal(sample_sizes)
-    batches = sample_sizes[0] // batch_size
-    batch_list = list(range(batches))
-    if shuffle:
-        random.shuffle(batch_list)
-    for i in batch_list:
-        start = i * batch_size
-        end = start + batch_size
-        batch = [a[start:end,] for a in arrays]
-        yield tuple(batch)
-
-
-class BatchedGradientOptimizer(Optimizer):
-
-    def __init__(self, batch_size: int, epochs: int, shuffle=True):
-        """
-        :param epochs: number of epochs to train the model. Each epoch is a complete iteration over the training set. The number of parameter updates is n //batch_size, where n is the number of samples of the dataset
-        :param batch_size: Batch the dataset with batches of size `batch_size`, and perform an optimization step for each batch
-        """
-        self.batch_size = batch_size
-        self.epochs = epochs
-        self.shuffle = shuffle
-
-    def backpropagation(self, model: Model, x: np.ndarray, y_true: np.ndarray, error_layer: Model):
-        # forward pass (model and error)
-        y = model.forward(x)
-        E = error_layer.forward(y_true, y)
-
-        # backward pass (error and model)
-        δEδy, _ = error_layer.backward(1)
-        δEδx, δEδps = model.backward(δEδy)
-
-        return δEδx, δEδps, E
-
-    def optimize(self, model: Model, x: np.ndarray, y: np.ndarray, error_layer: Model, verbose=True):
-        """
-        Fit a model to a dataset.
-        :param model: the Model to optimize
-        :param x: dataset inputs
-        :param y: dataset outputs
-        :param error_layer: To be applied to the output of the last layer
-        :return:
-        """
-        n = x.shape[0]
-        batches = n // self.batch_size
-        history = []
-        model.set_phase(Phase.Training)
-        bar = tqdm(range(self.epochs), desc=f"optim. {model.name}", file=sys.stdout, disable=not verbose)
-        for epoch in bar:
-            epoch_error = 0
-            for i, (x_batch, y_batch) in enumerate(batch_arrays(self.batch_size, x, y, shuffle=self.shuffle)):
-                δEδx, δEδps, batch_error = self.backpropagation(model, x_batch, y_batch, error_layer)
-                self.optimize_batch(model, δEδps, epoch, i)
-                epoch_error += batch_error
-            epoch_error /= batches
-            history.append(epoch_error)
-            bar.set_postfix_str(f"{error_layer.name}: {epoch_error:.5f}")
-
-        return np.array(history)
-
-    @abc.abstractmethod
-    def optimize_batch(self, model: Model, x: np.ndarray, y: np.ndarray, error_layer: Model, epoch: int):
-        pass
-
-
-class GradientDescent(BatchedGradientOptimizer):
-
-    def __init__(self, batch_size: int, epochs: int, lr: float = 0.1, shuffle=True):
-        super().__init__(batch_size, epochs, shuffle)
+    def __init__(self, lr: float = 0.1):
         self.lr = lr
 
-    def optimize_batch(self, model: Model, δEδps: ParameterSet, epoch: int, iteration: int):
-
-        # Update parameters
-        parameters = model.get_parameters()
-        for parameter_name, δEδp in δEδps.items():
+    def step(self, parameters: ParameterSet, gradients: ParameterSet, epoch: int, iteration: int):
+        for parameter_name, δEδp in gradients.items():
             p = parameters[parameter_name]
             # use p[:] so that updates are in-place
             # instead of creating a new variable
@@ -117,27 +64,98 @@ class GradientDescent(BatchedGradientOptimizer):
             """YOUR IMPLEMENTATION END"""
 
 
-class RMSprop(BatchedGradientOptimizer):
+class MomentumSGD(Optimizer):
+    """
+    Gradient Descent with Momentum.
 
-    def __init__(
-        self, batch_size: int, epochs: int, lr: float = 0.1, beta: float = 0.99, eps: float = 1e-8, shuffle=True
-    ):
-        super().__init__(batch_size, epochs, shuffle)
+    Maintains a velocity buffer and updates parameters using:
+        v = gamma * v + lr * gradient
+        p = p - v
+    """
+
+    def __init__(self, lr: float = 0.1, gamma: float = 0.9):
+        self.lr = lr
+        self.gamma = gamma
+        self.v = {}
+
+    def initialize(self, parameters: ParameterSet):
+        for k, p in parameters.items():
+            self.v[k] = np.zeros_like(p)
+
+    def step(self, parameters: ParameterSet, gradients: ParameterSet, epoch: int, iteration: int):
+        if not self.v:
+            self.initialize(parameters)
+
+        for k, δEδp in gradients.items():
+            p = parameters[k]
+            v = self.v[k]
+            # use p[:] and v[:] so that updates are in-place
+            # instead of creating a new variable
+            """YOUR IMPLEMENTATION START"""
+            v[:] = self.gamma * v + self.lr * δEδp
+            p[:] = p - v
+            """YOUR IMPLEMENTATION END"""
+
+
+class NesterovMomentumSGD(Optimizer):
+    """
+    Nesterov Accelerated Gradient (NAG) optimizer.
+
+    A variant of momentum that "looks ahead" by computing the gradient at
+    the anticipated future position:
+        v = gamma * v + lr * gradient
+        p = p - (gamma * v + lr * gradient)
+    """
+
+    def __init__(self, lr: float = 0.1, gamma: float = 0.9):
+        self.lr = lr
+        self.gamma = gamma
+        self.v = {}
+
+    def initialize(self, parameters: ParameterSet):
+        for k, p in parameters.items():
+            self.v[k] = np.zeros_like(p)
+
+    def step(self, parameters: ParameterSet, gradients: ParameterSet, epoch: int, iteration: int):
+        if not self.v:
+            self.initialize(parameters)
+
+        for k, δEδp in gradients.items():
+            p = parameters[k]
+            v = self.v[k]
+            # use p[:] so that updates are in-place
+            # instead of creating a new variable
+            """YOUR IMPLEMENTATION START"""
+            v[:] = self.gamma * v + self.lr * δEδp
+            p[:] = p - (self.gamma * v + self.lr * δEδp)
+            """YOUR IMPLEMENTATION END"""
+
+
+class RMSpropOptimizer(Optimizer):
+    """
+    RMSprop optimizer.
+
+    Adapts the learning rate per-parameter using a running average of
+    squared gradients:
+        v = beta * v + (1 - beta) * gradient^2
+        p = p - lr / (sqrt(v) + eps) * gradient
+    """
+
+    def __init__(self, lr: float = 0.1, beta: float = 0.99, eps: float = 1e-8):
         self.lr = lr
         self.beta = beta
         self.eps = eps
-        self.first = True
         self.v = {}
 
-    def optimize_batch(self, model: Model, δEδps: ParameterSet, epoch: int, iteration: int):
-        if self.first:
-            self.first = False
-            for k, p in model.get_parameters().items():
-                self.v[k] = np.zeros_like(p)
+    def initialize(self, parameters: ParameterSet):
+        for k, p in parameters.items():
+            self.v[k] = np.zeros_like(p)
 
-        # Update parameters
-        parameters = model.get_parameters()
-        for parameter_name, δEδp in δEδps.items():
+    def step(self, parameters: ParameterSet, gradients: ParameterSet, epoch: int, iteration: int):
+        if not self.v:
+            self.initialize(parameters)
+
+        for parameter_name, δEδp in gradients.items():
             p = parameters[parameter_name]
             # use p[:] so that updates are in-place
             # instead of creating a new variable
@@ -147,30 +165,37 @@ class RMSprop(BatchedGradientOptimizer):
             """YOUR IMPLEMENTATION END"""
 
 
-class Adam(BatchedGradientOptimizer):
+class AdamOptimizer(Optimizer):
+    """
+    Adam optimizer (Adaptive Moment Estimation).
 
-    def __init__(
-        self, batch_size: int, epochs: int, lr: float = 0.1, betas: tuple = (0.9, 0.999), eps: int = 1e-08, shuffle=True
-    ):
-        super().__init__(batch_size, epochs, shuffle)
+    Combines ideas from momentum and RMSprop, maintaining both first and
+    second moment estimates of the gradients with bias correction:
+        m = beta1 * m + (1 - beta1) * gradient
+        v = beta2 * v + (1 - beta2) * gradient^2
+        m_hat = m / (1 - beta1^t)
+        v_hat = v / (1 - beta2^t)
+        p = p - lr * m_hat / (sqrt(v_hat) + eps)
+    """
+
+    def __init__(self, lr: float = 0.1, betas: tuple = (0.9, 0.999), eps: float = 1e-08):
         self.lr = lr
         self.beta_1, self.beta_2 = betas
         self.eps = eps
-        self.first = True
         self.m = {}
         self.v = {}
 
-    def optimize_batch(self, model: Model, δEδps: ParameterSet, epoch: int, iteration: int):
-        if self.first:
-            self.first = False
-            for k, p in model.get_parameters().items():
-                self.m[k] = np.zeros_like(p)
-                self.v[k] = np.zeros_like(p)
+    def initialize(self, parameters: ParameterSet):
+        for k, p in parameters.items():
+            self.m[k] = np.zeros_like(p)
+            self.v[k] = np.zeros_like(p)
+
+    def step(self, parameters: ParameterSet, gradients: ParameterSet, epoch: int, iteration: int):
+        if not self.m:
+            self.initialize(parameters)
         iteration += 1
 
-        # Update parameters
-        parameters = model.get_parameters()
-        for parameter_name, δEδp in δEδps.items():
+        for parameter_name, δEδp in gradients.items():
             p = parameters[parameter_name]
             # use p[:] so that updates are in-place
             # instead of creating a new variable
@@ -183,76 +208,21 @@ class Adam(BatchedGradientOptimizer):
             """YOUR IMPLEMENTATION END"""
 
 
-class MomentumGD(BatchedGradientOptimizer):
+class SignSGDOptimizer(Optimizer):
+    """
+    Sign Stochastic Gradient Descent.
 
-    def __init__(self, batch_size: int, epochs: int, lr: float = 0.1, gamma=0.9, shuffle=True):
-        super().__init__(batch_size, epochs, shuffle)
+    Normalizes each gradient component by its magnitude, effectively
+    taking a unit step in the direction of the gradient:
+        p = p - lr * gradient / sqrt(gradient^2 + eps)
+    """
+
+    def __init__(self, lr: float = 0.1, eps: float = 1e-8):
         self.lr = lr
-        self.gamma = gamma
-        self.first = True
-        self.v = {}
-
-    def optimize_batch(self, model: Model, δEδps: ParameterSet, epoch: int, iteration: int):
-        if self.first:
-            self.first = False
-            for k, p in model.get_parameters().items():
-                self.v[k] = np.zeros_like(p)
-
-        # Update parameters
-        parameters = model.get_parameters()
-        for k, δEδp in δEδps.items():
-            # K = parameter name
-            p = parameters[k]
-            v = self.v[k]
-            # use p[:] and v[:] so that updates are in-place
-            # instead of creating a new variable
-            """YOUR IMPLEMENTATION START"""
-            v[:] = self.gamma * v + self.lr * δEδp
-            p[:] = p - v
-            """YOUR IMPLEMENTATION END"""
-
-
-class NesterovMomentumGD(BatchedGradientOptimizer):
-
-    def __init__(self, batch_size: int, epochs: int, lr: float = 0.1, gamma=0.9, shuffle=True):
-        super().__init__(batch_size, epochs, shuffle)
-        self.lr = lr
-        self.gamma = gamma
-        self.first = True
-        self.v = {}
-
-    def optimize_batch(self, model: Model, δEδps: ParameterSet, epoch: int, iteration: int):
-        if self.first:
-            self.first = False
-            for k, p in model.get_parameters().items():
-                self.v[k] = np.zeros_like(p)
-
-        # Update parameters
-        parameters = model.get_parameters()
-        for k, δEδp in δEδps.items():
-            # K = parameter name
-            p = parameters[k]
-            v = self.v[k]
-            # use p[:] so that updates are in-place
-            # instead of creating a new variable
-            """YOUR IMPLEMENTATION START"""
-            v[:] = self.gamma * v + self.lr * δEδp
-            p[:] = p - (self.gamma * v + self.lr * δEδp)
-            """YOUR IMPLEMENTATION END"""
-
-
-class SignGD(BatchedGradientOptimizer):
-
-    def __init__(self, batch_size: int, epochs: int, lr: float = 0.1, eps=1e-8, shuffle=True):
-        super().__init__(batch_size, epochs, shuffle)
         self.eps = eps
-        self.lr = lr
 
-    def optimize_batch(self, model: Model, δEδps: ParameterSet, epoch: int, iteration: int):
-
-        # Update parameters
-        parameters = model.get_parameters()
-        for parameter_name, δEδp in δEδps.items():
+    def step(self, parameters: ParameterSet, gradients: ParameterSet, epoch: int, iteration: int):
+        for parameter_name, δEδp in gradients.items():
             p = parameters[parameter_name]
             # use p[:] so that updates are in-place
             # instead of creating a new variable
