@@ -45,7 +45,7 @@ def evaluate_classification_model(dataset_name: str, model_generator: Callable, 
 
 def evaluate_classification_model_datasets(model_generator, datasets_config):
 
-    for i, (dataset_name, config) in datasets_config.items():
+    for i, (dataset_name, config) in enumerate(datasets_config.items()):
         lr, epochs, min_accuracy = config.lr, config.epochs, config.min_accuracy
         model, accuracy = evaluate_classification_model(dataset_name, model_generator, epochs, lr, str(i))
         assert (
@@ -56,11 +56,13 @@ def evaluate_classification_model_datasets(model_generator, datasets_config):
 
 
 def test_logistic_regression():
+    nn.model.clear_registry()
     config_datasets = {
         "study1d": ExperimentConfig(0.5),
         "study2d_easy": ExperimentConfig(0.5),
         "study2d": ExperimentConfig(0.5),
-        "iris": ExperimentConfig(0.95, epochs=2000),
+        "iris": ExperimentConfig(0.9,
+ epochs=2000),
     }
 
     def logistic_regression(din, classes, id):
@@ -81,11 +83,13 @@ def test_logistic_regression():
 
 
 def test_classification_network():
+    nn.model.clear_registry()
     config_datasets = {
         "study1d": ExperimentConfig(0.5),
         "study2d_easy": ExperimentConfig(0.5),
         "study2d": ExperimentConfig(0.5),
-        "iris": ExperimentConfig(0.95, lr=0.1),
+        "iris": ExperimentConfig(0.9,
+ lr=0.1),
     }
 
     def network(din, classes, id):

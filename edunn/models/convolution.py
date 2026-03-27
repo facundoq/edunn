@@ -57,11 +57,13 @@ def conv2d_forward(w, x, strides=(1, 1), pad_size=(0, 0)):
     # Compute the convolution between X and W to get Y
     # Hint: use multiple for loops for the expected size
     """YOUR IMPLEMENTATION START"""
-    for i in range(hy):
-        for j in range(wy):
-            for a in range(hw):
-                for b in range(ww):
-                    y[:, :, i, j] += np.einsum("mk,lk->lm", w[:, :, a, b], x[:, :, i * stride_h + a, j * stride_w + b])
+    # Optimized: Loop over the kernel size instead of output spatial dimensions
+    for a in range(hw):
+        for b in range(ww):
+            # x_slice has shape (bx, cx, hy, wy)
+            x_slice = x[:, :, a:a + hy * stride_h:stride_h, b:b + wy * stride_w:stride_w]
+            # y += einsum('oc...,bc...->bo...', w[:, :, a, b], x_slice)
+            y += np.einsum("oc,bcHW->boHW", w[:, :, a, b], x_slice)
     """YOUR IMPLEMENTATION END"""
 
     return y
@@ -85,14 +87,10 @@ def conv2d_backward_x(w, x, input_x, strides=(1, 1), pad_size=(0, 0)):
     # Compute the convolution between X and W to get δEδx
     # Hint: use multiple for loops for the expected size
     """YOUR IMPLEMENTATION START"""
-    # Example: δEδx must be (2, 3, 7, 7) when X is (2,3,7,7) and W is (4,3,5,5)
-    # Then w_flipped is (4, 3, 5, 5) and δEδy (2, 4, 3, 3)
-    # When δEδy is padded (2, 4, 11, 11) which corresponds with int((hx - hd)) + 1 => 11-5+1=7
-    for i in range(hy):
-        for j in range(wy):
-            for a in range(hw):
-                for b in range(ww):
-                    y[:, :, i, j] += np.einsum("lk,ml->mk", w[:, :, a, b], x[:, :, i + a, j + b])
+    for a in range(hw):
+        for b in range(ww):
+            x_slice = x[:, :, a:a + hy, b:b + wy]
+            y[:, :, :, :] += np.einsum("lk,mlHW->mkHW", w[:, :, a, b], x_slice)
     """YOUR IMPLEMENTATION END"""
 
     return y
@@ -116,13 +114,18 @@ def conv2d_backward_w(w, x, input_w, strides=(1, 1), pad_size=(0, 0)):
     # Compute the convolution between X and W to get δEδw
     # Hint: use multiple for loops for the expected size
     """YOUR IMPLEMENTATION START"""
-    # Example: δEδw must be (4,3,5,5) when X is (2,3,7,7) and W is (4,3,5,5)
-    # Then δEδy is (2,4,3,3) and X (2,3,7,7)
+    # y shape is (bw, cw, hy, wy) which corresponds to (out_channels, in_channels, kh, kw)
+    # w shape is (bx, bw, hw, ww) where hw, ww are output spatial dimensions
+    # x shape is (bx, cx, hx, wx) where hx, wx are input spatial dimensions
     for i in range(hy):
         for j in range(wy):
-            for a in range(hw):
-                for b in range(ww):
-                    y[:, :, i, j] += np.einsum("mk,ml->kl", w[:, :, a, b], x[:, :, i + a, j + b])
+            # w[:, :, a, b] for all a, b -> w[:, :, :, :]
+            # x[:, :, i+a, j+b] for all a, b -> x[:, :, i:i+hw, j:j+ww]
+            x_slice = x[:, :, i:i + hw, j:j + ww]
+            # w is (bx, bw, hw, ww). x_slice is (bx, cx, hw, ww)
+            # einsum("mk,ml->kl") where m is bx, k is bw, l is cx. But now we have spatial hw, ww.
+            # We want to sum over bx (m) and spatial hw, ww (H, W).
+            y[:, :, i, j] = np.einsum("mkHW,mlHW->kl", w, x_slice)
     """YOUR IMPLEMENTATION END"""
 
     return y
@@ -161,7 +164,12 @@ class Conv2d(ModelWithParameters):
         shape = (out_channels, in_channels, kh, kw)
         w = kernel_initializer.create(shape)
         self.register_parameter("w", w)
-        # self.bias = Bias(out_channels, initializer=bias_initializer)
+        self.use_bias = bias
+        if self.use_bias:
+            if bias_initializer is None:
+                bias_initializer = RandomNormal()
+            b = bias_initializer.create((out_channels,))
+            self.register_parameter("b", b)
 
     def forward(self, x: np.ndarray):
         y = {}
@@ -171,6 +179,9 @@ class Conv2d(ModelWithParameters):
 
         """YOUR IMPLEMENTATION START"""
         y = conv2d_forward(w, x, self.strides, self.pad_size)
+        if self.use_bias:
+            b_val = self.get_parameters()["b"]
+            y = y + b_val[np.newaxis, :, np.newaxis, np.newaxis]
         """YOUR IMPLEMENTATION END"""
 
         # add input to cache to calculate δEδw in backward step
@@ -188,6 +199,11 @@ class Conv2d(ModelWithParameters):
         w = self.get_parameters()["w"]
 
         """YOUR IMPLEMENTATION START"""
+        ret_grads = {}
+        if self.use_bias:
+            δEδb = np.sum(δEδy, axis=(0, 2, 3))
+            ret_grads["b"] = δEδb
+            
         w_flipped = np.flip(w, axis=(2, 3))
         ph = w.shape[2] - 1 - self.pad_size[0]
         pw = w.shape[3] - 1 - self.pad_size[1]
@@ -195,6 +211,7 @@ class Conv2d(ModelWithParameters):
         δEδx = conv2d_backward_x(w_flipped, δEδy, x, self.strides, full_pad)
 
         δEδw = conv2d_backward_w(δEδy, x, w, self.strides, self.pad_size)
+        ret_grads["w"] = δEδw
         """YOUR IMPLEMENTATION END"""
 
-        return δEδx, {"w": δEδw}
+        return δEδx, ret_grads

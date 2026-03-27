@@ -16,9 +16,7 @@ def conv2d_forward(x, func, stride=(1, 1), pool_size=(1, 1)):
     """YOUR IMPLEMENTATION START"""
     for i in range(hy):
         for j in range(wy):
-            for k in range(cx):
-                for l in range(bx):
-                    y[l, k, i, j] = func(x[l, k, i * stride_h : i * stride_h + ph, j * stride_w : j * stride_w + pw])
+            y[:, :, i, j] = func(x[:, :, i * stride_h : i * stride_h + ph, j * stride_w : j * stride_w + pw], axis=(2, 3))
     """YOUR IMPLEMENTATION END"""
 
     return y
@@ -38,18 +36,12 @@ def conv2d_backward_max(dy, x, stride=(1, 1), pool_size=(1, 1)):
     """YOUR IMPLEMENTATION START"""
     for i in range(hy):
         for j in range(wy):
-            for k in range(cx):
-                for l in range(bx):
-                    # get the index in the region i,j where the value is the maximum
-                    i_t, j_t = np.where(
-                        np.max(x[l, k, i * stride_h : i * stride_h + ph, j * stride_w : j * stride_w + pw])
-                        == x[l, k, i * stride_h : i * stride_h + ph, j * stride_w : j * stride_w + pw]
-                    )
-                    i_t, j_t = i_t[0], j_t[0]
-                    # only the position of the maximum element in the region i,j gets the incoming gradient, the other gradients are zero
-                    dx[l, k, i * stride_h : i * stride_h + ph, j * stride_w : j * stride_w + pw][i_t, j_t] = dy[
-                        l, k, i, j
-                    ]
+            x_slice = x[:, :, i * stride_h : i * stride_h + ph, j * stride_w : j * stride_w + pw]
+            max_val = np.max(x_slice, axis=(2, 3), keepdims=True)
+            mask = (x_slice == max_val)
+            # If there are multiple maximums, divide the gradient equally
+            mask_sum = np.sum(mask, axis=(2, 3), keepdims=True)
+            dx[:, :, i * stride_h : i * stride_h + ph, j * stride_w : j * stride_w + pw] += mask * (dy[:, :, i, j][:, :, None, None] / mask_sum)
     """YOUR IMPLEMENTATION END"""
 
     return dx
@@ -69,12 +61,8 @@ def conv2d_backward_avg(dy, x, stride=(1, 1), pool_size=(1, 1)):
     """YOUR IMPLEMENTATION START"""
     for i in range(hy):
         for j in range(wy):
-            for k in range(cx):
-                for l in range(bx):
-                    dy_avg = dy[l, k, i, j] / (ph * pw)
-                    dx[l, k, i * stride_h : (i * stride_h + ph), j * stride_w : (j * stride_w + pw)] += (
-                        np.ones((ph, pw)) * dy_avg
-                    )
+            dy_avg = dy[:, :, i, j] / (ph * pw)
+            dx[:, :, i * stride_h : i * stride_h + ph, j * stride_w : j * stride_w + pw] += dy_avg[:, :, None, None]
     """YOUR IMPLEMENTATION END"""
 
     return dx

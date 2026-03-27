@@ -2,7 +2,7 @@
 # "An overview of gradient descent optimization algorithms" https://ruder.io/optimizing-gradient-descent/
 
 
-from typing import Dict
+from typing import Dict, Optional
 import numpy as np
 from .model import Model, Phase
 from .model import ParameterSet
@@ -47,7 +47,7 @@ def batch_arrays(batch_size: int, *arrays, shuffle=False):
 
 class BatchedGradientOptimizer(Optimizer):
 
-    def __init__(self, batch_size: int, epochs: int, shuffle=True):
+    def __init__(self, batch_size: Optional[int] = None, epochs: Optional[int] = None, shuffle=True):
         """
         :param epochs: number of epochs to train the model. Each epoch is a complete iteration over the training set. The number of parameter updates is n //batch_size, where n is the number of samples of the dataset
         :param batch_size: Batch the dataset with batches of size `batch_size`, and perform an optimization step for each batch
@@ -76,6 +76,10 @@ class BatchedGradientOptimizer(Optimizer):
         :param error_layer: To be applied to the output of the last layer
         :return:
         """
+        if self.batch_size is None or self.epochs is None:
+            raise ValueError("batch_size and epochs must be set before optimization. "
+                             "Use a Trainer or set them manually in the optimizer.")
+            
         n = x.shape[0]
         batches = n // self.batch_size
         history = []
@@ -94,13 +98,13 @@ class BatchedGradientOptimizer(Optimizer):
         return np.array(history)
 
     @abc.abstractmethod
-    def optimize_batch(self, model: Model, x: np.ndarray, y: np.ndarray, error_layer: Model, epoch: int):
+    def optimize_batch(self, model: Model, δEδps: ParameterSet, epoch: int, iteration: int):
         pass
 
 
 class GradientDescent(BatchedGradientOptimizer):
 
-    def __init__(self, batch_size: int, epochs: int, lr: float = 0.1, shuffle=True):
+    def __init__(self, batch_size: Optional[int] = None, epochs: Optional[int] = None, lr: float = 0.1, shuffle=True):
         super().__init__(batch_size, epochs, shuffle)
         self.lr = lr
 
@@ -120,7 +124,7 @@ class GradientDescent(BatchedGradientOptimizer):
 class RMSprop(BatchedGradientOptimizer):
 
     def __init__(
-        self, batch_size: int, epochs: int, lr: float = 0.1, beta: float = 0.99, eps: float = 1e-8, shuffle=True
+        self, batch_size: Optional[int] = None, epochs: Optional[int] = None, lr: float = 0.1, beta: float = 0.99, eps: float = 1e-8, shuffle=True
     ):
         super().__init__(batch_size, epochs, shuffle)
         self.lr = lr
@@ -150,7 +154,7 @@ class RMSprop(BatchedGradientOptimizer):
 class Adam(BatchedGradientOptimizer):
 
     def __init__(
-        self, batch_size: int, epochs: int, lr: float = 0.1, betas: tuple = (0.9, 0.999), eps: int = 1e-08, shuffle=True
+        self, batch_size: Optional[int] = None, epochs: Optional[int] = None, lr: float = 0.1, betas: tuple = (0.9, 0.999), eps: float = 1e-08, shuffle=True
     ):
         super().__init__(batch_size, epochs, shuffle)
         self.lr = lr
@@ -185,7 +189,7 @@ class Adam(BatchedGradientOptimizer):
 
 class MomentumGD(BatchedGradientOptimizer):
 
-    def __init__(self, batch_size: int, epochs: int, lr: float = 0.1, gamma=0.9, shuffle=True):
+    def __init__(self, batch_size: Optional[int] = None, epochs: Optional[int] = None, lr: float = 0.1, gamma=0.9, shuffle=True):
         super().__init__(batch_size, epochs, shuffle)
         self.lr = lr
         self.gamma = gamma
@@ -214,7 +218,7 @@ class MomentumGD(BatchedGradientOptimizer):
 
 class NesterovMomentumGD(BatchedGradientOptimizer):
 
-    def __init__(self, batch_size: int, epochs: int, lr: float = 0.1, gamma=0.9, shuffle=True):
+    def __init__(self, batch_size: Optional[int] = None, epochs: Optional[int] = None, lr: float = 0.1, gamma=0.9, shuffle=True):
         super().__init__(batch_size, epochs, shuffle)
         self.lr = lr
         self.gamma = gamma
@@ -243,7 +247,7 @@ class NesterovMomentumGD(BatchedGradientOptimizer):
 
 class SignGD(BatchedGradientOptimizer):
 
-    def __init__(self, batch_size: int, epochs: int, lr: float = 0.1, eps=1e-8, shuffle=True):
+    def __init__(self, batch_size: Optional[int] = None, epochs: Optional[int] = None, lr: float = 0.1, eps: float = 1e-8, shuffle=True):
         super().__init__(batch_size, epochs, shuffle)
         self.eps = eps
         self.lr = lr

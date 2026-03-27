@@ -68,28 +68,48 @@ class RNN(ModelWithParameters):
         δEδh_next = np.zeros((batch_size, self.hidden_dim))
 
         """YOUR IMPLEMENTATION START"""
-        # steps_back = min(self.bptt_truncate, t)
         for t in reversed(range(timesteps)):
-            # (vocab_size, batch_size) x (batch_size, hidden_dim) = (vocab_size, hidden_dim)
-            δEδV += δEδy[:, t, :].T @ h[:, t, :]
-            # (batch_size, vocab_size) x (vocab_size, hidden_dim) + (batch_size, hidden_dim)
-            δEδh = δEδy[:, t, :] @ V + δEδh_next
-
-            δEδa = (1 - h[:, t, :] ** 2) * δEδh
-
-            # (hidden_dim, batch_size) x (batch_size, vocab_size) = (hidden_dim, vocab_size)
-            δEδU += δEδa.T @ x[:, t, :]
-
-            # (batch_size, hidden_dim) x (hidden_dim, vocab_size) = (batch_size, vocab_size)
-            δEδx[:, t, :] = δEδa @ U
-
-            if t > 0:
-                # (hidden_dim, batch_size) x (batch_size, hidden_dim) = (hidden_dim, hidden_dim)
-                δEδW += δEδa.T @ h[:, t - 1, :]
-                # (batch_size, hidden_dim) x (hidden_dim, hidden_dim) = (batch_size, hidden_dim)
+            # Start BPTT from t, going back up to bptt_truncate steps
+            steps_back = min(self.bptt_truncate, t + 1)
+            
+            # The gradient from the output at time t
+            δEδy_t = δEδy[:, t, :]
+            
+            # Calculate gradient of V based on output at time t
+            δEδV += δEδy_t.T @ h[:, t, :]
+            
+            # Initial gradient coming into hidden state at time t
+            δEδh = δEδy_t @ V
+            
+            # Propagate gradients back through time
+            for bptt_step in range(steps_back):
+                current_t = t - bptt_step
+                
+                # Add gradient from next hidden state (if any)
+                if bptt_step == 0:
+                    δEδh_total = δEδh + δEδh_next
+                else:
+                    δEδh_total = δEδh_next
+                
+                # Gradient through tanh
+                δEδa = (1 - h[:, current_t, :] ** 2) * δEδh_total
+                
+                # Gradients for U and W
+                δEδU += δEδa.T @ x[:, current_t, :]
+                if current_t > 0:
+                    δEδW += δEδa.T @ h[:, current_t - 1, :]
+                    
+                # Gradient for input x
+                δEδx[:, current_t, :] += δEδa @ U
+                
+                # Prepare gradient for the previous step in time
                 δEδh_next = δEδa @ W
-            else:
-                δEδh_next = np.zeros((batch_size, self.hidden_dim))
+
+            # Reset δEδh_next for the next output time step t-1
+            # Actually, Truncated BPTT standard implementation accumulates gradients
+            # by stepping back from each output. We reset δEδh_next for the outer loop.
+            δEδh_next = np.zeros((batch_size, self.hidden_dim))
+            
         """YOUR IMPLEMENTATION END"""
 
         # clip to mitigate exploding gradients

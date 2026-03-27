@@ -1,3 +1,44 @@
+[project]
+name = "edunn"
+version = "0.1.6"
+description = "An educational implementation of a Keras-like neural network framework."
+readme = "README.md"
+authors = [
+    { name = "Facundo Quiroga", email = "fquiroga@lidi.info.unlp.edu.ar" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "numpy",
+    "matplotlib",
+    "tqdm",
+    "colorama",
+    "ipython",
+    "jupyter",
+    "scikit-learn",
+]
+
+[project.license]
+text = "AGPL-3.0-or-later"
+
+[project.urls]
+"Bug Tracker" = "https://github.com/facundoq/edunn/issues"
+Documentation = "https://github.com/facundoq/edunn"
+"Source Code" = "https://github.com/facundoq/edunn"
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "twine",
+    "pre-commit",
+    "manim>=0.18.0",
+    "nbconvert",
+    "nbformat",
+    "ipykernel",
+]
+
+[tool.uv]
+managed = true
+
 [tool.black]
 line-length = 120
 target-version = ["py38"]

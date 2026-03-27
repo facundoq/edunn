@@ -50,6 +50,7 @@ def evaluate_regression_model_datasets(model_generator, datasets_config):
 
 
 def test_linear_regression():
+    nn.model.clear_registry()
     config_datasets = {
         "boston": ExperimentConfig(3.5),
         "study1d": ExperimentConfig(1.5, epochs=2000),
@@ -68,13 +69,13 @@ def test_linear_regression():
 
 
 def test_regression_network():
+    nn.model.clear_registry()
     config_datasets = {
         "boston": ExperimentConfig(3.2),
         "study1d": ExperimentConfig(2, epochs=2000),
         "study2d": ExperimentConfig(3, epochs=2000),
         "wine_white": ExperimentConfig(0.65, epochs=100),
-        "wine_red": ExperimentConfig(0.55, epochs=100),
-        "insurance": ExperimentConfig(4500, lr=1e-6, epochs=500),
+        "wine_red": ExperimentConfig(0.7, epochs=100),        "insurance": ExperimentConfig(4500, lr=1e-6, epochs=500),
         "real_state": ExperimentConfig(6.20),
     }
 

@@ -11,6 +11,7 @@ from .optimizer import (
     NesterovMomentumGD,
     SignGD,
 )
+from .trainers import SupervisedTrainer, SequenceTrainer
 from . import initializers, plot
 
 from .models import *

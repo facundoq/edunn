@@ -5,6 +5,11 @@ from enum import Enum
 class_counter = {}
 model_name_registry = []
 
+
+def clear_registry():
+    class_counter.clear()
+    model_name_registry.clear()
+
 from typing import Tuple, Dict
 
 
@@ -39,9 +44,14 @@ class Model(ABC):
             count = class_counter.get(class_name, 0)
             name = f"{class_name}_{count}"
             class_counter[class_name] = count + 1
-        assert not (
-            name in model_name_registry
-        ), f"The model name {name} has already been used, see model_name_registry: {model_name_registry}."
+        
+        # Make sure the name is unique if provided manually but already exists
+        original_name = name
+        suffix_count = 1
+        while name in model_name_registry:
+            name = f"{original_name}_{suffix_count}"
+            suffix_count += 1
+            
         model_name_registry.append(name)
 
         self.phase = Phase.Training

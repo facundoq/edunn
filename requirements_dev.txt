@@ -1,5 +1,0 @@
-# dev requirements
-twine
-pytest
-pre-commit
-manim==0.18.0
