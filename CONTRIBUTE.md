@@ -19,6 +19,7 @@ Guides can be written for different languages (english, spanish, etc), and are z
 
 1. Clone the repository
 2. Create a venv, install packages in `requirements.txt` and `requirements_dev.txt`, also run `pre-commit install`
+3. Install libpango to use `manim`: `sudo apt install libpango1.0-dev`
 2. Run `edit_guides.sh` to fire up a jupyter-notebook server that can import `edunn` correctly (recommended to avoid path issues, but you can do this in other ways if you are knowledgeable in python[^import])
 2. Add/modify guide and/or a `edunn` component
 2. Before commit, run `clear_notebooks.py`

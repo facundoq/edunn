@@ -1,10 +1,15 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "edunn"
-version = "0.1.6"
+version = "0.1.7"
 description = "An educational implementation of a Keras-like neural network framework."
 readme = "README.md"
 authors = [
-    { name = "Facundo Quiroga", email = "fquiroga@lidi.info.unlp.edu.ar" }
+    { name = "Facundo Quiroga", email = "fquiroga@lidi.info.unlp.edu.ar" },
+    { name = "Oscar Stanchi" }
 ]
 requires-python = ">=3.12"
 dependencies = [
@@ -15,6 +20,13 @@ dependencies = [
     "ipython",
     "jupyter",
     "scikit-learn",
+]
+
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
 ]
 
 [project.license]
@@ -30,10 +42,10 @@ dev = [
     "pytest",
     "twine",
     "pre-commit",
-    "manim>=0.18.0",
     "nbconvert",
     "nbformat",
     "ipykernel",
+    "manim>=0.20.1",
 ]
 
 [tool.uv]
@@ -51,3 +63,11 @@ exclude = '''
   | dist
 )/
 '''
+
+[tool.setuptools.packages.find]
+exclude = ["samples*", "guides*", "releases*", "generated*", "tests*"]
+
+[tool.setuptools.package-data]
+"edunn.datasets.regression_data" = ["*"]
+"edunn.datasets.classification_data" = ["*"]
+

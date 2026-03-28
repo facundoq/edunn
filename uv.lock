@@ -612,8 +612,8 @@ wheels = [
 
 [[package]]
 name = "edunn"
-version = "0.1.6"
-source = { virtual = "." }
+version = "0.1.7"
+source = { editable = "." }
 dependencies = [
     { name = "colorama" },
     { name = "ipython" },
@@ -649,7 +649,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "ipykernel" },
-    { name = "manim", specifier = ">=0.18.0" },
+    { name = "manim", specifier = ">=0.20.1" },
     { name = "nbconvert" },
     { name = "nbformat" },
     { name = "pre-commit" },

@@ -1,2 +1,0 @@
-include edunn/datasets/regression_data/*
-include edunn/datasets/classification_data/*
