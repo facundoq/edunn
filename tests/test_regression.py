@@ -22,15 +22,10 @@ def evaluate_regression_model(dataset_name: str, model_generator: Callable, epoc
     batch_size = min(16, max(64, n // 32))
     batch_size = min(n, batch_size)
 
-    optimizer = nn.GradientDescent(batch_size, epochs, lr)
+    optimizer = nn.GradientDescent(lr=lr)
     error = edunn.models.mean_error.MeanError(nn.SquaredError())
-
-    optimizer.optimize(
-        model,
-        x,
-        y,
-        error,
-    )
+    trainer = nn.SupervisedTrainer(model, optimizer, error, epochs=epochs, batch_size=batch_size, verbose=False)
+    history = trainer.train(x, y)
     y_pred = model.forward(x)
     mse, mae = metrics.rmse(y, y_pred), metrics.mae(y, y_pred)
 

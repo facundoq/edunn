@@ -27,7 +27,7 @@ def evaluate_classification_model(dataset_name: str, model_generator: Callable, 
     print(f"Testing model {model} on dataset {dataset_name}: {n} samples, {din} features, {n_classes} classes")
     batch_size = min(16, max(64, n // 32))
     batch_size = min(n, batch_size)
-    optimizer = nn.GradientDescent(batch_size, epochs // 10, lr)
+    optimizer = nn.GradientDescent(lr=lr)
 
     if n_classes == 2:
         sample_error = nn.BinaryCrossEntropy()
@@ -35,7 +35,8 @@ def evaluate_classification_model(dataset_name: str, model_generator: Callable, 
         sample_error = nn.CrossEntropyWithLabels()
 
     error = edunn.models.mean_error.MeanError(sample_error)
-    optimizer.optimize(model, x, y, error)
+    trainer = nn.SupervisedTrainer(model, optimizer, error, epochs=epochs, batch_size=batch_size, verbose=False)
+    trainer.train(x, y)
     y_pred = model.forward(x)
     y_pred_labels = np.argmax(y_pred, axis=1)
     accuracy = metrics.accuracy(y, y_pred_labels)

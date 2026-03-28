@@ -13,7 +13,7 @@ from tqdm.auto import tqdm
 class Optimizer(abc.ABC):
 
     @abc.abstractmethod
-    def optimize(self, model: Model, *args):
+    def optimize_batch(self, model: Model, δEδps: ParameterSet, epoch: int, iteration: int):
         pass
 
 
@@ -45,67 +45,9 @@ def batch_arrays(batch_size: int, *arrays, shuffle=False):
         yield tuple(batch)
 
 
-class BatchedGradientOptimizer(Optimizer):
+class GradientDescent(Optimizer):
 
-    def __init__(self, batch_size: Optional[int] = None, epochs: Optional[int] = None, shuffle=True):
-        """
-        :param epochs: number of epochs to train the model. Each epoch is a complete iteration over the training set. The number of parameter updates is n //batch_size, where n is the number of samples of the dataset
-        :param batch_size: Batch the dataset with batches of size `batch_size`, and perform an optimization step for each batch
-        """
-        self.batch_size = batch_size
-        self.epochs = epochs
-        self.shuffle = shuffle
-
-    def backpropagation(self, model: Model, x: np.ndarray, y_true: np.ndarray, error_layer: Model):
-        # forward pass (model and error)
-        y = model.forward(x)
-        E = error_layer.forward(y_true, y)
-
-        # backward pass (error and model)
-        δEδy, _ = error_layer.backward(1)
-        δEδx, δEδps = model.backward(δEδy)
-
-        return δEδx, δEδps, E
-
-    def optimize(self, model: Model, x: np.ndarray, y: np.ndarray, error_layer: Model, verbose=True):
-        """
-        Fit a model to a dataset.
-        :param model: the Model to optimize
-        :param x: dataset inputs
-        :param y: dataset outputs
-        :param error_layer: To be applied to the output of the last layer
-        :return:
-        """
-        if self.batch_size is None or self.epochs is None:
-            raise ValueError("batch_size and epochs must be set before optimization. "
-                             "Use a Trainer or set them manually in the optimizer.")
-            
-        n = x.shape[0]
-        batches = n // self.batch_size
-        history = []
-        model.set_phase(Phase.Training)
-        bar = tqdm(range(self.epochs), desc=f"optim. {model.name}", file=sys.stdout, disable=not verbose)
-        for epoch in bar:
-            epoch_error = 0
-            for i, (x_batch, y_batch) in enumerate(batch_arrays(self.batch_size, x, y, shuffle=self.shuffle)):
-                δEδx, δEδps, batch_error = self.backpropagation(model, x_batch, y_batch, error_layer)
-                self.optimize_batch(model, δEδps, epoch, i)
-                epoch_error += batch_error
-            epoch_error /= batches
-            history.append(epoch_error)
-            bar.set_postfix_str(f"{error_layer.name}: {epoch_error:.5f}")
-
-        return np.array(history)
-
-    @abc.abstractmethod
-    def optimize_batch(self, model: Model, δEδps: ParameterSet, epoch: int, iteration: int):
-        pass
-
-
-class GradientDescent(BatchedGradientOptimizer):
-
-    def __init__(self, batch_size: Optional[int] = None, epochs: Optional[int] = None, lr: float = 0.1, shuffle=True):
-        super().__init__(batch_size, epochs, shuffle)
+    def __init__(self, lr: float = 0.1):
         self.lr = lr
 
     def optimize_batch(self, model: Model, δEδps: ParameterSet, epoch: int, iteration: int):
@@ -121,12 +63,11 @@ class GradientDescent(BatchedGradientOptimizer):
             """YOUR IMPLEMENTATION END"""
 
 
-class RMSprop(BatchedGradientOptimizer):
+class RMSprop(Optimizer):
 
     def __init__(
-        self, batch_size: Optional[int] = None, epochs: Optional[int] = None, lr: float = 0.1, beta: float = 0.99, eps: float = 1e-8, shuffle=True
+        self, lr: float = 0.1, beta: float = 0.99, eps: float = 1e-8
     ):
-        super().__init__(batch_size, epochs, shuffle)
         self.lr = lr
         self.beta = beta
         self.eps = eps
@@ -151,12 +92,11 @@ class RMSprop(BatchedGradientOptimizer):
             """YOUR IMPLEMENTATION END"""
 
 
-class Adam(BatchedGradientOptimizer):
+class Adam(Optimizer):
 
     def __init__(
-        self, batch_size: Optional[int] = None, epochs: Optional[int] = None, lr: float = 0.1, betas: tuple = (0.9, 0.999), eps: float = 1e-08, shuffle=True
+        self, lr: float = 0.1, betas: tuple = (0.9, 0.999), eps: float = 1e-08
     ):
-        super().__init__(batch_size, epochs, shuffle)
         self.lr = lr
         self.beta_1, self.beta_2 = betas
         self.eps = eps
@@ -187,10 +127,9 @@ class Adam(BatchedGradientOptimizer):
             """YOUR IMPLEMENTATION END"""
 
 
-class MomentumGD(BatchedGradientOptimizer):
+class MomentumGD(Optimizer):
 
-    def __init__(self, batch_size: Optional[int] = None, epochs: Optional[int] = None, lr: float = 0.1, gamma=0.9, shuffle=True):
-        super().__init__(batch_size, epochs, shuffle)
+    def __init__(self, lr: float = 0.1, gamma=0.9):
         self.lr = lr
         self.gamma = gamma
         self.first = True
@@ -216,10 +155,9 @@ class MomentumGD(BatchedGradientOptimizer):
             """YOUR IMPLEMENTATION END"""
 
 
-class NesterovMomentumGD(BatchedGradientOptimizer):
+class NesterovMomentumGD(Optimizer):
 
-    def __init__(self, batch_size: Optional[int] = None, epochs: Optional[int] = None, lr: float = 0.1, gamma=0.9, shuffle=True):
-        super().__init__(batch_size, epochs, shuffle)
+    def __init__(self, lr: float = 0.1, gamma=0.9):
         self.lr = lr
         self.gamma = gamma
         self.first = True
@@ -245,10 +183,9 @@ class NesterovMomentumGD(BatchedGradientOptimizer):
             """YOUR IMPLEMENTATION END"""
 
 
-class SignGD(BatchedGradientOptimizer):
+class SignGD(Optimizer):
 
-    def __init__(self, batch_size: Optional[int] = None, epochs: Optional[int] = None, lr: float = 0.1, eps: float = 1e-8, shuffle=True):
-        super().__init__(batch_size, epochs, shuffle)
+    def __init__(self, lr: float = 0.1, eps: float = 1e-8):
         self.eps = eps
         self.lr = lr
 

@@ -17,7 +17,7 @@ class TestTrainers(unittest.TestCase):
             if 'b' in k:
                 params[k][:] = 0
         
-        optimizer = nn.GradientDescent(batch_size=10, epochs=50, lr=0.01)
+        optimizer = nn.GradientDescent(lr=0.01)
         error = nn.MeanError(nn.SquaredError())
         
         trainer = nn.SupervisedTrainer(model, optimizer, error, epochs=50, batch_size=10)
@@ -32,7 +32,7 @@ class TestTrainers(unittest.TestCase):
         y = np.random.randn(100, 1)
         
         model = nn.Linear(2, 1)
-        optimizer = nn.GradientDescent(batch_size=10, epochs=50, lr=0.01)
+        optimizer = nn.GradientDescent(lr=0.01)
         error = nn.MeanError(nn.SquaredError())
         
         # Accumulate over 5 steps
@@ -62,7 +62,7 @@ class TestTrainers(unittest.TestCase):
                 if 'b' in k:
                     params[k][:] = 0.0
             
-            opt = nn.GradientDescent(batch_size=bs, epochs=1, lr=0.01)
+            opt = nn.GradientDescent(lr=0.01)
             err = nn.MeanError(nn.SquaredError())
             trainer = nn.SequenceTrainer(model, opt, err, epochs=1, batch_size=bs, shuffle=False, accumulation_steps=acc)
             trainer.train(x, y, verbose=False)

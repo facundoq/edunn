@@ -3,7 +3,6 @@ eps = 1e-12
 from .model import Model, Phase, ModelWithParameters, ModelWithoutParameters
 from .optimizer import (
     Optimizer,
-    BatchedGradientOptimizer,
     GradientDescent,
     RMSprop,
     Adam,

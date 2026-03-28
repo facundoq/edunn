@@ -46,6 +46,10 @@ dev = [
     "nbformat",
     "ipykernel",
     "manim>=0.20.1",
+    "ruff>=0.15.8",
+    "ty>=0.0.26",
+    "jupytext>=1.19.1",
+    "marimo>=0.21.1",
 ]
 
 [tool.uv]
@@ -55,6 +59,20 @@ managed = true
 line-length = 120
 target-version = ["py38"]
 include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.ruff]
+line-length = 120
+
+[tool.ty]
+type-checking = true
 exclude = '''
 /(
     \.git

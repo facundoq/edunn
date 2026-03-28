@@ -5,24 +5,42 @@ from tqdm.auto import tqdm
 from .optimizer import Optimizer, batch_arrays
 
 class SupervisedTrainer:
-    def __init__(self, model: Model, optimizer: Optimizer, error_layer: Model, epochs: int, batch_size: int, verbose=True):
+    def __init__(self, model: Model, optimizer: Optimizer, error_layer: Model, epochs: int, batch_size: int, shuffle=True, verbose=True):
         self.model = model
         self.optimizer = optimizer
         self.error_layer = error_layer
         self.epochs = epochs
         self.batch_size = batch_size
+        self.shuffle = shuffle
         self.verbose = verbose
 
     def train(self, x: np.ndarray, y: np.ndarray, verbose=None):
         if verbose is None:
             verbose = self.verbose
 
-        if hasattr(self.optimizer, 'epochs'):
-            self.optimizer.epochs = self.epochs
-        if hasattr(self.optimizer, 'batch_size'):
-            self.optimizer.batch_size = self.batch_size
+        n = x.shape[0]
+        batches = max(1, n // self.batch_size)
+        history = []
+        self.model.set_phase(Phase.Training)
 
-        return self.optimizer.optimize(self.model, x, y, self.error_layer, verbose=verbose)
+        bar = tqdm(range(self.epochs), desc=f"train {self.model.name}", file=sys.stdout, disable=not verbose)
+        for epoch in bar:
+            epoch_error = 0
+            for i, (x_batch, y_batch) in enumerate(batch_arrays(self.batch_size, x, y, shuffle=self.shuffle)):
+                y_pred = self.model.forward(x_batch)
+                batch_error = self.error_layer.forward(y_batch, y_pred)
+                epoch_error += batch_error
+
+                δEδy, _ = self.error_layer.backward(1)
+                _, δEδps = self.model.backward(δEδy)
+
+                self.optimizer.optimize_batch(self.model, δEδps, epoch, i)
+
+            epoch_error /= batches
+            history.append(epoch_error)
+            bar.set_postfix_str(f"{self.error_layer.name}: {epoch_error:.5f}")
+
+        return np.array(history)
 
 class SequenceTrainer(SupervisedTrainer):
     def __init__(self, model: Model, optimizer: Optimizer, error_layer: Model, epochs: int, batch_size: int,
