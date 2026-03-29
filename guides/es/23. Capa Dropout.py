@@ -66,7 +66,7 @@ def _(nn, np):
     batch_size=2
 
     x = np.random.rand(batch_size,din)
-                       
+
     layer=nn.Dropout(p=0.5)
     return layer, x
 
@@ -92,7 +92,7 @@ def _(layer, np, y):
     # Propaga el gradiente hacia atrás a través de la convolución
     layer_grad = layer.backward(g)
     layer_grad
-    return (g,)
+    return
 
 
 @app.cell
@@ -119,11 +119,14 @@ def _(x):
     dropout = None
     torch = None
     x_1 = None
-    return dropout, torch, x_1, y_torch
+    return dropout, x_1
+
+
 @app.cell
-def _(g, torch, x_1, y_torch):
-    
+def _():
     return
+
+
 @app.cell
 def _(dropout, x_1):
     dropout.eval()

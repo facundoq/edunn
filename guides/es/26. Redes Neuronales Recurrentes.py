@@ -752,7 +752,7 @@ def _(np):
 
         X_onehot = np.eye(vocab_size)[X_int]
         Y_onehot = np.eye(vocab_size)[Y_int]
-    
+
         return X_onehot, Y_onehot
 
     return (generate_echo_dataset,)

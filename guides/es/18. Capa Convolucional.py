@@ -467,7 +467,7 @@ def _(layer, np, y):
     # Propaga el gradiente hacia atrás a través de la convolución
     layer_grad = layer.backward(g)
     layer_grad
-    return g, layer_grad
+    return
 
 
 @app.cell(hide_code=True)
@@ -486,7 +486,9 @@ def _(padding, stride, w, x):
     tnn = None
     torch = None
     x_1 = None
-    return conv, tnn, torch, x_1, y_torch
+    return (y_torch,)
+
+
 @app.cell
 def _(utils, y, y_torch):
     utils.check_same(y_torch,y)
@@ -494,17 +496,20 @@ def _(utils, y, y_torch):
 
 
 @app.cell
-def _(conv, g, torch, x_1, y_torch):
-    
+def _():
     return
+
+
 @app.cell
-def _(layer_grad, utils, x_1):
-    
+def _():
     return
+
+
 @app.cell
-def _(conv, layer_grad, utils):
-    
+def _():
     return
+
+
 @app.cell
 def _(nn, utils):
     samples = 100
@@ -542,23 +547,29 @@ def _():
 
 
 @app.cell
-def _(torch):
-    
+def _():
+
     x1d = None
     x2d = None
-    return x1d, x2d
+    return (x2d,)
+
+
 @app.cell
-def _(padding_1, stride_1, tnn, x1d):
-    
+def _():
+
     conv1d = None
     conv2d = None
-    return conv1d, conv2d
+    return (conv2d,)
+
+
 @app.cell
-def _(conv1d, conv2d, x1d, x2d):
-    
+def _():
+
     output1d = None
     output2d = None
-    return output1d, output2d
+    return (output2d,)
+
+
 @app.cell
 def _(output2d):
     # (batch_size, num_filters, 1, new_length) -> (batch_size, num_filters, new_length)
@@ -567,22 +578,27 @@ def _(output2d):
 
 
 @app.cell
-def _(output1d, output2d_1, torch):
-    
+def _():
     return
+
+
 @app.cell
-def _(output1d, output2d_1, torch):
-    
+def _():
+
     grad_output_np = None
     return (grad_output_np,)
+
+
 @app.cell
-def _(torch, x1d, x2d):
-    
+def _():
     return
+
+
 @app.cell
-def _(conv1d, conv2d, torch):
-    
+def _():
     return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -622,9 +638,10 @@ def _(grad_output_np, layer_2):
 
 
 @app.cell
-def _(layer_grad_1, utils, x2d):
-    
+def _():
     return
+
+
 @app.cell
 def _(conv2d, layer_grad_1, utils):
     utils.check_same(conv2d.weight.grad.squeeze(2).detach().numpy(), layer_grad_1[1]['w'].squeeze(2), tol=1e-05)

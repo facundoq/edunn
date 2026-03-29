@@ -59,7 +59,7 @@ def _(layer, np, y):
     # Propaga el gradiente hacia atrás a través de la convolución
     layer_grad = layer.backward(g)
     layer_grad
-    return g, layer_grad
+    return
 
 
 @app.cell(hide_code=True)
@@ -76,7 +76,9 @@ def _(x):
     y_torch = reference.flatten_forward(x)
     torch = None
     x_1 = None
-    return torch, x_1, y_torch
+    return (y_torch,)
+
+
 @app.cell
 def _(utils, y, y_torch):
     utils.check_same(y_torch,y)
@@ -84,13 +86,15 @@ def _(utils, y, y_torch):
 
 
 @app.cell
-def _(g, torch, x_1, y_torch):
-    
+def _():
     return
+
+
 @app.cell
-def _(layer_grad, utils, x_1):
-    
+def _():
     return
+
+
 @app.cell
 def _(nn, utils):
     samples = 100

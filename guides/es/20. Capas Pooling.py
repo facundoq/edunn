@@ -132,7 +132,7 @@ def _(layer, np, y):
     # Propaga el gradiente hacia atrás a través de la convolución
     layer_grad = layer.backward(g)
     layer_grad
-    return g, layer_grad
+    return
 
 
 @app.cell(hide_code=True)
@@ -145,18 +145,19 @@ def _(mo):
 
 @app.cell
 def _():
-    
+
     tnn = None
     torch = None
-
     return tnn, torch
+
+
 @app.cell
 def _(kernel_size, stride, tnn, torch, x):
     x_1 = torch.from_numpy(x).to(torch.double)
     _pool = tnn.MaxPool2d(kernel_size=kernel_size, stride=stride, return_indices=True)
     x_1.requires_grad = True
     y_torch, indices = _pool(x_1)
-    return x_1, y_torch
+    return (y_torch,)
 
 
 @app.cell
@@ -166,13 +167,15 @@ def _(utils, y, y_torch):
 
 
 @app.cell
-def _(g, torch, x_1, y_torch):
-    
+def _():
     return
+
+
 @app.cell
-def _(layer_grad, utils, x_1):
-    
+def _():
     return
+
+
 @app.cell
 def _(nn, utils):
     _samples = 100
@@ -307,7 +310,7 @@ def _(layer_2, np, y_1):
     layer_grad_1 = layer_2.backward(g_2)
     # Propaga el gradiente hacia atrás a través de la convolución
     layer_grad_1
-    return g_2, layer_grad_1
+    return
 
 
 @app.cell(hide_code=True)
@@ -324,7 +327,7 @@ def _(kernel_size_1, stride_1, tnn, torch, x_2):
     _pool = tnn.AvgPool2d(kernel_size=kernel_size_1, stride=stride_1)
     x_3.requires_grad = True
     y_torch_1 = _pool(x_3)
-    return x_3, y_torch_1
+    return (y_torch_1,)
 
 
 @app.cell
@@ -334,13 +337,15 @@ def _(utils, y_1, y_torch_1):
 
 
 @app.cell
-def _(g_2, torch, x_3, y_torch_1):
-    
+def _():
     return
+
+
 @app.cell
-def _(layer_grad_1, utils, x_3):
-    
+def _():
     return
+
+
 @app.cell
 def _(nn, utils):
     _samples = 100

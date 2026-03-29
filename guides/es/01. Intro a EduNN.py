@@ -225,7 +225,7 @@ def _(mean_cross_entropy_error, model, nn, x, y):
     # Optimización
     trainer = nn.SupervisedTrainer(model, optimizer, mean_cross_entropy_error, epochs=100, batch_size=8)
     history = trainer.train(x, y)
-    return (history,)
+    return
 
 
 @app.cell(hide_code=True)
@@ -245,7 +245,7 @@ def _(mo):
 
 
 @app.cell
-def _(dataset_name, din, history, model, nn, x, y):
+def _(dataset_name, din, model, nn, x, y):
     # nn.plot.plot_history(history)
 
     # Reporte del desempeño

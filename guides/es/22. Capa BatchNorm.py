@@ -86,7 +86,7 @@ def _(nn, np):
     gamma_initializer = nn.initializers.Constant(w)
     beta_initializer = nn.initializers.Constant(b)
     layer = nn.BatchNorm(num_features=din, gamma_initializer=gamma_initializer, beta_initializer=beta_initializer)
-    return b, din, layer, w, x
+    return b, layer, w, x
 
 
 @app.cell
@@ -265,7 +265,7 @@ def _(layer, np, y):
     # Propaga el gradiente hacia atrás a través de la convolución
     layer_grad = layer.backward(g)
     layer_grad
-    return g, layer_grad
+    return (layer_grad,)
 
 
 @app.cell(hide_code=True)
@@ -277,13 +277,15 @@ def _(mo):
 
 
 @app.cell
-def _(b, din, w, x):
+def _(b, w, x):
     from edunn.utils import reference
     y_torch = reference.batchnorm_forward(x, w, b)
     batch_norm = None
     torch = None
     x_1 = None
-    return batch_norm, torch, x_1, y_torch
+    return batch_norm, y_torch
+
+
 @app.cell
 def _(utils, y, y_torch):
     utils.check_same(y_torch,y,tol=1e-5)
@@ -291,13 +293,15 @@ def _(utils, y, y_torch):
 
 
 @app.cell
-def _(batch_norm, g, torch, x_1, y_torch):
-    
+def _():
     return
+
+
 @app.cell
-def _(layer_grad, utils, x_1):
-    
+def _():
     return
+
+
 @app.cell
 def _(batch_norm, layer_grad, utils):
     utils.check_same(batch_norm.weight.grad.numpy(),layer_grad[1]['w'],tol=1e-5)
