@@ -22,18 +22,16 @@ def clear_notebooks(folderpath: Path):
         command = f"uv run marimo check --fix \"{f.absolute()}\""
         subprocess.run(command, shell=True)
 
-def convert_notebooks(folderpath: Path):
+def convert_notebooks(folderpath: Path, build_folder: Path):
+    build_folder.mkdir(parents=True, exist_ok=True)
     for f in folderpath.rglob("*.py"):
         if not f.is_file():
             continue
-        ipynb_out = f.with_suffix(".ipynb")
+        rel_path = f.relative_to(folderpath)
+        ipynb_out = build_folder / rel_path.with_suffix(".ipynb")
+        ipynb_out.parent.mkdir(parents=True, exist_ok=True)
         command = f"uv run marimo export ipynb \"{f.absolute()}\" -o \"{ipynb_out.absolute()}\""
         subprocess.run(command, shell=True)
-
-def remove_jupyter_notebooks(folderpath: Path):
-    for f in folderpath.rglob("*.ipynb"):
-        if f.is_file():
-            f.unlink()
 
 
 def zip_all(path, zip_file):
@@ -83,8 +81,9 @@ if __name__ == "__main__":
     print(f"Clearing notebooks in {guide_folderpath}...")
     clear_notebooks(guide_folderpath)
 
-    print(f"Converting marimo notebooks to Jupyter notebooks...")
-    convert_notebooks(guide_folderpath)
+    build_folder = Path(f"_build_{language}")
+    print(f"Converting marimo notebooks to Jupyter notebooks in {build_folder}...")
+    convert_notebooks(guide_folderpath, build_folder)
 
     print(f"Arranging edunn for solving (generating skeleton)...")
     subprocess.run([sys.executable, "export_code.py"], check=True)
@@ -95,13 +94,15 @@ if __name__ == "__main__":
     zip_file = zipfile.ZipFile(zip_filepath, "w", zipfile.ZIP_DEFLATED)
     print(f"Adding guide to zip...")
     zip_all(guide_folderpath, zip_file)
+    print(f"Adding compiled Jupyter notebooks to zip...")
+    zip_all(build_folder, zip_file)
     print(f"Adding code to zip...")
     zip_all(generated_path, zip_file)
 
     print(f"Saving to file...")
     zip_file.close()
 
-    print(f"Cleaning up Jupyter notebooks...")
-    remove_jupyter_notebooks(guide_folderpath)
+    print(f"Cleaning up build folder...")
+    shutil.rmtree(build_folder)
 
     print(f"Done: {zip_filepath}")
