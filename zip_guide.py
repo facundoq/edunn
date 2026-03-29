@@ -85,7 +85,8 @@ if __name__ == "__main__":
     print(f"Clearing notebooks in {guide_folderpath}...")
     clear_notebooks(guide_folderpath)
 
-    build_folder = Path(f"_build_{language}")
+    build_base = Path("_build")
+    build_folder = build_base / "guides"
     print(f"Converting marimo notebooks to Jupyter notebooks in {build_folder}...")
     convert_notebooks(guide_folderpath, build_folder)
 
@@ -107,8 +108,6 @@ if __name__ == "__main__":
     zip_file.close()
 
     print(f"Cleaning up build folder...")
-    shutil.rmtree(build_folder)
-    print(f"Cleaning up generated code skeleton...")
-    shutil.rmtree(generated_path)
+    shutil.rmtree(build_base)
 
     print(f"Done: {zip_filepath}")

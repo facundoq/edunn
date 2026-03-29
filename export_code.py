@@ -55,7 +55,7 @@ def remove_implementation(filepath: Path):
     return modifications
 
 
-generated_path = Path("generated")
+generated_path = Path("_build/edunn")
 lib_name = "edunn"
 lib_folderpath = generated_path / lib_name
 import sys
