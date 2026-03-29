@@ -34,19 +34,23 @@ def convert_notebooks(folderpath: Path, build_folder: Path):
         subprocess.run(command, shell=True)
 
 
-def zip_all(path, zip_file):
+def zip_all(path, zip_file, exclude_ext=None):
     for f in path.iterdir():
         if f.is_file():
+            if exclude_ext and f.name.endswith(exclude_ext):
+                continue
             zip_file.write(f, f.name)
         if f.is_dir():
-            zipdir(f, zip_file)
+            zipdir(f, zip_file, exclude_ext=exclude_ext)
 
 
-def zipdir(path, zip_file, skip_hidden=True):
+def zipdir(path, zip_file, skip_hidden=True, exclude_ext=None):
     # ziph is zipfile handle
     for root, dirs, files in os.walk(path):
         for file in files:
             if file.startswith(".") and skip_hidden:
+                continue
+            if exclude_ext and file.endswith(exclude_ext):
                 continue
             zip_file.write(
                 os.path.join(root, file), os.path.relpath(os.path.join(root, file), os.path.join(path, ".."))
@@ -92,8 +96,8 @@ if __name__ == "__main__":
 
     print(f"Creating zip file...")
     zip_file = zipfile.ZipFile(zip_filepath, "w", zipfile.ZIP_DEFLATED)
-    print(f"Adding guide to zip...")
-    zip_all(guide_folderpath, zip_file)
+    print(f"Adding guide to zip without .py files...")
+    zip_all(guide_folderpath, zip_file, exclude_ext=".py")
     print(f"Adding compiled Jupyter notebooks to zip...")
     zip_all(build_folder, zip_file)
     print(f"Adding code to zip...")
