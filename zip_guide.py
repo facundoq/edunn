@@ -108,5 +108,7 @@ if __name__ == "__main__":
 
     print(f"Cleaning up build folder...")
     shutil.rmtree(build_folder)
+    print(f"Cleaning up generated code skeleton...")
+    shutil.rmtree(generated_path)
 
     print(f"Done: {zip_filepath}")
