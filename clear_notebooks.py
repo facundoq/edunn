@@ -7,22 +7,18 @@ from export_code import Language, supported_languages
 
 
 def clear_notebooks(folderpath: Path):
-    for f in folderpath.rglob("*.ipynb"):
+    for f in folderpath.rglob("*.py"):
         if not f.is_file():
             continue
-        command = (
-            f"jupyter nbconvert --clear-output "
-            f"--ClearOutputPreprocessor.remove_metadata_fields='[(\"ExecuteTime\")]' "
-            f'--inplace "{f.absolute()}"'
-        )
+        command = f"uv run marimo check --fix \"{f.absolute()}\""
         subprocess.run(command, shell=True)
 
 
 def format_notebooks(folderpath: Path):
-    for f in folderpath.rglob("*.ipynb"):
+    for f in folderpath.rglob("*.py"):
         if not f.is_file():
             continue
-        command = f'black --line-length 999 "{f.absolute()}"'
+        command = f'uv run ruff format "{f.absolute()}"'
         subprocess.run(command, shell=True)
 
 

@@ -16,11 +16,24 @@ def delete_checkpoints(folderpath: Path):
 
 
 def clear_notebooks(folderpath: Path):
-    for f in folderpath.rglob("*.ipynb"):
+    for f in folderpath.rglob("*.py"):
         if not f.is_file():
             continue
-        command = f"jupyter nbconvert --clear-output --inplace '{f.absolute()}'"
+        command = f"uv run marimo check --fix \"{f.absolute()}\""
         subprocess.run(command, shell=True)
+
+def convert_notebooks(folderpath: Path):
+    for f in folderpath.rglob("*.py"):
+        if not f.is_file():
+            continue
+        ipynb_out = f.with_suffix(".ipynb")
+        command = f"uv run marimo export ipynb \"{f.absolute()}\" -o \"{ipynb_out.absolute()}\""
+        subprocess.run(command, shell=True)
+
+def remove_jupyter_notebooks(folderpath: Path):
+    for f in folderpath.rglob("*.ipynb"):
+        if f.is_file():
+            f.unlink()
 
 
 def zip_all(path, zip_file):
@@ -70,10 +83,13 @@ if __name__ == "__main__":
     print(f"Clearing notebooks in {guide_folderpath}...")
     clear_notebooks(guide_folderpath)
 
-    zip_filepath = releases_folderpath / f"{lib_name}-{language}.zip"
+    print(f"Converting marimo notebooks to Jupyter notebooks...")
+    convert_notebooks(guide_folderpath)
 
-    if not generated_path.exists():
-        sys.exit(f"Code skeleton not found in {generated_path.absolute()}")
+    print(f"Arranging edunn for solving (generating skeleton)...")
+    subprocess.run([sys.executable, "export_code.py"], check=True)
+
+    zip_filepath = releases_folderpath / f"{lib_name}-{language}.zip"
 
     print(f"Creating zip file...")
     zip_file = zipfile.ZipFile(zip_filepath, "w", zipfile.ZIP_DEFLATED)
@@ -84,4 +100,8 @@ if __name__ == "__main__":
 
     print(f"Saving to file...")
     zip_file.close()
+
+    print(f"Cleaning up Jupyter notebooks...")
+    remove_jupyter_notebooks(guide_folderpath)
+
     print(f"Done: {zip_filepath}")

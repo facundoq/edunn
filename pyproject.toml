@@ -44,6 +44,7 @@ dev = [
     "ruff>=0.15.8",
     "ty>=0.0.26",
     "marimo>=0.21.1",
+    "nbformat>=5.10.4",
 ]
 
 [tool.uv]

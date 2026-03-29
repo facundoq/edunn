@@ -34,7 +34,8 @@ def remove_implementation(filepath: Path):
             # add start of implementation comment
             if i < n:
                 new_lines.append(lines[i])
-                pass_str = lines[i][: lines[i].index("#")] + "pass\n"
+                indent = len(lines[i]) - len(lines[i].lstrip())
+                pass_str = lines[i][:indent] + "pass\n"
                 new_lines.append(pass_str)
                 modifications += 1
                 i += 1
@@ -90,7 +91,7 @@ if __name__ == "__main__":
 
     print(f"Done, {modified_files} files modified out of {total_files} python files.")
 
-    extra_files = ["requirements.txt"]
+    extra_files = ["pyproject.toml", "uv.lock"]
     print("Copying additional files...")
     for f in extra_files:
         print(f)
