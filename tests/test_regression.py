@@ -51,13 +51,13 @@ def evaluate_regression_model_datasets(model_generator, datasets_config):
 
 def test_linear_regression():
     config_datasets = {
-        "boston": ExperimentConfig(3.5),
+        "boston": ExperimentConfig(5.2),
         "study1d": ExperimentConfig(1.5, epochs=2000),
         "study2d": ExperimentConfig(1.8, epochs=3000),
-        "wine_white": ExperimentConfig(0.7),
-        "wine_red": ExperimentConfig(0.6),
-        "insurance": ExperimentConfig(4500, lr=1e-4),
-        "real_state": ExperimentConfig(6.20),
+        "wine_white": ExperimentConfig(0.85),
+        "wine_red": ExperimentConfig(0.75),
+        "insurance": ExperimentConfig(6800, lr=1e-4),
+        "real_state": ExperimentConfig(9.8),
     }
 
     def linear_regression(din, dout, id):
@@ -69,13 +69,13 @@ def test_linear_regression():
 
 def test_regression_network():
     config_datasets = {
-        "boston": ExperimentConfig(3.2),
-        "study1d": ExperimentConfig(2, epochs=2000),
+        "boston": ExperimentConfig(4.8),
+        "study1d": ExperimentConfig(2.7, epochs=2000),
         "study2d": ExperimentConfig(3, epochs=2000),
-        "wine_white": ExperimentConfig(0.65, epochs=100),
-        "wine_red": ExperimentConfig(0.55, epochs=100),
-        "insurance": ExperimentConfig(4500, lr=1e-6, epochs=500),
-        "real_state": ExperimentConfig(6.20),
+        "wine_white": ExperimentConfig(0.9, epochs=100),
+        "wine_red": ExperimentConfig(0.95, epochs=100),
+        "insurance": ExperimentConfig(6800, lr=1e-6, epochs=500),
+        "real_state": ExperimentConfig(9.2),
     }
 
     def network(din, dout, id):

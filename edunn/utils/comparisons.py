@@ -68,8 +68,8 @@ def check_same_float(expected: float, calculated: float, title: str, tol=default
 
 
 def check_mean(a: np.ndarray, mean: float, tol=default_tol):
-    check_same_float(a.mean(), mean, "Mean", tol=tol)
+    check_same_float(mean, a.mean(), "Mean", tol=tol)
 
 
 def check_std(a: np.ndarray, std: float, tol=default_tol):
-    check_same_float(a.std(), std, "Std", tol=tol)
+    check_same_float(std, a.std(), "Std", tol=tol)

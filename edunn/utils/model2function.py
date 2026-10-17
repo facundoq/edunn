@@ -14,7 +14,7 @@ def set_parameters_inplace(l: nn.Model, parameters: ParameterSet):
 def common_layer_to_function(l: nn.ModelWithParameters):
 
     def f(inputs: Dict[str, np.ndarray]):
-        old_params = l.get_parameters().copy()
+        old_params = {k: v.copy() for k, v in l.get_parameters().items()}
         set_parameters_inplace(l, inputs)
         y = l.forward(inputs["x"])
 
@@ -22,7 +22,7 @@ def common_layer_to_function(l: nn.ModelWithParameters):
         return y
 
     def df(inputs: ParameterSet, δEδy: np.ndarray):
-        old_params = l.get_parameters().copy()
+        old_params = {k: v.copy() for k, v in l.get_parameters().items()}
         set_parameters_inplace(l, inputs)
         y = l.forward(inputs["x"])
         δEδx, δEδp = l.backward(δEδy)
@@ -36,14 +36,14 @@ def common_layer_to_function(l: nn.ModelWithParameters):
 def error_layer_to_function(l: nn.Model):
 
     def f(inputs: Dict[str, np.ndarray]):
-        old_params = l.get_parameters().copy()
+        old_params = {k: v.copy() for k, v in l.get_parameters().items()}
         set_parameters_inplace(l, inputs)
         y = l.forward(inputs["y_true"], inputs["y"])
         set_parameters_inplace(l, old_params)
         return y
 
     def df(inputs: Dict[str, np.ndarray]):
-        old_params = l.get_parameters().copy()
+        old_params = {k: v.copy() for k, v in l.get_parameters().items()}
         set_parameters_inplace(l, inputs)
         y = l.forward(inputs["y_true"], inputs["y"])
         δEδy, δEδp = l.backward(np.ones_like(y))

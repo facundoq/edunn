@@ -1,6 +1,6 @@
 import numpy as np
 from ..model import ModelWithParameters
-from ..initializers import Initializer, RandomNormal
+from ..initializers import Initializer, Constant, Zero
 
 
 class BatchNorm(ModelWithParameters):
@@ -19,9 +19,9 @@ class BatchNorm(ModelWithParameters):
         # self.momemtum=momemtum
         # self.affine=affine
         if gamma_initializer is None:
-            gamma_initializer = RandomNormal()
+            gamma_initializer = Constant(1.0)
         if beta_initializer is None:
-            beta_initializer = RandomNormal()
+            beta_initializer = Zero()
         w = gamma_initializer.create(num_features)
         b = beta_initializer.create(num_features)
         self.register_parameter("w", w)

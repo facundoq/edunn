@@ -214,7 +214,7 @@ class Softmax(ModelWithoutParameters):
         y = np.zeros_like(x)
         for i in range(n):
             xi = x[i, :]
-            xi = xi + xi.max()  # trick to avoid numerical issues
+            xi = xi - xi.max()  # trick to avoid numerical issues
             # Calcular las probabilidades para cada clase
             # y guardar el valor en y[i,:]
             # en base al vector de puntaje xi

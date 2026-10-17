@@ -61,11 +61,11 @@ Afterward:
 
 1. Download a [release](https://github.com/facundoq/edunn/blob/main/releases) for your language. If you prefer the command line, use `wget`, replacing `es` with your preferred language (only `es` is currently supported):
 
-    `wget https://github.com/facundoq/edunn/blob/main/releases/edunn-es.zip`
+    `wget https://github.com/facundoq/edunn/raw/main/releases/edunn-es.zip`
 
 2. Unzip to `edunn` or other folder name you choose:
 
-    `unzip es.zip -d edunn && cd edunn`
+    `unzip edunn-es.zip -d edunn && cd edunn`
 
 3. Make sure Python3.6 or greater, pip3 and venv are installed:
 
@@ -80,7 +80,7 @@ Afterward:
 
     ````bash
     python3 -m venv nnenv
-    source nnvenv/bin/activate
+    source nnenv/bin/activate
     pip install -r requirements.txt
     ````
 
@@ -120,7 +120,7 @@ layers = [nn.Linear(din, 10),
           nn.Linear(10, 20),
           nn.Bias(20),
           nn.TanH(),
-          nn.Linear(10, n_classes),
+          nn.Linear(20, n_classes),
           nn.Bias(n_classes),
           nn.Softmax()
           ]
@@ -129,7 +129,7 @@ model = nn.Sequential(layers)
 print(model.summary())
 
 error = nn.MeanError(nn.CrossEntropyWithLabels())
-optimizer = nn.StochasticGradientDescent(lr=0.001, epochs=1000, batch_size=32)
+optimizer = nn.GradientDescent(lr=0.001, epochs=1000, batch_size=32)
 history = optimizer.optimize(model, x, y, error)
 ````
 

@@ -3,7 +3,6 @@
 import argparse
 import subprocess
 from pathlib import Path
-from export_code import Language, supported_languages
 
 
 def clear_notebooks(folderpath: Path):
@@ -28,20 +27,20 @@ def format_notebooks(folderpath: Path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    all_langs = [l.value for l in supported_languages]
+    all_langs = ["es", "en"]
     parser.add_argument(
         "-l", "--languages", nargs="*", choices=all_langs, default=all_langs, help="Language of guide to export"
     )
     args = parser.parse_args()
 
-    languages = [Language[l] for l in args.languages]
-    print(f'Clearing notebooks for languages: {", ".join([x.value for x in languages])}')
+    languages = args.languages
+    print(f'Clearing notebooks for languages: {", ".join(languages)}')
 
     guides_folderpath = Path("guides")
 
     for language in languages:
         print(language)
-        guide_folderpath = guides_folderpath / language.value
+        guide_folderpath = guides_folderpath / language
         clear_notebooks(guide_folderpath)
         format_notebooks(guide_folderpath)
         print()

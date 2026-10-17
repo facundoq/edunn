@@ -106,4 +106,4 @@ class SequenceCrossEntropyWithLabels(ModelWithoutParameters):
         δEδy /= max(self.valid_tokens, 1)
         """YOUR IMPLEMENTATION END"""
 
-        return δEδy * δEδyi, None
+        return δEδy * δEδyi, {}

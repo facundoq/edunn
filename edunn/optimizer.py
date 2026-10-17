@@ -21,9 +21,6 @@ def all_equal(list: []):
     return len(list) == 0 or list.count(list[0]) == len(list)
 
 
-import random
-
-
 def batch_arrays(batch_size: int, *arrays, shuffle=False):
     """
 
@@ -35,13 +32,13 @@ def batch_arrays(batch_size: int, *arrays, shuffle=False):
     sample_sizes = [a.shape[0] for a in arrays]
     assert all_equal(sample_sizes)
     batches = sample_sizes[0] // batch_size
-    batch_list = list(range(batches))
+    indices = np.arange(sample_sizes[0])
     if shuffle:
-        random.shuffle(batch_list)
-    for i in batch_list:
+        np.random.shuffle(indices)
+    for i in range(batches):
         start = i * batch_size
         end = start + batch_size
-        batch = [a[start:end,] for a in arrays]
+        batch = [a[indices[start:end]] for a in arrays]
         yield tuple(batch)
 
 
@@ -55,6 +52,7 @@ class BatchedGradientOptimizer(Optimizer):
         self.batch_size = batch_size
         self.epochs = epochs
         self.shuffle = shuffle
+        self.iterations = 0
 
     def backpropagation(self, model: Model, x: np.ndarray, y_true: np.ndarray, error_layer: Model):
         # forward pass (model and error)
@@ -85,7 +83,8 @@ class BatchedGradientOptimizer(Optimizer):
             epoch_error = 0
             for i, (x_batch, y_batch) in enumerate(batch_arrays(self.batch_size, x, y, shuffle=self.shuffle)):
                 δEδx, δEδps, batch_error = self.backpropagation(model, x_batch, y_batch, error_layer)
-                self.optimize_batch(model, δEδps, epoch, i)
+                self.optimize_batch(model, δEδps, epoch, self.iterations)
+                self.iterations += 1
                 epoch_error += batch_error
             epoch_error /= batches
             history.append(epoch_error)

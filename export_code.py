@@ -20,7 +20,7 @@ def remove_implementation(filepath: Path):
         s = s.strip()
         return s == end
 
-    with open(filepath, "r+") as f:
+    with open(filepath, "r+", encoding="utf-8") as f:
         lines = f.readlines()
         i = 0
         modifications = 0
@@ -34,7 +34,7 @@ def remove_implementation(filepath: Path):
             # add start of implementation comment
             if i < n:
                 new_lines.append(lines[i])
-                pass_str = lines[i][: lines[i].index("#")] + "pass\n"
+                pass_str = lines[i][: lines[i].index('"')] + "pass\n"
                 new_lines.append(pass_str)
                 modifications += 1
                 i += 1
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     generated_path.mkdir()
 
     print(f"Copying new version from {lib_name} to {generated_path.absolute()}...")
-    shutil.copytree(lib_name, lib_folderpath)
+    shutil.copytree(lib_name, lib_folderpath, ignore=shutil.ignore_patterns("__pycache__"))
 
     print(f"Removing implementation code...")
     total_files = 0

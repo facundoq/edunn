@@ -47,7 +47,7 @@ def conv2d_backward_max(dy, x, stride=(1, 1), pool_size=(1, 1)):
                     )
                     i_t, j_t = i_t[0], j_t[0]
                     # only the position of the maximum element in the region i,j gets the incoming gradient, the other gradients are zero
-                    dx[l, k, i * stride_h : i * stride_h + ph, j * stride_w : j * stride_w + pw][i_t, j_t] = dy[
+                    dx[l, k, i * stride_h : i * stride_h + ph, j * stride_w : j * stride_w + pw][i_t, j_t] += dy[
                         l, k, i, j
                     ]
     """YOUR IMPLEMENTATION END"""

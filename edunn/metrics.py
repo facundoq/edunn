@@ -9,7 +9,7 @@ def accuracy(y_true: np.ndarray, y_pred: np.ndarray) -> float:
 
 
 def rmse(y_true: np.ndarray, y_pred: np.ndarray) -> float:
-    return np.sqrt(((y_true - y_pred) ** 2).sum(axis=1)).mean()
+    return np.sqrt(((y_true - y_pred) ** 2).mean())
 
 
 def mae(y_true: np.ndarray, y_pred: np.ndarray) -> float:

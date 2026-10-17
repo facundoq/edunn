@@ -88,7 +88,7 @@ def binary_cross_entropy_labels(
         parameters = {k: np.random.normal(0, 1, shape) for k, shape in parameter_shapes.items()}
         y = np.random.uniform(0, 1, (batch_size, 1))
 
-        y_true = np.random.randint(0, 1, (batch_size, 1))
+        y_true = np.random.randint(0, 2, (batch_size, 1))
 
         return {**parameters, "y": y, "y_true": y_true}
 

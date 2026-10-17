@@ -26,7 +26,7 @@ def pad2d(x, pad_size):
     x_padded = np.zeros(new_shape)
 
     """YOUR IMPLEMENTATION START"""
-    x_padded[:, :, pad_size_h : -pad_size_h if pad_size_h > 0 else h, pad_size_w:-pad_size_w] = x
+    x_padded[:, :, pad_size_h : pad_size_h + h, pad_size_w : pad_size_w + w] = x
     """YOUR IMPLEMENTATION END"""
 
     return x_padded
@@ -72,7 +72,7 @@ def conv2d_backward_x(w, x, input_x, strides=(1, 1), pad_size=(0, 0)):
     """YOUR IMPLEMENTATION START"""
     if strides[-1] > 1:
         x = dilate2d(x, strides)
-    if pad_size[-1] > 0:
+    if pad_size[0] > 0 or pad_size[1] > 0:
         x = pad2d(x, pad_size)
     """YOUR IMPLEMENTATION END"""
 
@@ -81,6 +81,8 @@ def conv2d_backward_x(w, x, input_x, strides=(1, 1), pad_size=(0, 0)):
 
     y = np.zeros_like(input_x)
     by, cy, hy, wy = y.shape
+    # pad bottom/right with zeros when (H - F + 2P) is not a multiple of the stride
+    x = np.pad(x, ((0, 0), (0, 0), (0, hy + hw - 1 - hx), (0, wy + ww - 1 - wx)))
 
     # Compute the convolution between X and W to get δEδx
     # Hint: use multiple for loops for the expected size

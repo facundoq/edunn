@@ -18,9 +18,9 @@ def numerical_gradient(f, x: np.ndarray, δEδy: np.ndarray = None, h=1e-5):
     for i in indices_generator(x):
         oldval = x[i]
         x[i] = oldval + h  # increment by h
-        fxph = f(x)  # evaluate f(x + h)
-        x[i] = oldval - h2  # decrement by h2
-        fxmh = f(x)  # evaluate f(x - h)
+        fxph = np.copy(f(x))  # evaluate f(x + h)
+        x[i] = oldval - h  # decrement by h
+        fxmh = np.copy(f(x))  # evaluate f(x - h)
         x[i] = oldval  # reset
 
         δyδxi = (fxph - fxmh) / h2

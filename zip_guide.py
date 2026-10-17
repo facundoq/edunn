@@ -19,7 +19,7 @@ def clear_notebooks(folderpath: Path):
     for f in folderpath.rglob("*.ipynb"):
         if not f.is_file():
             continue
-        command = f"jupyter nbconvert --clear-output --inplace '{f.absolute()}'"
+        command = f'jupyter nbconvert --clear-output --inplace "{f.absolute()}"'
         subprocess.run(command, shell=True)
 
 

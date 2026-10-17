@@ -37,6 +37,39 @@ def test_gradients():
     layer = nn.Softmax()
     common_layer(layer, shape, samples=samples)
 
+    layer = nn.GELU()
+    common_layer(layer, shape, samples=samples, tolerance=1e-5)
+
+    layer = nn.BatchNorm(features)
+    common_layer(layer, (8, features), samples=samples, tolerance=1e-5)
+
+    layer = nn.Dropout()
+    layer.set_phase(nn.Phase.Test)
+    common_layer(layer, shape, samples=samples)
+
+    image_shape = (2, 3, 7, 7)
+
+    layer = nn.Flatten()
+    common_layer(layer, image_shape, samples=3, tolerance=1e-5)
+
+    layer = nn.MaxPool2d(kernel_size=3, stride=1)
+    common_layer(layer, image_shape, samples=3, tolerance=1e-5)
+
+    layer = nn.AvgPool2d(kernel_size=3, stride=1)
+    common_layer(layer, image_shape, samples=3, tolerance=1e-5)
+
+    layer = nn.Conv2d(3, 4, kernel_size=(3, 3), stride=2, padding=1)
+    common_layer(layer, image_shape, samples=3, tolerance=1e-5)
+
+    layer = nn.Conv2d(3, 4, kernel_size=(3, 3), stride=2)
+    common_layer(layer, (2, 3, 6, 6), samples=3, tolerance=1e-5)
+
+    layer = nn.Conv2d(3, 4, kernel_size=(3, 1))
+    common_layer(layer, image_shape, samples=3, tolerance=1e-5)
+
+    layer = nn.RNN(input_dim=4, output_dim=3, hidden_dim=6)
+    common_layer(layer, (2, 5, 4), samples=3, tolerance=1e-5)
+
     layer = nn.SquaredError()
     squared_error(layer, shape, samples=samples, tolerance=1e-3)
 

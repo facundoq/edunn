@@ -6,7 +6,7 @@ import numpy as np
 
 
 def onehot2labels(onehot):
-    return onehot.argmax(axis=1)
+    return onehot.argmax(axis=-1)
 
 
 def labels2onehot(labels, n_classes):

@@ -12,10 +12,11 @@ class Dropout(ModelWithoutParameters):
     def forward(self, x: np.ndarray):
         u = np.zeros_like(x)
         """YOUR IMPLEMENTATION START"""
-        u = np.random.binomial(1, self.p, size=x.shape) / self.p
         if self.phase == Phase.Training:
+            u = np.random.binomial(1, 1 - self.p, size=x.shape) / (1 - self.p)
             y = x * u
         else:
+            u = np.ones_like(x)
             y = x
         """YOUR IMPLEMENTATION END"""
         self.set_cache(u)

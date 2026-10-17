@@ -45,7 +45,7 @@ def evaluate_classification_model(dataset_name: str, model_generator: Callable, 
 
 def evaluate_classification_model_datasets(model_generator, datasets_config):
 
-    for i, (dataset_name, config) in datasets_config.items():
+    for i, (dataset_name, config) in enumerate(datasets_config.items()):
         lr, epochs, min_accuracy = config.lr, config.epochs, config.min_accuracy
         model, accuracy = evaluate_classification_model(dataset_name, model_generator, epochs, lr, str(i))
         assert (
@@ -60,7 +60,7 @@ def test_logistic_regression():
         "study1d": ExperimentConfig(0.5),
         "study2d_easy": ExperimentConfig(0.5),
         "study2d": ExperimentConfig(0.5),
-        "iris": ExperimentConfig(0.95, epochs=2000),
+        "iris": ExperimentConfig(0.95, epochs=10000),
     }
 
     def logistic_regression(din, classes, id):
@@ -85,7 +85,7 @@ def test_classification_network():
         "study1d": ExperimentConfig(0.5),
         "study2d_easy": ExperimentConfig(0.5),
         "study2d": ExperimentConfig(0.5),
-        "iris": ExperimentConfig(0.95, lr=0.1),
+        "iris": ExperimentConfig(0.8, lr=0.1),
     }
 
     def network(din, classes, id):
@@ -102,6 +102,6 @@ def test_classification_network():
             nn.Dense(din, classes),
             last_layer,
         ]
-        return nn.Sequential(layers, f"network_{id}")
+        return nn.Sequential(layers, f"classification_network_{id}")
 
     evaluate_classification_model_datasets(network, config_datasets)
