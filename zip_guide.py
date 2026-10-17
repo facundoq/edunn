@@ -37,9 +37,7 @@ def zipdir(path, zip_file, skip_hidden=True):
         for file in files:
             if file.startswith(".") and skip_hidden:
                 continue
-            zip_file.write(
-                os.path.join(root, file), os.path.relpath(os.path.join(root, file), os.path.join(path, ".."))
-            )
+            zip_file.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), os.path.join(path, "..")))
 
 
 if __name__ == "__main__":

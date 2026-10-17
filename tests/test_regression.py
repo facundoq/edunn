@@ -42,9 +42,7 @@ def evaluate_regression_model_datasets(model_generator, datasets_config):
     for i, (dataset_name, config) in enumerate(datasets_config.items()):
         lr, epochs, max_mse = config.lr, config.epochs, config.max_mse
         model, mse, mae = evaluate_regression_model(dataset_name, model_generator, epochs, lr, str(i))
-        assert (
-            mse < config.max_mse
-        ), f"Model {model} achieved {mse} rmse, more than  {max_mse} which is the maximum expected for dataset {dataset_name}."
+        assert mse < config.max_mse, f"Model {model} achieved {mse} rmse, more than  {max_mse} which is the maximum expected for dataset {dataset_name}."
         print(f"\nRMSE={mse} OK (expected less than {max_mse}).")
     print("All models have satisfactory errors.")
 

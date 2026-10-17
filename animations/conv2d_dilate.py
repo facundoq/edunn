@@ -11,10 +11,18 @@ config.frame_width = 25.0
 class CustomScene(Scene):
     def construct(self):
         matrix_2x2_input = VGroup(
-            *[Square().set_fill(DARK_BLUE, opacity=1) for i in range(2) for j in range(2)]
+            *[
+                Square().set_fill(DARK_BLUE, opacity=1)
+                for i in range(2)
+                for j in range(2)
+            ]
         ).arrange_in_grid(2, 2, buff=0.0)
         matrix_3x3_dilate = VGroup(
-            *[Square().set_fill(GRAY, opacity=1) for i in range(3) for j in range(3)]
+            *[
+                Square().set_fill(GRAY, opacity=1)
+                for i in range(3) 
+                for j in range(3)
+            ]
         ).arrange_in_grid(3, 3, buff=0.0)
 
         dEdy = [

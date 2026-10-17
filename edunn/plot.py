@@ -34,9 +34,7 @@ def plot_model_dataset_1d(x: np.ndarray, y: np.ndarray, model: nn.Model, filepat
         plt.close()
 
 
-def plot_model_dataset_2d_classification(
-    x: np.ndarray, y: np.ndarray, model: nn.Model, filepath=None, detail=0.1, title=""
-):
+def plot_model_dataset_2d_classification(x: np.ndarray, y: np.ndarray, model: nn.Model, filepath=None, detail=0.1, title=""):
     assert x.shape[1] == 2, f"x must have only two input variables (received x with {x.shape[1]} dimensions)"
 
     plt.figure()

@@ -48,9 +48,7 @@ def evaluate_classification_model_datasets(model_generator, datasets_config):
     for i, (dataset_name, config) in enumerate(datasets_config.items()):
         lr, epochs, min_accuracy = config.lr, config.epochs, config.min_accuracy
         model, accuracy = evaluate_classification_model(dataset_name, model_generator, epochs, lr, str(i))
-        assert (
-            min_accuracy <= accuracy
-        ), f"Model {model} achieved {accuracy} accuracy, less that  {min_accuracy} which is the expected for dataset {dataset_name}"
+        assert min_accuracy <= accuracy, f"Model {model} achieved {accuracy} accuracy, less that  {min_accuracy} which is the expected for dataset {dataset_name}"
         print(f"Accuracy={accuracy} OK (expected more than {min_accuracy})\n")
     print("All models have satisfactory accuracies.\n")
 

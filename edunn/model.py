@@ -39,9 +39,7 @@ class Model(ABC):
             count = class_counter.get(class_name, 0)
             name = f"{class_name}_{count}"
             class_counter[class_name] = count + 1
-        assert not (
-            name in model_name_registry
-        ), f"The model name {name} has already been used, see model_name_registry: {model_name_registry}."
+        assert not (name in model_name_registry), f"The model name {name} has already been used, see model_name_registry: {model_name_registry}."
         model_name_registry.append(name)
 
         self.phase = Phase.Training

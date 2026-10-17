@@ -65,9 +65,7 @@ class Dense(ModelWithParameters):
         if activation_name in activation_dict:
             self.activation = activation_dict[activation_name]()
         else:
-            raise ValueError(
-                f"Unknown activation function {activation_name}. Available activations: {','.join(activation_dict.keys())}"
-            )
+            raise ValueError(f"Unknown activation function {activation_name}. Available activations: {','.join(activation_dict.keys())}")
 
         super().__init__(name=name)
         # add activation name to Dense name

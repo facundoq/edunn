@@ -46,8 +46,6 @@ class MeanError(ModelWithoutParameters):
         δEδy *= δE
         # Calculate gradient for each sample
         δEδy_sample, δEδp_sample = self.sample_error_layer.backward(δEδy)
-        assert_message = (
-            f"sample_error_layer's gradient must have n values (found {δEδy_sample.shape[0]}, expected {n})"
-        )
+        assert_message = f"sample_error_layer's gradient must have n values (found {δEδy_sample.shape[0]}, expected {n})"
         assert δEδy_sample.shape[0] == n, assert_message
         return δEδy_sample, δEδp_sample

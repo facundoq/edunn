@@ -118,9 +118,7 @@ class GradientDescent(BatchedGradientOptimizer):
 
 class RMSprop(BatchedGradientOptimizer):
 
-    def __init__(
-        self, batch_size: int, epochs: int, lr: float = 0.1, beta: float = 0.99, eps: float = 1e-8, shuffle=True
-    ):
+    def __init__(self, batch_size: int, epochs: int, lr: float = 0.1, beta: float = 0.99, eps: float = 1e-8, shuffle=True):
         super().__init__(batch_size, epochs, shuffle)
         self.lr = lr
         self.beta = beta
@@ -148,9 +146,7 @@ class RMSprop(BatchedGradientOptimizer):
 
 class Adam(BatchedGradientOptimizer):
 
-    def __init__(
-        self, batch_size: int, epochs: int, lr: float = 0.1, betas: tuple = (0.9, 0.999), eps: int = 1e-08, shuffle=True
-    ):
+    def __init__(self, batch_size: int, epochs: int, lr: float = 0.1, betas: tuple = (0.9, 0.999), eps: int = 1e-08, shuffle=True):
         super().__init__(batch_size, epochs, shuffle)
         self.lr = lr
         self.beta_1, self.beta_2 = betas

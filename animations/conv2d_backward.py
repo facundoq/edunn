@@ -47,15 +47,11 @@ class CustomScene(Scene):
 
         for i in range(2):
             for j in range(2):
-                matrix_2x2_input.add(
-                    MathTex(str(x[i][j])).move_to(np.array([-d - 1, 1, 0]) + np.array([j * 2, -i * 2, 0]))
-                )
+                matrix_2x2_input.add(MathTex(str(x[i][j])).move_to(np.array([-d - 1, 1, 0]) + np.array([j * 2, -i * 2, 0])))
 
         for i in range(2):
             for j in range(2):
-                matrix_2x2_filter.add(
-                    MathTex(str(w[i][j])).move_to(np.array([-d - 1, 1, 0]) + np.array([j * 2, -i * 2, 0]))
-                )
+                matrix_2x2_filter.add(MathTex(str(w[i][j])).move_to(np.array([-d - 1, 1, 0]) + np.array([j * 2, -i * 2, 0])))
 
         self.play(*[Create(sq) for sq in matrix_3x3_conv], *[Create(sq) for sq in matrix_2x2_input])
         self.wait()

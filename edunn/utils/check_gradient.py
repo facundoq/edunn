@@ -14,9 +14,7 @@ def common_layer(l: nn.ModelWithParameters, x_shape: Tuple, samples: int = 1, to
     input_generators = lambda: {k: np.random.normal(0, 1, shape) for k, shape in shapes.items()}
     y = f(input_generators())
     δEδy_generator = lambda: np.random.normal(0, 1, y.shape)
-    common_layer_random_sample(
-        l, f, df, input_generators, δEδy_generator, samples=samples, tolerance=tolerance, break_on_error=break_on_error
-    )
+    common_layer_random_sample(l, f, df, input_generators, δEδy_generator, samples=samples, tolerance=tolerance, break_on_error=break_on_error)
 
 
 def squared_error(l: nn.SquaredError, y_shape: Tuple, samples: int = 1, tolerance=1e-7, break_on_error=True):
@@ -46,9 +44,7 @@ def squared_error(l: nn.SquaredError, y_shape: Tuple, samples: int = 1, toleranc
     )
 
 
-def cross_entropy_labels(
-    l: nn.CrossEntropyWithLabels, y_shape: Tuple, samples: int = 1, tolerance=1e-7, break_on_error=True
-):
+def cross_entropy_labels(l: nn.CrossEntropyWithLabels, y_shape: Tuple, samples: int = 1, tolerance=1e-7, break_on_error=True):
     f, df, parameter_shapes = error_layer_to_function(l)
     df_ignore_δEδy = lambda x, δEδy: df(x)
 
@@ -77,9 +73,7 @@ def cross_entropy_labels(
     )
 
 
-def binary_cross_entropy_labels(
-    l: nn.BinaryCrossEntropy, batch_size: int, samples: int = 1, tolerance=1e-7, break_on_error=True
-):
+def binary_cross_entropy_labels(l: nn.BinaryCrossEntropy, batch_size: int, samples: int = 1, tolerance=1e-7, break_on_error=True):
     f, df, parameter_shapes = error_layer_to_function(l)
     df_ignore_δEδy = lambda x, δEδy: df(x)
     sm = nn.Softmax()
@@ -106,9 +100,7 @@ def binary_cross_entropy_labels(
     )
 
 
-def common_layer_random_sample(
-    l: nn.Model, f, df, input_generator, δEδy_generator, samples: int = 1, tolerance=1e-7, break_on_error=True
-):
+def common_layer_random_sample(l: nn.Model, f, df, input_generator, δEδy_generator, samples: int = 1, tolerance=1e-7, break_on_error=True):
     checks, errors = 0, 0
     print(f"{Back.LIGHTBLUE_EX}{Fore.BLACK}{l.name} layer:{Style.RESET_ALL}")
 
@@ -116,9 +108,7 @@ def common_layer_random_sample(
         inputs = input_generator()
         δEδy = δEδy_generator()
         δEδinputs_analytic = df(inputs, δEδy=δEδy)
-        sample_checks, sample_errors = check_gradient_numerical(
-            f, inputs, δEδy, δEδinputs_analytic, tolerance=tolerance, break_on_error=break_on_error
-        )
+        sample_checks, sample_errors = check_gradient_numerical(f, inputs, δEδy, δEδinputs_analytic, tolerance=tolerance, break_on_error=break_on_error)
         errors += sample_errors
         checks += sample_checks
         if errors > 0 and break_on_error:
@@ -130,9 +120,7 @@ def common_layer_random_sample(
 
     if not break_on_error and errors > 0:
         status = f"{Back.RED}{Fore.BLACK}ERROR{Style.RESET_ALL}"
-        print(
-            f"{status} {checks} partial derivatives checked, {errors} failed (tolerance {tolerance}, {samples} random input samples)"
-        )
+        print(f"{status} {checks} partial derivatives checked, {errors} failed (tolerance {tolerance}, {samples} random input samples)")
 
 
 def check_gradient_numerical(
@@ -177,9 +165,7 @@ def check_gradient_numerical(
     return checks, errors
 
 
-def report_errors(
-    δEδk_analytical, δEδk_numerical, label: str, x: np.ndarray, δEδy: np.ndarray, max_error: float, tolerance: float
-):
+def report_errors(δEδk_analytical, δEδk_numerical, label: str, x: np.ndarray, δEδy: np.ndarray, max_error: float, tolerance: float):
 
     message = f"{Back.RED}{Fore.BLACK} ERROR {Style.RESET_ALL}"
     message += f"\nδEδ{label}"
